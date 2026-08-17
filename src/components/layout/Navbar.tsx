@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaCog, FaBars, FaTimes, FaArrowRight, FaPhoneAlt, FaPaperPlane } from "react-icons/fa";
+import { FaBars, FaTimes, FaArrowRight, FaPhoneAlt, FaPaperPlane } from "react-icons/fa";
 
 export interface NavItem {
   label: string;
@@ -50,29 +51,36 @@ export default function Navbar() {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-md py-3"
-          : "bg-white py-4 border-b border-slate-100"
+          ? "bg-white/95 backdrop-blur-md shadow-md py-2"
+          : "bg-white py-3 border-b border-slate-100"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-brand-800 to-brand-950 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-200">
-              <FaCog className="text-xl text-accent group-hover:rotate-90 transition-transform duration-500" />
+        <div className="flex items-center justify-between gap-4 lg:gap-6">
+          {/* Official Client Logo Badge (Prominent Size & Vertically Center-Aligned) */}
+          <Link href="/" className="flex items-center gap-3 sm:gap-3.5 group shrink-0">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-[68px] md:h-[68px] shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+              <Image
+                src="/assets/logo.svg"
+                alt="Elite Standard Limited Logo"
+                width={72}
+                height={72}
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-extrabold text-lg sm:text-xl text-brand-900 tracking-tight leading-none group-hover:text-brand-800 transition-colors">
-                ELITE STANDARD
+            <div className="flex flex-col justify-center">
+              <span className="font-heading font-extrabold text-base sm:text-lg lg:text-xl text-brand-900 tracking-tight leading-none group-hover:text-brand-800 transition-colors whitespace-nowrap">
+                ELITE STANDARD LIMITED
               </span>
-              <span className="text-[10px] font-semibold tracking-widest text-slate-500 uppercase mt-0.5">
-                Limited &bull; MEP Engineering
+              <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-slate-500 uppercase mt-1 hidden sm:block whitespace-nowrap">
+                Engineering &bull; MEP Solutions
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-1 xl:gap-2">
+          <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1.5 shrink">
             {navItems.map((item) => {
               const isActive =
                 item.href === "/"
@@ -83,7 +91,7 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-3 py-2 text-xs font-semibold rounded-md transition-all duration-150 relative ${
+                  className={`px-2 py-1.5 2xl:px-3 text-xs font-semibold rounded-md transition-all duration-150 relative whitespace-nowrap ${
                     isActive
                       ? "text-brand-800 font-bold bg-brand-50"
                       : "text-slate-600 hover:text-brand-800 hover:bg-slate-50"
@@ -93,7 +101,7 @@ export default function Navbar() {
                   {isActive && (
                     <motion.div
                       layoutId="activeNavIndicator"
-                      className="absolute bottom-0 left-3 right-3 h-0.5 bg-accent rounded-full"
+                      className="absolute bottom-0 left-2 right-2 2xl:left-3 2xl:right-3 h-0.5 bg-accent rounded-full"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -103,10 +111,10 @@ export default function Navbar() {
           </nav>
 
           {/* CTA Button & Mobile Toggle */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <Link
               href="/contact?type=quotation"
-              className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-accent to-amber-500 hover:from-amber-600 hover:to-accent text-brand-950 font-semibold text-xs px-4 py-2.5 rounded-md shadow-cta hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+              className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-accent to-amber-500 hover:from-amber-600 hover:to-accent text-brand-950 font-semibold text-xs px-3.5 py-2.5 rounded-md shadow-cta hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
             >
               <span>Request Quotation</span>
               <FaPaperPlane className="text-[10px]" />

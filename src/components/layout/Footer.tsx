@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  FaCog,
   FaPhoneAlt,
   FaEnvelope,
   FaMapMarkerAlt,
@@ -34,22 +34,28 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-brand-950 text-slate-300 pt-16 pb-8 border-t border-brand-900">
+    <footer className="bg-brand-950 text-slate-300 pt-16 pb-8 border-t border-brand-900 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800/80">
           {/* Column 1: Brand Info & Accreditation (Col span 2 on lg) */}
           <div className="lg:col-span-2 flex flex-col gap-5">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-brand-950 font-bold shadow-md">
-                <FaCog className="text-xl animate-spin-slow" />
+            <Link href="/" className="flex items-center gap-3.5 group shrink-0">
+              <div className="w-13 h-13 sm:w-16 sm:h-16 shrink-0 bg-white/10 p-1.5 rounded-xl border border-white/10 flex items-center justify-center">
+                <Image
+                  src="/assets/logo.svg"
+                  alt="Elite Standard Limited Logo"
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div className="flex flex-col">
-                <span className="font-heading font-extrabold text-xl text-white tracking-tight">
-                  ELITE STANDARD
+                <span className="font-heading font-extrabold text-xl sm:text-2xl text-white tracking-tight leading-none">
+                  ELITE STANDARD LIMITED
                 </span>
-                <span className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
-                  Limited &bull; MEP Engineering
+                <span className="text-[10px] sm:text-xs font-semibold tracking-widest text-slate-400 uppercase mt-1">
+                  Engineering &bull; MEP Solutions
                 </span>
               </div>
             </Link>
