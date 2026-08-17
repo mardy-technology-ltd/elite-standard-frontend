@@ -330,7 +330,7 @@ export const servicesData: ServiceItem[] = [
     shortDescription: "On-grid rooftop solar PV plants, net metering installation, and industrial solar integration.",
     fullDescription: "Empowering businesses to reduce electricity bills with high-efficiency rooftop solar PV installations, net metering, and clean solar power storage systems.",
     icon: "FaSun",
-    bannerImage: "https://images.unsplash.com/photo-1509391365360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
+    bannerImage: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1200&auto=format&fit=crop",
     problems: [
       "Rising utility tariff costs impacting profit margins",
       "Corporate carbon footprint reduction targets",
