@@ -40,21 +40,22 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800/80">
           {/* Column 1: Brand Info & Accreditation (Col span 2 on lg) */}
           <div className="lg:col-span-2 flex flex-col gap-5">
-            <Link href="/" className="flex items-center gap-3.5 group shrink-0">
-              <div className="w-13 h-13 sm:w-16 sm:h-16 shrink-0 bg-white/10 p-1.5 rounded-xl border border-white/10 flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-4 group shrink-0">
+              {/* Prominent White Background Badge (Enlarged to 80px) */}
+              <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 bg-white p-2.5 rounded-2xl shadow-lg border border-white/30 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
                 <Image
                   src="/assets/logo.svg"
                   alt="Elite Standard Limited Logo"
-                  width={64}
-                  height={64}
+                  width={80}
+                  height={80}
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="flex flex-col">
-                <span className="font-heading font-extrabold text-xl sm:text-2xl text-white tracking-tight leading-none">
+              <div className="flex flex-col justify-center">
+                <span className="font-heading font-extrabold text-xl sm:text-2xl text-white tracking-tight leading-none group-hover:text-accent transition-colors">
                   ELITE STANDARD LIMITED
                 </span>
-                <span className="text-[10px] sm:text-xs font-semibold tracking-widest text-slate-400 uppercase mt-1">
+                <span className="text-[10px] sm:text-xs font-semibold tracking-widest text-slate-400 uppercase mt-1.5">
                   Engineering &bull; MEP Solutions
                 </span>
               </div>
