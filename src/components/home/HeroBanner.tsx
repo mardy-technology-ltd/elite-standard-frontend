@@ -11,6 +11,7 @@ import {
   FaBuilding,
   FaAward,
   FaUsers,
+  FaDownload,
 } from "react-icons/fa";
 
 const stats = [
@@ -136,6 +137,15 @@ export default function HeroBanner() {
               <span>Explore Services</span>
               <FaArrowRight className="text-xs group-hover:translate-x-1 transition-transform" />
             </Link>
+
+            <a
+              href="/elite-standard-profile.pdf"
+              download="Elite_Standard_Limited_Profile.pdf"
+              className="group bg-white/5 hover:bg-white/15 backdrop-blur-md text-slate-200 hover:text-white font-semibold text-sm px-7 py-4 rounded-lg border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-3"
+            >
+              <span>Download Profile</span>
+              <FaDownload className="text-xs group-hover:scale-110 transition-transform text-accent" />
+            </a>
           </motion.div>
         </div>
       </div>

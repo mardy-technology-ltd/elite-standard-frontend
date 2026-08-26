@@ -14,6 +14,7 @@ import {
   FaPaperPlane,
   FaCheckCircle,
   FaShieldAlt,
+  FaDownload,
 } from "react-icons/fa";
 
 export default function Footer() {
@@ -69,6 +70,15 @@ export default function Footer() {
               <FaShieldAlt className="text-accent text-sm" />
               <span className="font-semibold">ISO 9001:2015 & Fire Safety Certified Enterprise</span>
             </div>
+
+            <a
+              href="/elite-standard-profile.pdf"
+              download="Elite_Standard_Limited_Profile.pdf"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-accent hover:text-white transition-colors bg-brand-900 border border-brand-800 hover:border-brand-700 px-4 py-2.5 rounded-lg shadow w-fit"
+            >
+              <FaDownload className="text-xs shrink-0" />
+              <span>Download Company Profile (PDF)</span>
+            </a>
 
             {/* Social Icons */}
             <div className="flex items-center gap-3 pt-2">
