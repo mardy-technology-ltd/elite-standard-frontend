@@ -5,6 +5,7 @@ import CompanyStory from "@/components/about/CompanyStory";
 import CoreValues from "@/components/about/CoreValues";
 import CompanyTimeline from "@/components/about/CompanyTimeline";
 import LeadershipTeam from "@/components/about/LeadershipTeam";
+import CorporateStructure from "@/components/about/CorporateStructure";
 import Accreditations from "@/components/about/Accreditations";
 import AboutCTA from "@/components/about/AboutCTA";
 
@@ -38,6 +39,9 @@ export default function AboutPage() {
 
       {/* 5. Executive Leadership Team */}
       <LeadershipTeam />
+
+      {/* 5.5 Corporate Structure / Organogram Flowcharts */}
+      <CorporateStructure />
 
       {/* 6. Accreditations & Safety Compliance */}
       <Accreditations />
