@@ -11,22 +11,103 @@ import {
   FaBuilding,
   FaArrowRight,
   FaShieldAlt,
+  FaUniversity,
+  FaGraduationCap,
+  FaShoppingBag,
+  FaPlane,
+  FaBriefcase,
+  FaCapsules,
+  FaDna,
+  FaHeartbeat,
+  FaNetworkWired,
 } from "react-icons/fa";
 import { projectsData, ProjectItem } from "@/lib/mockData";
 
 const clientReferences = [
-  { name: "Projukti International", type: "Technology & Power Integration" },
-  { name: "Padma Bank Limited", type: "Banking & Infrastructure" },
-  { name: "IFIC Bank Limited", type: "Banking & Corporate Offices" },
-  { name: "Bank Asia Limited", type: "Banking & Corporate Offices" },
-  { name: "Aarong (BRAC Enterprise)", type: "Retail & Commercial MEP" },
-  { name: "Sky Air", type: "Aviation & Logistics Setup" },
-  { name: "Sonargaon University", type: "Educational Facility HVAC" },
-  { name: "Dhaka College", type: "Public Institution Lighting" },
-  { name: "MIST (Military Institute of Science and Technology)", type: "Institutional MEP Research" },
-  { name: "Mansons Pharma", type: "Pharmaceutical Cleanroom HVAC" },
-  { name: "Biotech Associates", type: "Healthcare Equipment Utilities" },
-  { name: "Global Health BD", type: "Medical Facility Automation" },
+  {
+    name: "Projukti International",
+    type: "Technology & Power Integration",
+    monogram: "PI",
+    icon: FaNetworkWired,
+    bgColor: "bg-blue-50 text-blue-600 border-blue-100",
+  },
+  {
+    name: "Padma Bank Limited",
+    type: "Banking & Infrastructure",
+    monogram: "PBL",
+    icon: FaUniversity,
+    bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100",
+  },
+  {
+    name: "IFIC Bank Limited",
+    type: "Banking & Corporate Offices",
+    monogram: "IFIC",
+    icon: FaUniversity,
+    bgColor: "bg-cyan-50 text-cyan-600 border-cyan-100",
+  },
+  {
+    name: "Bank Asia Limited",
+    type: "Banking & Corporate Offices",
+    monogram: "BAL",
+    icon: FaUniversity,
+    bgColor: "bg-indigo-50 text-indigo-600 border-indigo-100",
+  },
+  {
+    name: "Aarong (BRAC Enterprise)",
+    type: "Retail & Commercial MEP",
+    monogram: "AAR",
+    icon: FaShoppingBag,
+    bgColor: "bg-amber-50 text-amber-700 border-amber-100",
+  },
+  {
+    name: "Sky Air",
+    type: "Aviation & Logistics Setup",
+    monogram: "SA",
+    icon: FaPlane,
+    bgColor: "bg-sky-50 text-sky-600 border-sky-100",
+  },
+  {
+    name: "Sonargaon University",
+    type: "Educational Facility HVAC",
+    monogram: "SU",
+    icon: FaGraduationCap,
+    bgColor: "bg-violet-50 text-violet-600 border-violet-100",
+  },
+  {
+    name: "Dhaka College",
+    type: "Public Institution Lighting",
+    monogram: "DC",
+    icon: FaGraduationCap,
+    bgColor: "bg-rose-50 text-rose-600 border-rose-100",
+  },
+  {
+    name: "MIST (Military Institute of Science and Technology)",
+    type: "Institutional MEP Research",
+    monogram: "MIST",
+    icon: FaShieldAlt,
+    bgColor: "bg-lime-50 text-lime-700 border-lime-200",
+  },
+  {
+    name: "Mansons Pharma",
+    type: "Pharmaceutical Cleanroom HVAC",
+    monogram: "MP",
+    icon: FaCapsules,
+    bgColor: "bg-teal-50 text-teal-600 border-teal-100",
+  },
+  {
+    name: "Biotech Associates",
+    type: "Healthcare Equipment Utilities",
+    monogram: "BA",
+    icon: FaDna,
+    bgColor: "bg-purple-50 text-purple-600 border-purple-100",
+  },
+  {
+    name: "Global Health BD",
+    type: "Medical Facility Automation",
+    monogram: "GH",
+    icon: FaHeartbeat,
+    bgColor: "bg-red-50 text-red-600 border-red-100",
+  },
 ];
 
 export default function ProjectsPage() {
@@ -304,22 +385,35 @@ export default function ProjectsPage() {
           </div>
 
           {/* Grid list of 12 corporate references */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {clientReferences.map((client, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ scale: 1.03 }}
-                transition={{ duration: 0.2 }}
-                className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-center gap-1 min-h-[90px] text-center hover:border-accent/40 group hover:bg-slate-50/50"
-              >
-                <h4 className="font-bold text-xs sm:text-sm text-brand-950 group-hover:text-accent transition-colors leading-tight">
-                  {client.name}
-                </h4>
-                <span className="text-[10px] text-slate-400 font-semibold tracking-wide uppercase">
-                  {client.type}
-                </span>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {clientReferences.map((client, idx) => {
+              const ClientIcon = client.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  whileHover={{ y: -5 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center gap-4 text-center hover:border-brand-900/30 hover:bg-white hover:shadow-md group transition-all"
+                >
+                  {/* Styled Corporate Logo Badge */}
+                  <div className={`w-14 h-14 rounded-full flex flex-col items-center justify-center relative border shadow-sm ${client.bgColor} transition-transform group-hover:scale-105`}>
+                    <ClientIcon className="text-lg opacity-85" />
+                    <span className="text-[9px] font-extrabold uppercase tracking-tighter absolute -bottom-1 px-1.5 py-0.5 rounded bg-brand-950 text-white leading-none scale-90 border border-brand-800 shadow-sm">
+                      {client.monogram}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 mt-1">
+                    <h4 className="font-bold text-xs sm:text-sm text-brand-950 group-hover:text-accent transition-colors leading-snug">
+                      {client.name}
+                    </h4>
+                    <span className="text-[9px] sm:text-[10px] text-slate-500 font-semibold tracking-wide uppercase leading-tight">
+                      {client.type}
+                    </span>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* Footer Callout */}
