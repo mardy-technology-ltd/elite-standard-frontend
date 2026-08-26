@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { servicesData, ServiceItem } from "@/lib/mockData";
 import ServiceBanner from "@/components/services/ServiceBanner";
 import ServiceIntro from "@/components/services/ServiceIntro";
+import ServiceSectorBreakdown from "@/components/services/ServiceSectorBreakdown";
 import ServiceSubSpecialties from "@/components/services/ServiceSubSpecialties";
 import ServiceChallenges from "@/components/services/ServiceChallenges";
 import ServiceScope from "@/components/services/ServiceScope";
@@ -67,6 +68,9 @@ export default function ServiceDetailPage({ params }: ServicePageProps) {
 
       {/* 2. Introduction */}
       <ServiceIntro service={service} />
+
+      {/* Sector-Wise Solutions Tab Component */}
+      <ServiceSectorBreakdown service={service} />
 
       {/* 3. Sub-Specialties Deep Dive (with HTML element id anchors matching /services/fdps#alarm, /services/hvac#vrf, etc.) */}
       <ServiceSubSpecialties service={service} />

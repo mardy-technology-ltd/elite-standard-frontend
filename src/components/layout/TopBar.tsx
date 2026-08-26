@@ -8,19 +8,19 @@ export default function TopBar() {
         {/* Left Side: Contact Information & Hours */}
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 sm:gap-6">
           <a
-            href="tel:+8801700000000"
+            href="tel:+8801313663311"
             className="flex items-center gap-2 hover:text-accent transition-colors duration-150 group"
           >
             <FaPhoneAlt className="text-accent text-[11px] group-hover:scale-110 transition-transform" />
-            <span className="font-medium">+880 1700-000000</span>
+            <span className="font-medium">+880 1313-663311</span>
           </a>
 
           <a
-            href="mailto:info@elitestandard.com"
+            href="mailto:elitestandardlimited@gmail.com"
             className="flex items-center gap-2 hover:text-accent transition-colors duration-150 group"
           >
             <FaEnvelope className="text-accent text-[11px] group-hover:scale-110 transition-transform" />
-            <span>info@elitestandard.com</span>
+            <span>elitestandardlimited@gmail.com</span>
           </a>
 
           <div className="hidden lg:flex items-center gap-2 text-slate-400">

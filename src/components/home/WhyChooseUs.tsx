@@ -3,50 +3,50 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  FaUserCog,
-  FaClock,
+  FaPencilRuler,
+  FaTools,
+  FaClipboardCheck,
   FaShieldAlt,
   FaHeadset,
-  FaLeaf,
-  FaMedal,
+  FaBoxes,
 } from "react-icons/fa";
 
 const pillars = [
   {
-    icon: FaUserCog,
-    title: "Expert Engineering Team",
-    description: "Over 120+ certified PE & PMP engineers with decades of combined experience in MEP, HVAC, and industrial power engineering.",
-    badge: "Certified Experts",
+    icon: FaPencilRuler,
+    title: "1. Designing",
+    description: "We develop efficient, safe, and future-ready designs based on facility requirements, complying with BNBC, NFPA, ASHRAE, and international codes.",
+    badge: "Core Action 1",
   },
   {
-    icon: FaClock,
-    title: "Timely Project Delivery",
-    description: "Structured project management methodologies ensuring all engineering milestones and handovers are completed strictly on schedule.",
-    badge: "100% On-Time",
+    icon: FaTools,
+    title: "2. Installing",
+    description: "We ensure accurate and reliable installations of Mechanical, Electrical, and Plumbing systems using modern technology and skilled engineering professionals.",
+    badge: "Core Action 2",
+  },
+  {
+    icon: FaClipboardCheck,
+    title: "3. Commissioning",
+    description: "We perform complete testing and verification before system handover to ensure optimal performance and absolute safety compliance.",
+    badge: "Core Action 3",
   },
   {
     icon: FaShieldAlt,
-    title: "NFPA & BNBC Compliance",
-    description: "Every blueprint and active fire suppression system meets strict national Fire Service standards and international safety codes.",
-    badge: "Safety Guaranteed",
-  },
-  {
-    icon: FaLeaf,
-    title: "Energy & Cost Efficiency",
-    description: "Cutting-edge VRF HVAC design, automatic PFI plants, and solar integrations designed to cut operational power expenditure by up to 30%.",
-    badge: "Eco-Friendly",
+    title: "4. Maintaining",
+    description: "We provide regular preventive and predictive maintenance programs to ensure long-term system reliability, safety, and operational efficiency.",
+    badge: "Core Action 4",
   },
   {
     icon: FaHeadset,
-    title: "24/7 Technical Support",
-    description: "Round-the-clock emergency maintenance response teams ensuring minimum facility downtime and maximum system reliability.",
-    badge: "24/7 Helpline",
+    title: "5. Servicing",
+    description: "We deliver prompt and dependable engineering services to resolve critical issues quickly and maintain smooth, uninterrupted facility operations.",
+    badge: "Core Action 5",
   },
   {
-    icon: FaMedal,
-    title: "ISO 9001 Quality Assurance",
-    description: "Rigorous factory acceptance testing (FAT), site acceptance testing (SAT), and strict material procurement quality control.",
-    badge: "Certified Quality",
+    icon: FaBoxes,
+    title: "6. Supplying",
+    description: "We source and supply high-quality materials and trusted equipment to support durable, energy-efficient, and long-term engineering solutions.",
+    badge: "Core Action 6",
   },
 ];
 
@@ -69,7 +69,7 @@ export default function WhyChooseUs() {
           </h2>
 
           <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-            We blend technical precision, global safety standards, and robust project execution to power Bangladesh&apos;s leading commercial and industrial developments.
+            Our engineering workflow is built on 6 Core Project Actions, executed in strict compliance with BNBC, NFPA, ASHRAE, SMACNA, IEC, IEEE, NEC, and IPC standards.
           </p>
         </div>
 

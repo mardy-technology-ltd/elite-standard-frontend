@@ -37,6 +37,12 @@ export const timelineData: TimelineItem[] = [
     highlight: "Siemens & Schneider Automation Partner",
   },
   {
+    year: "2024",
+    title: "Dhaka Metro Rail Project Selection",
+    description: "Secured key contracts for the Dhaka Mass Rapid Transit Development Project (DMRTDP Line 6, CP-3&4) to install Building Automation (IBA Designing) and Rainwater Harvesting Systems (RHS Servicing).",
+    highlight: "National Infrastructure Project Partner",
+  },
+  {
     year: "2026",
     title: "Rooftop Solar & Enterprise Expansion",
     description: "Pioneered net-metered rooftop solar PV installations and expanded turnkey MEP operations nationwide.",

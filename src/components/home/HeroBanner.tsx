@@ -76,7 +76,7 @@ export default function HeroBanner() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-white"
           >
-            Engineering Excellence for a <span className="text-gradient-accent">Modern World</span>
+            Drive for Innovation and <span className="text-gradient-accent">Excellence</span>
           </motion.h1>
 
           {/* Subheadline */}
@@ -86,7 +86,7 @@ export default function HeroBanner() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-slate-300 text-base sm:text-lg lg:text-xl font-normal leading-relaxed max-w-2xl"
           >
-            Elite Standard Limited delivers end-to-end Mechanical, Electrical, Plumbing (MEP), HVAC, Fire Safety, and Industrial Automation solutions tailored for high-performance infrastructure.
+            Elite Standard Limited delivers integrated Mechanical, Electrical, Plumbing (MEP), HVAC, Fire Safety, and Building Automation engineering solutions, driving infrastructure growth in Bangladesh.
           </motion.p>
 
           {/* Bullet Points */}

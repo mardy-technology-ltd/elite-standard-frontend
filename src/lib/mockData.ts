@@ -8,6 +8,12 @@ export interface SubServiceDetail {
   image: string;
 }
 
+export interface SectorDetail {
+  title: string;
+  overview: string;
+  features: string[];
+}
+
 export interface ServiceItem {
   id: string;
   slug: string;
@@ -23,6 +29,11 @@ export interface ServiceItem {
   scopeOfWork: string[];
   subServices: SubServiceDetail[];
   faqs: { question: string; answer: string }[];
+  sectors?: {
+    residential: SectorDetail;
+    commercial: SectorDetail;
+    industrial: SectorDetail;
+  };
 }
 
 export interface ProductItem {
@@ -157,7 +168,45 @@ export const servicesData: ServiceItem[] = [
         question: "Do you offer energy audit and retrofit services?",
         answer: "Yes, we perform comprehensive energy audits to upgrade aging HVAC infrastructures with high-COP chillers and inverter technology."
       }
-    ]
+    ],
+    sectors: {
+      "residential": {
+            "title": "Residential Sectors- HVAC",
+            "overview": "Elite Standard Limited provides customized Residential HVAC Solutions designed to ensure year-round comfort, energy efficiency, and healthy indoor air quality for homes, apartments, and residential complexes.",
+            "features": [
+                  "Efficient home cooling and heating solutions",
+                  "Energy-saving inverter technology",
+                  "Smart thermostat & home automation integration",
+                  "Improved indoor air quality & ventilation",
+                  "Quiet and low-noise system operation",
+                  "Humidity control for healthier living spaces"
+            ]
+      },
+      "commercial": {
+            "title": "Commercial Sectors- HVAC",
+            "overview": "Elite Standard Limited provides customized HVAC design and installation solutions for commercial buildings such as offices, shopping complexes, hospitals, and educational institutions.",
+            "features": [
+                  "Precision load calculation and system sizing",
+                  "VRF, FCU, Chiller & Split System design",
+                  "Ducting, air balancing, and zoning solutions",
+                  "Smart thermostat & BMS integration",
+                  "Energy-saving inverter technology",
+                  "Indoor air quality & humidity control"
+            ]
+      },
+      "industrial": {
+            "title": "Industrial Sectors- HVAC",
+            "overview": "For industrial and commercial facilities, we deliver heavy-duty HVAC systems engineered to maintain air quality, temperature stability, and ventilation efficiency in demanding manufacturing environments.",
+            "features": [
+                  "Process cooling and dehumidification systems",
+                  "Centralized AHU and exhaust ventilation setup",
+                  "Cleanroom & dust-free air solutions (ISO Class 5-8)",
+                  "Heat recovery and economizer integration",
+                  "High-performance chillers and compressors",
+                  "Robust maintenance and monitoring systems"
+            ]
+      }
+}
   },
   {
     id: "s2",
@@ -248,98 +297,176 @@ export const servicesData: ServiceItem[] = [
         question: "Are your fire protection designs certified by Bangladesh Fire Service?",
         answer: "Yes, all our engineering blueprints adhere strictly to BNBC, NFPA standards, and receive approvals from FSCD."
       }
-    ]
+    ],
+    sectors: {
+      "residential": {
+            "title": "Residential Sectors- FDPS",
+            "overview": "Developed for residential buildings, apartments, and housing complexes, this system ensures maximum occupant safety through smart detection, suppression, and alert mechanisms.",
+            "features": [
+                  "Early fire detection with smoke & heat sensors",
+                  "Automatic fire alarm & notification systems",
+                  "Fire suppression and protection solutions",
+                  "24/7 monitoring and emergency response readiness",
+                  "Compliance with residential fire safety standards",
+                  "Enhanced life safety and property protection"
+            ]
+      },
+      "commercial": {
+            "title": "Commercial Sectors- FDPS",
+            "overview": "Developed for commercial buildings, malls, offices, and mixed-use complexes. This system ensures maximum occupant safety through smart detection, suppression, and alert mechanisms integrated within the facility.",
+            "features": [
+                  "Intelligent smoke & heat detection sensors",
+                  "Addressable fire alarm & control panels",
+                  "Wet riser, sprinkler, and hydrant networks",
+                  "Portable extinguishers and emergency lighting",
+                  "Automatic pump operation & water storage design",
+                  "Compliance with BNBC, NFPA & international standards"
+            ]
+      },
+      "industrial": {
+            "title": "Industrial Sectors- FDPS",
+            "overview": "Specially designed for factories, power plants, and production units where hazardous materials or heavy electrical loads exist. Focused on advanced automation, rapid response, and minimal downtime.",
+            "features": [
+                  "Foam and CO2-based suppression systems",
+                  "Heat and flame detector network with auto isolation",
+                  "Fire pump room with Jockey, Main & Diesel pump setup",
+                  "PLC/SCADA automation for monitoring & alarm control",
+                  "Integration with industrial automation and power systems",
+                  "Explosion-proof and flameproof rated components"
+            ]
+      }
+}
   },
   {
     id: "s3",
     slug: "guds",
     code: "GUDS",
-    title: "Generator & Utility Distribution System",
-    subtitle: "Uninterrupted Industrial Power Infrastructure",
-    shortDescription: "Heavy-duty diesel generator synchronization, acoustic canopy, busbar trunking, and fuel automation.",
-    fullDescription: "Ensuring 100% power uptime for manufacturing plants and commercial complexes through synchronized generator banks, acoustic silencers, and automatic transfer switches (ATS).",
+    title: "Gas & Utility Distribution System",
+    subtitle: "Safe Gas & Industrial Utility Pipelines",
+    shortDescription: "Turnkey LPG, LNG, natural gas, medical gas, and industrial utility pipeline design and installation.",
+    fullDescription: "Elite Standard Limited delivers high-performance Gas & Utility Distribution System (GUDS) solutions for residential, commercial, and industrial sectors, ensuring continuous, safe, and controlled gas and utility flow.",
     icon: "FaBolt",
     bannerImage: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1200&auto=format&fit=crop",
     problems: [
-      "Power outages causing costly production downtime",
-      "High noise pollution from unshielded industrial generators",
-      "Inefficient load sharing across multiple power sources"
+      "Hazardous gas leakages and lack of emergency shutoff automation",
+      "Non-compliance with BNBC, NFPA, and national gas safety codes",
+      "Pressure drops and flow instability in high-capacity pipelines"
     ],
     solutions: [
-      "Multi-megawatt generator synchronization panels",
-      "Custom soundproof acoustic enclosures (<75 dBA @ 1 meter)",
-      "Automated fuel delivery and day-tank monitoring"
+      "Smart leak detection, alarm, and automatic ESD shutoff valves",
+      "High-pressure pipeline fabrication with automatic gas monitoring dashboard",
+      "PLC/SCADA-based automation for multi-point utility distribution"
     ],
     scopeOfWork: [
-      "Generator sizing and transient load analysis",
-      "Acoustic lining & exhaust chimney installation",
-      "ATS & AMF panel commissioning",
-      "Substation integration"
+      "High-pressure pipeline design and certified fabrication",
+      "LPG, LNG, medical gas, and vacuum pipeline distribution",
+      "Safety interlocking systems and automatic pressure regulation",
+      "Regulatory inspection support and safety clearances"
     ],
     subServices: [
       {
         id: "ss-guds-1",
-        slug: "sync",
-        title: "Multi-MW Generator Synchronization",
-        shortDesc: "Automatic load sharing & peak shaving power control.",
-        fullDesc: "Synchronizing multiple diesel or gas generator units to operate in parallel, automatically starting and stopping engines based on real-time plant power demand.",
+        slug: "residential-gas",
+        title: "Residential Gas Networks",
+        shortDesc: "Safe and reliable gas distribution networks for apartments.",
+        fullDesc: "Custom gas distribution piping for residential complexes, housing developments, and high-rises equipped with modern leak detection and emergency shutoff valves.",
         features: [
-          "Deep Sea DSE8610 / ComAp InteliGen paralleling controllers",
-          "Motorized ABB / Schneider ACB breakers with bus tie control",
-          "Automatic frequency & voltage matching within milliseconds",
-          "Peak shaving & grid export prevention logic"
-        ],
-        image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800&auto=format&fit=crop"
-      },
-      {
-        id: "ss-guds-2",
-        slug: "canopy",
-        title: "Acoustic Canopy Enclosures",
-        shortDesc: "Soundproof acoustic treatment reducing noise <75 dBA.",
-        fullDesc: "Custom-engineered weatherproof and sound-attenuated enclosures fitted with acoustic rockwool lining, residential mufflers, and motorized louvers.",
-        features: [
-          "100mm heavy-density rockwool acoustic insulation",
-          "Dual residential grade exhaust silencers & stainless bellows",
-          "Motorized intake & discharge acoustic louvers",
-          "Vibration isolator spring dampers"
+          "Safe and reliable gas distribution pipeline layout",
+          "Automatic gas leak detection & warning systems",
+          "Precision pressure regulators & flow control valves",
+          "Compliance with national safety standards"
         ],
         image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800&auto=format&fit=crop"
       },
       {
-        id: "ss-guds-3",
-        slug: "ats",
-        title: "ATS & AMF Switch Panels",
-        shortDesc: "Automatic Transfer Switches & Mains Failure panels.",
-        fullDesc: "Seamless power transfer switchgear that detects grid failure and transfers critical loads to backup generator power within 5 to 10 seconds.",
+        id: "ss-guds-2",
+        slug: "commercial-gas",
+        title: "Commercial Gas & Medical Pipelines",
+        shortDesc: "Centralized LPG networks and medical gas pipelines.",
+        fullDesc: "Advanced gas systems designed for commercial hubs, hotels, restaurants, shopping malls, and medical gas pipeline systems for hospitals.",
         features: [
-          "4-Pole motorized changover switches up to 3200A",
-          "Mechanical & electrical interlocking safety protection",
-          "Programmable mains voltage drop & phase imbalance sensing",
-          "Manual override handle for emergency bypass"
+          "Centralized LPG / Natural Gas distribution networks",
+          "Certified medical gas pipelines for hospital wards",
+          "Fire-integrated gas safety interlocking & alarm systems",
+          "Automatic gas monitoring dashboard (IoT-enabled)"
         ],
         image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop"
       },
       {
-        id: "ss-guds-4",
-        slug: "fuel",
-        title: "Automated Fuel System",
-        shortDesc: "Bulk storage tanks, day tanks & digital level sensors.",
-        fullDesc: "Turnkey fuel management networks ensuring continuous diesel fuel transfer from main underground tanks to day tanks with spill containment.",
+        id: "ss-guds-3",
+        slug: "industrial-gas",
+        title: "Industrial Gas Distribution",
+        shortDesc: "High-pressure pipelines for LNG, LPG, O2, N2 & CO2.",
+        fullDesc: "Heavy-duty gas pipeline design and fabrication for processing plants, manufacturing zones, and factories requiring continuous, safe utility distribution.",
         features: [
-          "Duplex electric fuel transfer pumps with manual backup",
-          "Ultrasonic digital level sensors & high/low level alarms",
-          "Underground bulk tank cathodic protection",
-          "Fuel water separator & inline filtration units"
+          "Industrial gas distribution (LNG, LPG, Oxygen, Nitrogen, CO2, Air)",
+          "High-pressure pipeline design & certified fabrication",
+          "Explosion-proof gas detection and alarm network setup",
+          "Emergency shutdown (ESD) systems & safety interlocks"
+        ],
+        image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800&auto=format&fit=crop"
+      },
+      {
+        id: "ss-guds-4",
+        slug: "utility-automation",
+        title: "SCADA/PLC Utility Automation",
+        shortDesc: "Automated gas monitoring & utility line integration.",
+        fullDesc: "Advanced instrumentation linking manifolds, regulators, and shutoff valves to PLC/SCADA systems for real-time monitoring and control.",
+        features: [
+          "SCADA/PLC-based gas supply automation & control panels",
+          "High-capacity manifolds, regulators, and automatic valve stations",
+          "Utility distribution integration (steam, air, vacuum lines)",
+          "Real-time pressure, flow, and leakage diagnostic telemetry"
         ],
         image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop"
       }
     ],
     faqs: [
       {
-        question: "Can you synchronize generators of different manufacturers?",
-        answer: "Yes, our automation engineers configure deep sea or ComAp controllers for seamless multi-brand synchronization."
+        question: "What standards do you follow for gas pipeline safety?",
+        answer: "We design and install all pipelines in strict compliance with BNBC, NFPA, and international safety codes, incorporating certified ESD valves and leak detection."
       }
-    ]
+    ],
+    sectors: {
+      "residential": {
+            "title": "Residential Sectors- GUDS",
+            "overview": "Elite Standard Limited provides customized Gas Utility Distribution System (GUDS) Solutions for residential buildings, apartments, and housing complexes, delivering uninterrupted service and safety.",
+            "features": [
+                  "Safe and reliable gas distribution network",
+                  "Leak detection and emergency shutdown systems",
+                  "Pressure regulation and flow control solutions",
+                  "Compliance with national gas safety standards",
+                  "Low-maintenance and long-lasting infrastructure",
+                  "Efficient energy supply for residential applications"
+            ]
+      },
+      "commercial": {
+            "title": "Commercial Sectors- GUDS",
+            "overview": "Elite Standard Limited provides safe, efficient, and smart Gas & Utility Distribution System (GUDS) solutions tailored for commercial facilities such as hotels, hospitals, restaurants, and shopping malls.",
+            "features": [
+                  "Centralized gas distribution network (LPG / Natural Gas)",
+                  "Medical gas pipeline system for hospitals",
+                  "Smart leak detection, alarm & shutoff systems",
+                  "Pressure regulators, metering & manifold design",
+                  "Fire-integrated gas safety interlocking",
+                  "Compliance with BNBC, NFPA & international codes",
+                  "Automatic gas monitoring dashboard (IoT-enabled)"
+            ]
+      },
+      "industrial": {
+            "title": "Industrial Sectors- GUDS",
+            "overview": "Elite Standard Limited delivers high-performance GUDS solutions for industries requiring continuous, safe, and controlled distribution of gas and utilities in manufacturing and processing environments.",
+            "features": [
+                  "Industrial gas distribution (LNG, LPG, Oxygen, Nitrogen, CO2, Compressed Air)",
+                  "High-pressure pipeline design & fabrication",
+                  "Explosion-proof gas detection & alarm network",
+                  "SCADA/PLC-based gas supply automation",
+                  "High-capacity manifolds, regulators & valve stations",
+                  "Utility distribution integration (steam, air, vacuum)",
+                  "Emergency shutdown (ESD) systems & safety interlocks"
+            ]
+      }
+}
   },
   {
     id: "s4",
@@ -430,7 +557,45 @@ export const servicesData: ServiceItem[] = [
         question: "What IP ratings do your control panels support?",
         answer: "We build IP54 to IP65 weather-proof and dust-proof enclosures suitable for outdoor or harsh industrial environments."
       }
-    ]
+    ],
+    sectors: {
+      "residential": {
+            "title": "Residential Sectors- PDCP",
+            "overview": "Elite Standard Limited delivers advanced Power Distribution & Control Panel (PDCP) Solutions for residential buildings, apartments, and housing complexes, ensuring safe, reliable power management.",
+            "features": [
+                  "Main LT panel, MDB, SMDB, and DB design & fabrication",
+                  "Intelligent monitoring and metering integration",
+                  "ATS, AMF, and synchronization systems",
+                  "Busbar trunking and power factor correction (PFC) units",
+                  "Modular & space-saving electrical panel layouts",
+                  "Energy-efficient and fire-rated cabling with load balancing"
+            ]
+      },
+      "commercial": {
+            "title": "Commercial Sectors- PDCP",
+            "overview": "Elite Standard Limited delivers advanced Power Distribution & Control Panel (PDCP) Solutions for commercial buildings, shopping malls, corporate offices, hotels, and educational institutions.",
+            "features": [
+                  "Main LT panel, MDB, SMDB, and DB design & fabrication",
+                  "Intelligent monitoring and metering integration",
+                  "ATS, AMF, and synchronization systems",
+                  "Busbar trunking and power factor correction (PFC) units",
+                  "Modular & space-saving electrical panel layouts",
+                  "Energy-efficient and fire-rated cabling with load balancing"
+            ]
+      },
+      "industrial": {
+            "title": "Industrial Sectors- PDCP",
+            "overview": "Elite Standard Limited delivers robust and high-performance Power Distribution & Control Panel (PDCP) Solutions for industrial facilities, manufacturing plants, factories, and warehouses.",
+            "features": [
+                  "MCC (Motor Control Center) and PCC (Power Control Center) panels",
+                  "VFD, soft starter, and PLC-based automation control",
+                  "Transformer and generator interfacing",
+                  "33kV/11kV switchgear installation and commissioning",
+                  "Cable tray design, routing, and termination",
+                  "Comprehensive testing, earthing, and safety compliance"
+            ]
+      }
+}
   },
   {
     id: "s5",
@@ -521,7 +686,45 @@ export const servicesData: ServiceItem[] = [
         question: "Do you supply ESE lightning arrestors?",
         answer: "Yes, we install certified ESE lightning protection systems with coverage radii up to 107 meters."
       }
-    ]
+    ],
+    sectors: {
+      "residential": {
+            "title": "Residential Sectors- EELS",
+            "overview": "Elite Standard Limited provides comprehensive Electrical Engineering & Lighting Solutions (EELS) for residential developments, ensuring a safe, comfortable, and energy-efficient living environment.",
+            "features": [
+                  "Efficient residential power distribution systems",
+                  "Modern indoor and outdoor lighting solutions",
+                  "Smart home automation and electrical integration",
+                  "Energy-saving electrical infrastructure design",
+                  "Emergency power backup and lighting systems",
+                  "Safe, reliable, and standards-compliant installations"
+            ]
+      },
+      "commercial": {
+            "title": "Commercial Sectors- EELS",
+            "overview": "Elite Standard Limited offers innovative Electrical Engineering & Lighting Solutions (EELS) for commercial facilities, office buildings, shopping malls, hotels, and hospitals.",
+            "features": [
+                  "Reliable electrical infrastructure for commercial facilities",
+                  "Professional indoor, outdoor, and architectural lighting",
+                  "Smart energy monitoring and management systems",
+                  "Power backup and emergency lighting solutions",
+                  "Enhanced workplace safety and operational reliability",
+                  "Compliance with commercial electrical standards"
+            ]
+      },
+      "industrial": {
+            "title": "Industrial Sectors- EELS",
+            "overview": "Elite Standard Limited delivers specialized Electrical Engineering & Lighting Solutions (EELS) for industrial facilities, manufacturing plants, warehouses, and processing units.",
+            "features": [
+                  "High-capacity industrial power distribution systems",
+                  "Industrial-grade indoor and outdoor lighting solutions",
+                  "Motor control, automation, and electrical integration",
+                  "Energy-efficient systems for reduced operational costs",
+                  "Emergency power and critical load support solutions",
+                  "Compliance with industrial safety and electrical standards"
+            ]
+      }
+}
   },
   {
     id: "s6",
@@ -612,7 +815,45 @@ export const servicesData: ServiceItem[] = [
         question: "Which PLC brands do you support?",
         answer: "We work with leading automation platforms including Siemens S7-1200/1500, Schneider Electric, Mitsubishi, and Omron."
       }
-    ]
+    ],
+    sectors: {
+      "residential": {
+            "title": "Residential Sectors- IBA",
+            "overview": "Elite Standard Limited provides intelligent Industrial & Building Automation (IBA) Solutions for residential buildings, apartments, and housing complexes to enhance security and energy efficiency.",
+            "features": [
+                  "Smart home and building automation systems",
+                  "Centralized monitoring and control solutions",
+                  "Automated lighting, HVAC, and utility management",
+                  "Real-time performance and energy monitoring",
+                  "Enhanced safety, security, and convenience",
+                  "Optimized energy usage and operational efficiency"
+            ]
+      },
+      "commercial": {
+            "title": "Commercial Sectors- IBA",
+            "overview": "Elite Standard Limited delivers advanced Instrumentation & Building Automation (IBA) Solutions for commercial facilities, including office buildings, shopping malls, hotels, and hospitals.",
+            "features": [
+                  "Integrated building management and automation systems (IBMS)",
+                  "Centralized monitoring of critical building services",
+                  "Automated control of lighting, HVAC, and utilities",
+                  "Real-time data acquisition and performance analytics",
+                  "Enhanced security, safety, and operational control",
+                  "Reduced energy consumption and operating costs"
+            ]
+      },
+      "industrial": {
+            "title": "Industrial Sectors- IBA",
+            "overview": "Elite Standard Limited delivers intelligent Instrumentation & Building Automation (IBA) Solutions for industrial facilities, enabling efficient process control, real-time monitoring, and seamless automation.",
+            "features": [
+                  "Advanced industrial process monitoring and control",
+                  "PLC, SCADA, and automation system integration",
+                  "Real-time data collection and performance analysis",
+                  "Automated control of critical industrial operations",
+                  "Improved productivity, safety, and process efficiency",
+                  "Reduced downtime through intelligent monitoring systems"
+            ]
+      }
+}
   },
   {
     id: "s7",
@@ -703,7 +944,43 @@ export const servicesData: ServiceItem[] = [
         question: "Do you install constant pressure water boosting systems?",
         answer: "Yes, our VFD booster pumps maintain constant pressure across all taps while reducing energy consumption."
       }
-    ]
+    ],
+    sectors: {
+      "residential": {
+            "title": "Residential Sectors- WSDS",
+            "overview": "Elite Standard Limited designs and implements Water Supply & Distribution System (WSDS) Solutions that support the daily water demands of modern residential developments with reliability.",
+            "features": [
+                  "Reliable and uninterrupted water distribution",
+                  "Optimized water pressure management systems",
+                  "Efficient storage and pumping solutions",
+                  "Safe and hygienic water delivery network",
+                  "Reduced water loss through smart system design",
+                  "Durable and low-maintenance infrastructure"
+            ]
+      },
+      "commercial": {
+            "title": "Commercial Sectors- WSDS",
+            "overview": "Elite Standard Limited offers complete Water Supply, Drainage, and Sanitary (WSDS) design and installation solutions for commercial spaces such as offices, shopping malls, and hotels.",
+            "features": [
+                  "Smart water management with automation",
+                  "Energy-efficient and eco-friendly design",
+                  "Compliance with BNBC & international plumbing codes",
+                  "Use of premium-grade PPR, UPVC, and GI materials",
+                  "On-site testing and maintenance training"
+            ]
+      },
+      "industrial": {
+            "title": "Industrial Sectors- WSDS",
+            "overview": "Elite Standard Limited engineers and implements Water Supply & Distribution System (WSDS) Solutions for industrial facilities, manufacturing plants, warehouses, and processing industries.",
+            "features": [
+                  "High-capacity water supply and recycling systems",
+                  "Chemical & process water drainage design",
+                  "Compliance with industrial wastewater treatment standards",
+                  "Smart automation for water use optimization",
+                  "Robust installation for heavy-duty environments"
+            ]
+      }
+}
   },
   {
     id: "s8",
@@ -794,7 +1071,39 @@ export const servicesData: ServiceItem[] = [
         question: "Can your ETP achieve Zero Liquid Discharge (ZLD)?",
         answer: "Yes, we integrate evaporators and crystallizers with RO systems for 95%+ water recovery."
       }
-    ]
+    ],
+    sectors: {
+      "residential": {
+            "title": "Residential Sectors- WTS",
+            "overview": "Elite Standard Limited engineers and implements Water Treatment Solutions (WTS) for residential buildings, apartments, and individual homes, ensuring safe drinking water.",
+            "features": [
+                  "Smart water purification with advanced filtration technology",
+                  "Energy-efficient and eco-friendly system design",
+                  "Compliance with BNBC & international water quality standards",
+                  "Use of premium-grade filtration units, RO, UF, and softener systems"
+            ]
+      },
+      "commercial": {
+            "title": "Commercial Sectors- WTS",
+            "overview": "Elite Standard Limited designs and implements Water Treatment System (WTS) solutions for commercial infrastructures including shopping malls, hotels, restaurants, and corporate offices.",
+            "features": [
+                  "Smart filtration & purification units",
+                  "Energy-efficient RO and softening systems",
+                  "Low-maintenance automatic control",
+                  "Compliance with BNBC and WHO standards"
+            ]
+      },
+      "industrial": {
+            "title": "Industrial Sectors- WTS",
+            "overview": "Elite Standard Limited designs and implements Water Treatment System (WTS) solutions for industrial facilities including manufacturing plants, factories, warehouses, and processing industries.",
+            "features": [
+                  "ETP (Effluent Treatment Plant) & STP (Sewage Treatment Plant)",
+                  "Reverse Osmosis (RO) & Demineralization (DM) systems",
+                  "Process-specific filtration and pH control",
+                  "Wastewater recycling & zero-discharge design"
+            ]
+      }
+}
   },
   {
     id: "s9",
@@ -885,7 +1194,41 @@ export const servicesData: ServiceItem[] = [
         question: "What is the typical ROI period for rooftop solar in Bangladesh?",
         answer: "With current commercial tariffs, industrial rooftop solar projects typically payback in 3 to 4 years."
       }
-    ]
+    ],
+    sectors: {
+      "residential": {
+            "title": "Residential Sectors- RHS",
+            "overview": "Elite Standard Limited designs and implements Rainwater Harvesting System (RHS) solutions for residential buildings, apartments, housing complexes, and individual homes.",
+            "features": [
+                  "Smart rainwater collection with efficient storage and filtration",
+                  "Eco-friendly and sustainable water conservation design",
+                  "Compliance with BNBC & environmental management standards",
+                  "Use of durable HDPE, PVC, and high-quality filtration components"
+            ]
+      },
+      "commercial": {
+            "title": "Commercial Sectors- RHS",
+            "overview": "Designed for commercial buildings such as offices, shopping malls, and residential towers, this system focuses on efficient rooftop rainwater collection, purification, and storage for daily non-potable use.",
+            "features": [
+                  "Rooftop collection with first-flush and filtration unit",
+                  "Smart underground or modular tanks for compact installation",
+                  "UV purification with automated pump control",
+                  "Integration with toilet flushing & landscape irrigation",
+                  "Green building and LEED certification support"
+            ]
+      },
+      "industrial": {
+            "title": "Industrial Sectors- RHS",
+            "overview": "Built for factories, warehouses, and manufacturing zones where high water consumption demands sustainable management, maximizing rainwater recovery and integrating with industrial processes.",
+            "features": [
+                  "Large ground-level catchment and sedimentation setup",
+                  "Multi-stage filtration and sludge removal system",
+                  "PLC/SCADA automation for monitoring and control",
+                  "Compatible with cooling towers and process water loops",
+                  "Ensures compliance with industrial sustainability standards"
+            ]
+      }
+}
   }
 ];
 
@@ -940,16 +1283,16 @@ export const productsData: ProductItem[] = [
   },
   {
     id: "p4",
-    slug: "diesel-generator-500kva",
-    name: "500 kVA Diesel Generator Set",
-    category: "Generators",
-    brand: "Cummins / Perkins",
-    description: "Heavy-duty 500 kVA prime diesel generator fitted with Deep Sea controller and super silent canopy.",
+    slug: "gas-manifold-station",
+    name: "Industrial Gas Manifold & Pressure Regulating Station",
+    category: "Utility Systems",
+    brand: "Elite Standard Fabrications",
+    description: "High-capacity gas manifold system equipped with automatic changeover regulators, pressure transmitters, and emergency shutdown interlocks.",
     specifications: {
-      "Prime Power": "500 kVA / 400 kW",
-      "Engine Model": "Cummins KTA19-G4",
-      "Noise Level": "72 dBA @ 7 meters",
-      "Fuel Consumption": "95 L/hr @ 100% load"
+      "Capacity": "500 m3/hr",
+      "Design Pressure": "16 Bar",
+      "Control System": "PLC Auto-changeover",
+      "Interlock": "ESD Fire Integrated"
     },
     image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=600&auto=format&fit=crop",
     relatedServiceSlug: "guds"
@@ -957,6 +1300,22 @@ export const productsData: ProductItem[] = [
 ];
 
 export const projectsData: ProjectItem[] = [
+  {
+    id: "proj4",
+    slug: "dhaka-metro-rail-mep",
+    title: "Dhaka Mass Rapid Transit Development Project - DMRTDP Line 6 (CP-3&4)",
+    category: "Infrastructure MEP & Automation",
+    client: "Dhaka Mass Transit Company Limited (DMTC)",
+    location: "Dhaka, Bangladesh",
+    completionDate: "June 2026",
+    description: "Design, instrumentation, utility management, and Rainwater Harvesting Systems (RHS) installation for station infrastructure and depots.",
+    image: "https://images.unsplash.com/photo-1542013936693-884638332954?q=80&w=800&auto=format&fit=crop",
+    scope: [
+      "Building Automation & Instrumentation (IBA Designing)",
+      "Station Rainwater Harvesting Systems (RHS Servicing)",
+      "High-pressure utility drainage integration"
+    ]
+  },
   {
     id: "proj1",
     slug: "pharmaceutical-cleanroom-hvac",

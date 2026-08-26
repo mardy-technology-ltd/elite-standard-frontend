@@ -60,7 +60,7 @@ const sectors = [
     title: "Renewable Energy & Solar",
     description: "Industrial rooftop solar PV arrays, net metering integration, and high-efficiency inverter synchronization.",
     icon: FaSun,
-    image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=800&auto=format&fit=crop",
     projectsCount: "50+ Projects",
   },
 ];

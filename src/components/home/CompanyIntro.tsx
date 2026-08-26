@@ -88,11 +88,11 @@ export default function CompanyIntro() {
             </h2>
 
             <p className="text-slate-600 text-base leading-relaxed">
-              <strong>Elite Standard Limited</strong> is a full-service Mechanical, Electrical, Plumbing (MEP), HVAC, Fire Safety, and Automation engineering enterprise. We specialize in designing, fabricating, and installing mission-critical systems for commercial towers, pharmaceutical cleanrooms, power plants, and industrial manufacturing facilities across Bangladesh.
+              <strong>Elite Standard Limited</strong> is a Business Facility Management-focused organization delivering Technical Service Facility (MEP) solutions through the integration of modern technology, professional management, and practical expertise. We believe that the success of any facility depends on the coordinated, reliable, and efficient operation of its Mechanical, Electrical, and Plumbing systems.
             </p>
 
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Engineered with rigorous adherence to NFPA, BNBC, and international safety codes, our multidisciplinary team of over 120 certified engineers ensures seamless execution, energy efficiency, and long-term asset reliability.
+            <p className="text-slate-600 text-sm leading-relaxed border-l-4 border-accent pl-4 italic">
+              Our operational philosophy is built on the framework of <strong>Conception &ndash; Formalization &ndash; Integration</strong>. We begin by understanding client requirements, develop structured designs, and implement controlled execution.
             </p>
 
             {/* Core Values List */}
@@ -100,32 +100,32 @@ export default function CompanyIntro() {
               <div className="flex items-start gap-3">
                 <FaCheckCircle className="text-accent text-lg mt-0.5 shrink-0" />
                 <div>
-                  <h4 className="font-bold text-sm text-brand-950">Turnkey Execution</h4>
-                  <p className="text-xs text-slate-500">From concept & design to final commissioning.</p>
+                  <h4 className="font-bold text-sm text-brand-950">3 Integrated Solutions</h4>
+                  <p className="text-xs text-slate-500">Mechanical, Electrical, and Plumbing (MEP) alignment.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
                 <FaCheckCircle className="text-accent text-lg mt-0.5 shrink-0" />
                 <div>
-                  <h4 className="font-bold text-sm text-brand-950">NFPA Safety Code</h4>
-                  <p className="text-xs text-slate-500">Strict adherence to fire protection safety standards.</p>
+                  <h4 className="font-bold text-sm text-brand-950">Power of 3-6-9 LAW</h4>
+                  <p className="text-xs text-slate-500">Structured model for creative and efficient project management.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
                 <FaCheckCircle className="text-accent text-lg mt-0.5 shrink-0" />
                 <div>
-                  <h4 className="font-bold text-sm text-brand-950">Energy Optimization</h4>
-                  <p className="text-xs text-slate-500">High-COP chillers & VFD booster networks.</p>
+                  <h4 className="font-bold text-sm text-brand-950">6 Core Project Actions</h4>
+                  <p className="text-xs text-slate-500">From Design and Installation to Commissioning & Maintenance.</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
                 <FaCheckCircle className="text-accent text-lg mt-0.5 shrink-0" />
                 <div>
-                  <h4 className="font-bold text-sm text-brand-950">24/7 Operations</h4>
-                  <p className="text-xs text-slate-500">Dedicated emergency maintenance & monitoring.</p>
+                  <h4 className="font-bold text-sm text-brand-950">9 Flagship Services</h4>
+                  <p className="text-xs text-slate-500">Extensive range of HVAC, Fire Safety, and Automation products.</p>
                 </div>
               </div>
             </div>

@@ -15,15 +15,22 @@ export interface TeamMember {
 
 export const teamData: TeamMember[] = [
   {
-    name: "Engr. Mahmudul Hasan, PE",
-    role: "Managing Director & CEO",
-    credentials: "B.Sc. Mechanical (BUET), M.Sc. Energy Engineering",
-    bio: "Over 20 years of experience leading mega MEP infrastructure and cleanroom HVAC projects across Bangladesh and Southeast Asia.",
+    name: "Engr. Mamun Prodhan",
+    role: "Chairman",
+    credentials: "B.Sc. Engineering, Senior MEP Consultant",
+    bio: "Over 20 years of experience directing mega Mechanical, Electrical, and Plumbing engineering projects and guiding corporate vision in compliance with BNBC & NFPA standards.",
     image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop",
   },
   {
+    name: "Engr. Shipan Bala",
+    role: "Managing Director",
+    credentials: "B.Sc. Engineering, Industrial Facilities Specialist",
+    bio: "Directs technical and soft facilities operations, overseeing execution of large-scale infrastructure, automated systems, and high-performance engineering client relations.",
+    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop",
+  },
+  {
     name: "Engr. Farhana Ahmed",
-    role: "Executive Director & Chief Technical Officer",
+    role: "Executive Director & CTO",
     credentials: "B.Sc. Electrical & Electronic Engineering (BUET), NFPA Member",
     bio: "Specialist in high-voltage substation switchgear, PFI power factor optimization, and industrial automation networks.",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop",
@@ -33,13 +40,6 @@ export const teamData: TeamMember[] = [
     role: "Head of Fire Safety & Plumbing",
     credentials: "B.Sc. Civil & Environmental (DUET), FSCD Certified Safety Auditor",
     bio: "Pioneered UL/FM listed fire pump skid installations and hydraulic pipe calculations for major garment factories.",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop",
-  },
-  {
-    name: "Engr. Sarah Jahan",
-    role: "Lead Automation & Solar Systems Engineer",
-    credentials: "B.Sc. Mechatronics Engineering (RUT), Siemens Certified PLC Specialist",
-    bio: "Expert in SCADA telemetry, Siemens S7-1500 PLC logic, and on-grid rooftop solar net metering deployment.",
     image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600&auto=format&fit=crop",
   },
 ];

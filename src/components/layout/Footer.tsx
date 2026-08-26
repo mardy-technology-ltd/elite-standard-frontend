@@ -55,8 +55,8 @@ export default function Footer() {
                 <span className="font-heading font-extrabold text-xl sm:text-2xl text-white tracking-tight leading-none group-hover:text-accent transition-colors">
                   ELITE STANDARD LIMITED
                 </span>
-                <span className="text-[10px] sm:text-xs font-semibold tracking-widest text-slate-400 uppercase mt-1.5">
-                  Engineering &bull; MEP Solutions
+                <span className="text-[10px] sm:text-xs font-semibold tracking-widest text-slate-400 uppercase mt-1.5 animate-pulse">
+                  Drive for Innovation & Excellence
                 </span>
               </div>
             </Link>
@@ -173,7 +173,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/services/guds" className="hover:text-accent transition-colors">
-                  Generator & Utilities
+                  Gas & Utility Systems
                 </Link>
               </li>
               <li>
@@ -238,15 +238,15 @@ export default function Footer() {
             <div className="pt-2 flex flex-col gap-2 text-xs text-slate-400">
               <div className="flex items-start gap-2.5">
                 <FaMapMarkerAlt className="text-accent text-sm mt-0.5 shrink-0" />
-                <span>House 12, Road 5, Block D, Banani, Dhaka-1213, Bangladesh</span>
+                <span>House: 187/9, Kamal Soroni Road, Amtola, Dhaka-1216, Bangladesh</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <FaPhoneAlt className="text-accent text-xs shrink-0" />
-                <span>+880 1700-000000</span>
+                <a href="tel:+8801313663311" className="hover:text-accent transition-colors">+880 1313-663311</a>
               </div>
               <div className="flex items-center gap-2.5">
                 <FaEnvelope className="text-accent text-xs shrink-0" />
-                <span>info@elitestandard.com</span>
+                <a href="mailto:elitestandardlimited@gmail.com" className="hover:text-accent transition-colors">elitestandardlimited@gmail.com</a>
               </div>
             </div>
           </div>
