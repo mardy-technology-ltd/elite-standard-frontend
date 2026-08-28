@@ -92,14 +92,14 @@ export const serviceCategories: ServiceCategory[] = [
     id: "s3",
     slug: "guds",
     code: "GUDS",
-    title: "Generator & Utility Distribution",
-    shortDesc: "Multi-megawatt synchronization & acoustic silencers.",
-    icon: <FaBolt className="text-amber-500" />,
+    title: "Gas & Utility Distribution System",
+    shortDesc: "Natural/LPG distribution networks, industrial manifolds, and leak interlock controls.",
+    icon: <FaFireExtinguisher className="text-amber-500" />,
     subServices: [
-      { title: "Multi-MW Generator Synchronization", desc: "Deep Sea & ComAp automatic load sharing", href: "/services/guds#sync" },
-      { title: "Acoustic Canopy Enclosures", desc: "Soundproof lining <75 dBA @ 1 meter", href: "/services/guds#canopy" },
-      { title: "ATS & AMF Switch Panels", desc: "Automatic transfer & main failure control", href: "/services/guds#ats" },
-      { title: "Automated Fuel System", desc: "Day tank level sensors & transfer pumps", href: "/services/guds#fuel" },
+      { title: "LPG / Natural Gas Networks", desc: "Residential & commercial pipeline design", href: "/services/guds#networks" },
+      { title: "Industrial Gas Manifolds", desc: "High-pressure multi-cylinder manifold systems", href: "/services/guds#manifolds" },
+      { title: "Gas Leak Interlocking Systems", desc: "Smart sensors & automatic shutdown valves", href: "/services/guds#safety" },
+      { title: "Pressure Regulating Stations", desc: "Single/multi-stage reduction manifolds", href: "/services/guds#prs" },
     ],
   },
   {
@@ -609,11 +609,11 @@ export default function Navbar() {
                   </Link>
 
                   <a
-                    href="tel:+8801700000000"
+                    href="tel:+8801313663311"
                     className="w-full flex items-center justify-center gap-2 bg-brand-900 text-white font-medium text-xs py-2.5 rounded-lg hover:bg-brand-800 transition-colors"
                   >
                     <FaPhoneAlt className="text-accent text-xs" />
-                    <span>Call Sales: +880 1700-000000</span>
+                    <span>Call Sales: +880 1313-663311</span>
                   </a>
                 </div>
               </div>
