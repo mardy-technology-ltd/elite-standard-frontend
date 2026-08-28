@@ -11,9 +11,10 @@ import {
   FaServer,
   FaChartLine,
   FaUserShield,
+  FaTools,
 } from "react-icons/fa";
 
-type TabKey = "organizational" | "operational";
+type TabKey = "organizational" | "operational" | "departmental";
 
 export default function CorporateStructure() {
   const [activeTab, setActiveTab] = useState<TabKey>("organizational");
@@ -40,10 +41,10 @@ export default function CorporateStructure() {
 
         {/* Tab Buttons */}
         <div className="flex justify-center mb-16">
-          <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 shadow-inner">
+          <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 shadow-inner flex-wrap justify-center gap-1 sm:gap-0">
             <button
               onClick={() => setActiveTab("organizational")}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wider transition-all ${
+              className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wider transition-all ${
                 activeTab === "organizational"
                   ? "bg-brand-900 text-white shadow-md"
                   : "text-slate-500 hover:text-brand-950"
@@ -54,7 +55,7 @@ export default function CorporateStructure() {
             </button>
             <button
               onClick={() => setActiveTab("operational")}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wider transition-all ${
+              className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wider transition-all ${
                 activeTab === "operational"
                   ? "bg-brand-900 text-white shadow-md"
                   : "text-slate-500 hover:text-brand-950"
@@ -63,13 +64,24 @@ export default function CorporateStructure() {
               <FaCogs className="text-sm" />
               <span>Operational Structure</span>
             </button>
+            <button
+              onClick={() => setActiveTab("departmental")}
+              className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wider transition-all ${
+                activeTab === "departmental"
+                  ? "bg-brand-900 text-white shadow-md"
+                  : "text-slate-500 hover:text-brand-950"
+              }`}
+            >
+              <FaUsers className="text-sm" />
+              <span>Departmental Teams</span>
+            </button>
           </div>
         </div>
 
         {/* Diagrams Display */}
         <div className="relative min-h-[500px]">
           <AnimatePresence mode="wait">
-            {activeTab === "organizational" ? (
+            {activeTab === "organizational" && (
               <motion.div
                 key="organizational"
                 initial={{ opacity: 0, y: 15 }}
@@ -184,7 +196,9 @@ export default function CorporateStructure() {
                   Elite Standard Limited’s hierarchy is structured to ensure 100% client satisfaction without any issues. It clearly defines roles, responsibilities, and reporting lines.
                 </div>
               </motion.div>
-            ) : (
+            )}
+
+            {activeTab === "operational" && (
               <motion.div
                 key="operational"
                 initial={{ opacity: 0, y: 15 }}
@@ -303,6 +317,61 @@ export default function CorporateStructure() {
                       </div>
                     </div>
                   </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === "departmental" && (
+              <motion.div
+                key="departmental"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.4 }}
+                className="flex flex-col items-center gap-8 w-full"
+              >
+                {/* Descriptive Banner */}
+                <div className="bg-slate-50 p-6 sm:p-8 rounded-[24px] border border-slate-200/80 w-full max-w-4xl text-center flex flex-col items-center gap-2">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-brand-900 bg-brand-50 px-3 py-1 rounded-full border border-brand-100">
+                    Unified Turnkey Standards
+                  </span>
+                  <h3 className="font-heading font-extrabold text-brand-950 text-sm sm:text-base">
+                    Uniform Technical Deployment Across All 3 MEP Divisions
+                  </h3>
+                  <p className="text-slate-500 text-xs max-w-2xl leading-relaxed">
+                    To maintain strict ISO 9001 and compliance engineering standards, each of our three primary divisions (**Mechanical, Electrical, Plumbing**) is permanently staffed with this standard 9-member specialist team structure for every turnkey contract.
+                  </p>
+                </div>
+
+                {/* Single premium grid of the 9 Roles */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl">
+                  {[
+                    { title: "Project Manager", icon: FaSitemap, desc: "End-to-end milestone coordination, safety reports, and client communications." },
+                    { title: "Project Engineer", icon: FaCogs, desc: "Technical system execution, shop drawings, and BOQ schematic calculation." },
+                    { title: "Project Supervisor", icon: FaUsers, desc: "Daily on-site technician management, safety compliance, and site registers." },
+                    { title: "Commissioning Expert", icon: FaUserShield, desc: "Pre-operation testing, load synchronization, and system validation checks." },
+                    { title: "Maintenance Expert", icon: FaServer, desc: "Post-handover planned preventive maintenance (PPM) services and SLA coordination." },
+                    { title: "Servicing Expert", icon: FaTools, desc: "24/7 helpline emergency troubleshooting, spare parts sourcing, and repairs." },
+                    { title: "Installation Expert", icon: FaTools, desc: "Structural utility fitting, duct routing, BBT installation, and rigging." },
+                    { title: "Design Expert", icon: FaChartLine, desc: "CAD/BIM structural modeling, hazard safety, and BNBC/NFPA compliance." },
+                    { title: "Supply Chain Expert", icon: FaShieldAlt, desc: "Procurement of UL/FM certified materials and coordinating with global OEMs." }
+                  ].map((role, idx) => {
+                    const RoleIcon = role.icon;
+                    return (
+                      <div
+                        key={idx}
+                        className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:border-brand-900/20 hover:shadow-md transition-all flex gap-4 items-start"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-slate-50 text-brand-950 flex items-center justify-center shrink-0 border border-slate-200 shadow-inner text-xs font-bold mt-0.5">
+                          {idx + 1}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <h5 className="text-xs sm:text-sm font-bold text-brand-950">{role.title}</h5>
+                          <p className="text-[10px] sm:text-xs text-slate-500 leading-normal">{role.desc}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </motion.div>
             )}

@@ -29,6 +29,30 @@ const testimonials = [
     company: "Dhaka Financial Tower",
     stars: 5,
   },
+  {
+    quote:
+      "Excellent company for electrical, Water Treatment and heavy machinery work. Professional team, reliable service, and great attention to detail. Highly recommended!",
+    clientName: "Md Rubel Talukder",
+    designation: "Executive Director",
+    company: "Standard Machinery Ltd.",
+    stars: 5,
+  },
+  {
+    quote:
+      "Your work is truly on another level. Thank you for taking such great care of my work.",
+    clientName: "Ratul khan",
+    designation: "Project Coordinator",
+    company: "RK Infrastructure",
+    stars: 5,
+  },
+  {
+    quote:
+      "The work was completed on time as promised. The quality and professionalism are truly commendable.",
+    clientName: "Bijoy Barkatulla",
+    designation: "Managing Partner",
+    company: "BB MEP Associates",
+    stars: 5,
+  },
 ];
 
 const brandPartners = [
@@ -63,8 +87,8 @@ export default function TestimonialsAndPartners() {
           </p>
         </div>
 
-        {/* 3 Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+        {/* 6 Testimonials Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {testimonials.map((test, idx) => (
             <motion.div
               key={idx}

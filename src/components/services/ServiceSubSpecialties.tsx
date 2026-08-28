@@ -88,12 +88,18 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
                   </div>
                 </div>
 
-                <div className="pt-4 flex items-center gap-4">
+                <div className="pt-4 flex flex-wrap items-center gap-3">
+                  <Link
+                    href={`/services/${service.slug}/${sub.slug}`}
+                    className="inline-flex items-center gap-2 bg-brand-900 hover:bg-brand-950 text-white font-bold text-xs px-5 py-3 rounded-lg shadow-sm transition-colors"
+                  >
+                    <span>View Technical Specifications</span>
+                  </Link>
                   <Link
                     href={`/contact?service=${service.slug}&sub=${sub.slug}&type=quotation`}
-                    className="inline-flex items-center gap-2 bg-brand-900 hover:bg-accent text-white hover:text-brand-950 font-bold text-xs px-5 py-3 rounded-lg shadow-sm transition-colors"
+                    className="inline-flex items-center gap-2 bg-slate-100 hover:bg-accent text-brand-950 font-bold text-xs px-5 py-3 rounded-lg shadow-sm transition-colors border border-slate-200"
                   >
-                    <span>Inquire For {sub.title}</span>
+                    <span>Request Quote</span>
                     <FaPaperPlane className="text-[10px]" />
                   </Link>
                 </div>

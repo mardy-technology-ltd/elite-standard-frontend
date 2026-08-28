@@ -83,10 +83,10 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "VRF systems, chilled water plants, and cleanroom AHU.",
     icon: <FaSnowflake className="text-sky-500" />,
     subServices: [
-      { title: "VRF/VRV Multi-Split Systems", desc: "Tropical high-COP outdoor units", href: "/services/hvac#vrf" },
-      { title: "Chilled Water Plant Setup", desc: "Centrifugal chillers & cooling towers", href: "/services/hvac#chillers" },
-      { title: "Cleanroom AHU & HEPA Filtration", desc: "ISO Class 5-8 positive pressure", href: "/services/hvac#cleanroom" },
-      { title: "Data Center Precision AC", desc: "N+1 redundant precision cooling", href: "/services/hvac#precision" },
+      { title: "VRF/VRV Multi-Split Systems", desc: "Tropical high-COP outdoor units", href: "/services/hvac/vrf" },
+      { title: "Chilled Water Plant Setup", desc: "Centrifugal chillers & cooling towers", href: "/services/hvac/chillers" },
+      { title: "Cleanroom AHU & HEPA Filtration", desc: "ISO Class 5-8 positive pressure", href: "/services/hvac/cleanroom" },
+      { title: "Data Center Precision AC", desc: "N+1 redundant precision cooling", href: "/services/hvac/precision" },
     ],
   },
   {
@@ -97,10 +97,10 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "NFPA-compliant sprinkler, hydrant & FM200 clean agent.",
     icon: <FaFireExtinguisher className="text-red-500" />,
     subServices: [
-      { title: "Addressable Fire Alarm Systems", desc: "Central control panel & detector array", href: "/services/fdps#alarm" },
-      { title: "Automatic Wet Pipe Sprinklers", desc: "UL/FM listed sprinkler heads & valves", href: "/services/fdps#sprinkler" },
-      { title: "FM200 / Novec Gas Suppression", desc: "Clean agent protection for server rooms", href: "/services/fdps#gas" },
-      { title: "High-Pressure Hydrant Network", desc: "Fire pump skids & landing valves", href: "/services/fdps#hydrant" },
+      { title: "Addressable Fire Alarm Systems", desc: "Central control panel & detector array", href: "/services/fdps/alarm" },
+      { title: "Automatic Wet Pipe Sprinklers", desc: "UL/FM listed sprinkler heads & valves", href: "/services/fdps/sprinkler" },
+      { title: "FM200 / Novec Gas Suppression", desc: "Clean agent protection for server rooms", href: "/services/fdps/gas" },
+      { title: "High-Pressure Hydrant Network", desc: "Fire pump skids & landing valves", href: "/services/fdps/hydrant" },
     ],
   },
   {
@@ -111,10 +111,10 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "Natural/LPG distribution networks, industrial manifolds, and leak interlock controls.",
     icon: <FaFireExtinguisher className="text-amber-500" />,
     subServices: [
-      { title: "LPG / Natural Gas Networks", desc: "Residential & commercial pipeline design", href: "/services/guds#networks" },
-      { title: "Industrial Gas Manifolds", desc: "High-pressure multi-cylinder manifold systems", href: "/services/guds#manifolds" },
-      { title: "Gas Leak Interlocking Systems", desc: "Smart sensors & automatic shutdown valves", href: "/services/guds#safety" },
-      { title: "Pressure Regulating Stations", desc: "Single/multi-stage reduction manifolds", href: "/services/guds#prs" },
+      { title: "LPG / Natural Gas Networks", desc: "Residential & commercial pipeline design", href: "/services/guds/networks" },
+      { title: "Industrial Gas Manifolds", desc: "High-pressure multi-cylinder manifold systems", href: "/services/guds/manifolds" },
+      { title: "Gas Leak Interlocking Systems", desc: "Smart sensors & automatic shutdown valves", href: "/services/guds/safety" },
+      { title: "Pressure Regulating Stations", desc: "Single/multi-stage reduction manifolds", href: "/services/guds/prs" },
     ],
   },
   {
@@ -125,10 +125,10 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "Form-4 LT switchgear, PFI plants & smart MCC.",
     icon: <FaMicrochip className="text-blue-600" />,
     subServices: [
-      { title: "Main LT Switchgear (up to 4000A)", desc: "Form-4 type tested ABB ACB boards", href: "/services/pdcp#lt" },
-      { title: "HT Substation & VCB Panels", desc: "11kV / 33kV vacuum circuit breakers", href: "/services/pdcp#ht" },
-      { title: "Automatic PFI Plants (0.99 PF)", desc: "Microprocessor PF correction banks", href: "/services/pdcp#pfi" },
-      { title: "Smart VFD Motor Control Center", desc: "Modbus/Profibus automated MCC", href: "/services/pdcp#mcc" },
+      { title: "Main LT Switchgear (up to 4000A)", desc: "Form-4 type tested ABB ACB boards", href: "/services/pdcp/lt" },
+      { title: "HT Substation & VCB Panels", desc: "11kV / 33kV vacuum circuit breakers", href: "/services/pdcp/ht" },
+      { title: "Automatic PFI Plants (0.99 PF)", desc: "Microprocessor PF correction banks", href: "/services/pdcp/pfi" },
+      { title: "Smart VFD Motor Control Center", desc: "Modbus/Profibus automated MCC", href: "/services/pdcp/mcc" },
     ],
   },
   {
@@ -139,10 +139,10 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "Busbar trunking, ESE lightning grid & DALI LED.",
     icon: <FaLightbulb className="text-yellow-500" />,
     subServices: [
-      { title: "Compact Busbar Trunking (BBT)", desc: "High-conductivity copper/aluminum BBT", href: "/services/eels#bbt" },
-      { title: "ESE Lightning Protection Grid", desc: "Certified early streamer arrestors", href: "/services/eels#lightning" },
-      { title: "Industrial DALI LED Networks", desc: "Energy efficient high-bay luminaires", href: "/services/eels#led" },
-      { title: "Earthing Grid Resistance Testing", desc: "Low resistance grounding (<1 Ohm)", href: "/services/eels#earthing" },
+      { title: "Compact Busbar Trunking (BBT)", desc: "High-conductivity copper/aluminum BBT", href: "/services/eels/bbt" },
+      { title: "ESE Lightning Protection Grid", desc: "Certified early streamer arrestors", href: "/services/eels/lightning" },
+      { title: "Industrial DALI LED Networks", desc: "Energy efficient high-bay luminaires", href: "/services/eels/led" },
+      { title: "Earthing Grid Resistance Testing", desc: "Low resistance grounding (<1 Ohm)", href: "/services/eels/earthing" },
     ],
   },
   {
@@ -153,10 +153,10 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "Siemens/Schneider PLC, SCADA & BMS telemetry.",
     icon: <FaIndustry className="text-emerald-500" />,
     subServices: [
-      { title: "Siemens & Schneider PLC Setup", desc: "S7-1500 & Modicon HMI automation", href: "/services/iba#plc" },
-      { title: "Centralized SCADA Telemetry", desc: "Real-time remote facility dashboard", href: "/services/iba#scada" },
-      { title: "Smart BMS Energy Analytics", desc: "Automated HVAC & power metering", href: "/services/iba#bms" },
-      { title: "IoT Field Sensors & Actuators", desc: "Pressure, temp & humidity transmitters", href: "/services/iba#sensors" },
+      { title: "Siemens & Schneider PLC Setup", desc: "S7-1500 & Modicon HMI automation", href: "/services/iba/plc" },
+      { title: "Centralized SCADA Telemetry", desc: "Real-time remote facility dashboard", href: "/services/iba/scada" },
+      { title: "Smart BMS Energy Analytics", desc: "Automated HVAC & power metering", href: "/services/iba/bms" },
+      { title: "IoT Field Sensors & Actuators", desc: "Pressure, temp & humidity transmitters", href: "/services/iba/sensors" },
     ],
   },
   {
@@ -167,10 +167,10 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "VFD hydro-pneumatic pumps & PPR/HDPE risers.",
     icon: <FaShower className="text-cyan-500" />,
     subServices: [
-      { title: "VFD Hydro-Pneumatic Booster Pumps", desc: "Constant water pressure boost sets", href: "/services/wsds#booster" },
-      { title: "PPR & HDPE Plumbing Risers", desc: "Corrosion-resistant supply networks", href: "/services/wsds#piping" },
-      { title: "Submersible Drainage Stations", desc: "Heavy-duty sump pumps with level floats", href: "/services/wsds#drainage" },
-      { title: "Stormwater Harvesting Networks", desc: "Rainwater filtration & storage tanks", href: "/services/wsds#stormwater" },
+      { title: "VFD Hydro-Pneumatic Booster Pumps", desc: "Constant water pressure boost sets", href: "/services/wsds/booster" },
+      { title: "PPR & HDPE Plumbing Risers", desc: "Corrosion-resistant supply networks", href: "/services/wsds/piping" },
+      { title: "Submersible Drainage Stations", desc: "Heavy-duty sump pumps with level floats", href: "/services/wsds/drainage" },
+      { title: "Stormwater Harvesting Networks", desc: "Rainwater filtration & storage tanks", href: "/services/wsds/stormwater" },
     ],
   },
   {
@@ -181,10 +181,10 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "Effluent treatment (ETP/ZLD), STP & RO plants.",
     icon: <FaWater className="text-teal-500" />,
     subServices: [
-      { title: "Industrial ETP with ZLD Option", desc: "Biological & chemical wastewater treatment", href: "/services/wts#etp" },
-      { title: "MBBR / MBR Sewage Treatment (STP)", desc: "Compact bio-reactor sewage plants", href: "/services/wts#stp" },
-      { title: "Reverse Osmosis (RO) Purification", desc: "High-recovery membrane desalination", href: "/services/wts#ro" },
-      { title: "De-Mineralization (DM) Water Plant", desc: "Cation/Anion ion exchange resins", href: "/services/wts#dm" },
+      { title: "Industrial ETP with ZLD Option", desc: "Biological & chemical wastewater treatment", href: "/services/wts/etp" },
+      { title: "MBBR / MBR Sewage Treatment (STP)", desc: "Compact bio-reactor sewage plants", href: "/services/wts/stp" },
+      { title: "Reverse Osmosis (RO) Purification", desc: "High-recovery membrane desalination", href: "/services/wts/ro" },
+      { title: "De-Mineralization (DM) Water Plant", desc: "Cation/Anion ion exchange resins", href: "/services/wts/dm" },
     ],
   },
   {
@@ -195,10 +195,10 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "Rooftop solar PV, net metering & hybrid inverters.",
     icon: <FaSun className="text-amber-500" />,
     subServices: [
-      { title: "On-Grid Rooftop Solar PV Plants", desc: "Tier-1 Mono PERC solar panel arrays", href: "/services/rhs#solar" },
-      { title: "Net Metering Setup & Approvals", desc: "Grid feed-in meter & utility clearance", href: "/services/rhs#netmetering" },
-      { title: "Solar Hybrid Storage Inverters", desc: "Battery backup integration for outage continuity", href: "/services/rhs#inverters" },
-      { title: "Remote Solar App Monitoring", desc: "Real-time energy generation telemetry", href: "/services/rhs#monitoring" },
+      { title: "On-Grid Rooftop Solar PV Plants", desc: "Tier-1 Mono PERC solar panel arrays", href: "/services/rhs/solar" },
+      { title: "Net Metering Setup & Approvals", desc: "Grid feed-in meter & utility clearance", href: "/services/rhs/netmetering" },
+      { title: "Solar Hybrid Storage Inverters", desc: "Battery backup integration for outage continuity", href: "/services/rhs/inverters" },
+      { title: "Remote Solar App Monitoring", desc: "Real-time energy generation telemetry", href: "/services/rhs/monitoring" },
     ],
   },
 ];

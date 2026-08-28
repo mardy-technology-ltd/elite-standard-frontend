@@ -159,6 +159,115 @@ export default function ContactClient() {
         </div>
       </section>
 
+      {/* 2.5. Director Consultation & Emergency Support Grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="bg-white p-8 sm:p-10 rounded-[32px] border border-slate-200/80 shadow-lg">
+          <div className="text-center max-w-2xl mx-auto mb-10 flex flex-col items-center gap-2">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent bg-brand-950 px-3 py-1 rounded-full border border-brand-900 shadow-sm">
+              Direct Access
+            </span>
+            <h2 className="font-heading font-extrabold text-brand-950 text-xl sm:text-2xl text-center">
+              Director Consultations & Emergency Support
+            </h2>
+            <p className="text-slate-500 text-xs sm:text-sm">
+              Book a direct online consultation session or request urgent emergency dispatch.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Mechanical Department */}
+            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200/80 flex flex-col gap-4 justify-between hover:border-blue-900/20 hover:bg-white hover:shadow-md transition-all group">
+              <div className="flex flex-col gap-2">
+                <span className="text-[9px] font-extrabold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md self-start border border-blue-100">
+                  Mechanical Division
+                </span>
+                <h4 className="font-heading font-bold text-sm text-brand-950 mt-1 leading-snug">
+                  Free online schedule with Director of Mechanical Solution
+                </h4>
+                <p className="text-slate-500 text-[11px] leading-relaxed">
+                  Discuss cleanroom HVAC designs, industrial air filtration, and boiler/chiller utility integration.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-2 border-t border-slate-200/60">
+                <a
+                  href="/contact?type=meeting-mech"
+                  className="w-full text-center bg-brand-950 hover:bg-brand-900 text-white font-bold text-[11px] py-2.5 rounded-lg transition-colors border border-brand-950 shadow-sm"
+                >
+                  Schedule Consultation
+                </a>
+                <a
+                  href="tel:+8801313663311"
+                  className="w-full text-center bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 font-bold text-[11px] py-2.5 rounded-lg transition-all border border-blue-200/80"
+                >
+                  Emergency Call
+                </a>
+              </div>
+            </div>
+
+            {/* Electrical Department */}
+            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200/80 flex flex-col gap-4 justify-between hover:border-brand-900/20 hover:bg-white hover:shadow-md transition-all group">
+              <div className="flex flex-col gap-2">
+                <span className="text-[9px] font-extrabold uppercase tracking-wider text-brand-950 bg-brand-50 px-2.5 py-1 rounded-md self-start border border-brand-100">
+                  Electrical Division
+                </span>
+                <h4 className="font-heading font-bold text-sm text-brand-950 mt-1 leading-snug">
+                  Free online schedule with Director of Electrical Solution
+                </h4>
+                <p className="text-slate-500 text-[11px] leading-relaxed">
+                  Discuss compact BBT runs, power factor optimization (PFI), substations, and VFD motor panels.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-2 border-t border-slate-200/60">
+                <a
+                  href="/contact?type=meeting-elec"
+                  className="w-full text-center bg-brand-950 hover:bg-brand-900 text-white font-bold text-[11px] py-2.5 rounded-lg transition-colors border border-brand-950 shadow-sm"
+                >
+                  Schedule Consultation
+                </a>
+                <a
+                  href="tel:+8801313663311"
+                  className="w-full text-center bg-brand-50 hover:bg-brand-900 hover:text-white text-brand-950 font-bold text-[11px] py-2.5 rounded-lg transition-all border border-brand-200/80"
+                >
+                  Emergency Call
+                </a>
+              </div>
+            </div>
+
+            {/* Plumbing Department */}
+            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200/80 flex flex-col gap-4 justify-between hover:border-amber-900/20 hover:bg-white hover:shadow-md transition-all group">
+              <div className="flex flex-col gap-2">
+                <span className="text-[9px] font-extrabold uppercase tracking-wider text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md self-start border border-amber-100">
+                  Plumbing Division
+                </span>
+                <h4 className="font-heading font-bold text-sm text-brand-950 mt-1 leading-snug">
+                  Free online schedule with Director of Plumbing Solution
+                </h4>
+                <p className="text-slate-500 text-[11px] leading-relaxed">
+                  Discuss storm-water harvesting networks, industrial ETP/STP/RO water treatment plants, and hydro-booster setups.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-2 border-t border-slate-200/60">
+                <a
+                  href="/contact?type=meeting-plumb"
+                  className="w-full text-center bg-brand-950 hover:bg-brand-900 text-white font-bold text-[11px] py-2.5 rounded-lg transition-colors border border-brand-950 shadow-sm"
+                >
+                  Schedule Consultation
+                </a>
+                <a
+                  href="tel:+8801313663311"
+                  className="w-full text-center bg-amber-50 hover:bg-amber-600 hover:text-white text-amber-700 font-bold text-[11px] py-2.5 rounded-lg transition-all border border-amber-200/80"
+                >
+                  Emergency Call
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 3. Main Form & Map Content */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
