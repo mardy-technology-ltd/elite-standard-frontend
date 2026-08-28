@@ -23,6 +23,8 @@ import {
   FaWater,
   FaSun,
   FaShieldAlt,
+  FaHome,
+  FaBuilding,
 } from "react-icons/fa";
 
 export interface NavItem {
@@ -36,11 +38,24 @@ export const navItems: NavItem[] = [
   { label: "About Us", href: "/about" },
   { label: "Services", href: "/services", hasDropdown: true },
   { label: "Products", href: "/products" },
-  { label: "Sectors", href: "/sectors" },
+  { label: "Sectors", href: "/sectors", hasDropdown: true },
   { label: "Projects", href: "/projects" },
   { label: "Blog", href: "/blog" },
   { label: "Career", href: "/career" },
   { label: "Contact", href: "/contact" },
+];
+
+export interface SectorItem {
+  title: string;
+  desc: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+export const sectorItems: SectorItem[] = [
+  { title: "Residential Sector", desc: "Premium MEP services for high-rise condos & luxury apartments.", href: "/sectors#residential", icon: <FaHome className="text-emerald-500" /> },
+  { title: "Commercial Sector", desc: "Central chiller systems & automated controls for corporate spaces.", href: "/sectors#commercial", icon: <FaBuilding className="text-blue-500" /> },
+  { title: "Industrial Sector", desc: "Cleanrooms, substations, and automated lines for factories.", href: "/sectors#industrial", icon: <FaIndustry className="text-amber-500" /> },
 ];
 
 export interface SubService {
@@ -193,10 +208,13 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+  const [sectorsDropdownOpen, setSectorsDropdownOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<ServiceCategory>(serviceCategories[0]);
   const [mobileServicesExpanded, setMobileServicesExpanded] = useState(false);
+  const [mobileSectorsExpanded, setMobileSectorsExpanded] = useState(false);
 
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sectorsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -215,6 +233,7 @@ export default function Navbar() {
   useEffect(() => {
     setMobileMenuOpen(false);
     setServicesDropdownOpen(false);
+    setSectorsDropdownOpen(false);
   }, [pathname]);
 
   const handleMouseEnterDropdown = () => {
@@ -225,6 +244,17 @@ export default function Navbar() {
   const handleMouseLeaveDropdown = () => {
     dropdownTimeoutRef.current = setTimeout(() => {
       setServicesDropdownOpen(false);
+    }, 200);
+  };
+
+  const handleMouseEnterSectors = () => {
+    if (sectorsTimeoutRef.current) clearTimeout(sectorsTimeoutRef.current);
+    setSectorsDropdownOpen(true);
+  };
+
+  const handleMouseLeaveSectors = () => {
+    sectorsTimeoutRef.current = setTimeout(() => {
+      setSectorsDropdownOpen(false);
     }, 200);
   };
 
@@ -268,7 +298,7 @@ export default function Navbar() {
                   ? pathname === "/"
                   : pathname.startsWith(item.href);
 
-              if (item.hasDropdown) {
+              if (item.label === "Services") {
                 return (
                   <div
                     key={item.href}
@@ -436,6 +466,66 @@ export default function Navbar() {
                 );
               }
 
+              if (item.label === "Sectors") {
+                return (
+                  <div
+                    key={item.href}
+                    onMouseEnter={handleMouseEnterSectors}
+                    onMouseLeave={handleMouseLeaveSectors}
+                    className="relative"
+                  >
+                    <Link
+                      href={item.href}
+                      className={`px-2 py-1.5 2xl:px-3 text-xs font-semibold rounded-md transition-all duration-150 inline-flex items-center gap-1.5 whitespace-nowrap ${
+                        isActive || sectorsDropdownOpen
+                          ? "text-brand-800 font-bold bg-brand-50"
+                          : "text-slate-600 hover:text-brand-800 hover:bg-slate-50"
+                      }`}
+                    >
+                      <span>{item.label}</span>
+                      <FaChevronDown
+                        className={`text-[10px] transition-transform duration-200 ${
+                          sectorsDropdownOpen ? "rotate-180 text-accent" : "text-slate-400"
+                        }`}
+                      />
+                    </Link>
+
+                    {/* Sectors Standard Dropdown Menu */}
+                    <AnimatePresence>
+                      {sectorsDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute top-full left-0 mt-1 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-3 flex flex-col gap-1"
+                        >
+                          {sectorItems.map((sec, idx) => (
+                            <Link
+                              key={idx}
+                              href={sec.href}
+                              className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group/sec"
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-slate-100 group-hover/sec:bg-white flex items-center justify-center shrink-0 border border-slate-200/50 shadow-sm transition-colors text-sm">
+                                {sec.icon}
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-brand-950 group-hover/sec:text-brand-800 transition-colors">
+                                  {sec.title}
+                                </span>
+                                <span className="text-[10px] text-slate-500 leading-normal mt-0.5 line-clamp-2">
+                                  {sec.desc}
+                                </span>
+                              </div>
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={item.href}
@@ -514,7 +604,7 @@ export default function Navbar() {
                         ? pathname === "/"
                         : pathname.startsWith(item.href);
 
-                    if (item.hasDropdown) {
+                    if (item.label === "Services") {
                       return (
                         <div key={item.href} className="flex flex-col">
                           <button
@@ -574,6 +664,60 @@ export default function Navbar() {
                                       ))}
                                     </div>
                                   </div>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    }
+
+                    if (item.label === "Sectors") {
+                      return (
+                        <div key={item.href} className="flex flex-col">
+                          <button
+                            onClick={() => setMobileSectorsExpanded(!mobileSectorsExpanded)}
+                            className={`flex items-center justify-between px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
+                              isActive || mobileSectorsExpanded
+                                ? "text-brand-800 bg-brand-50 border-l-4 border-accent"
+                                : "text-slate-700 hover:bg-slate-50 hover:text-brand-800"
+                            }`}
+                          >
+                            <span className="flex items-center gap-2">
+                              <span>{item.label}</span>
+                              <span className="px-2 py-0.5 rounded bg-accent/20 text-brand-950 text-[10px] font-extrabold">
+                                3 Sectors
+                              </span>
+                            </span>
+                            <FaChevronDown
+                              className={`text-xs transition-transform duration-200 ${
+                                mobileSectorsExpanded ? "rotate-180 text-accent" : "text-slate-400"
+                              }`}
+                            />
+                          </button>
+
+                          {/* Expanding Mobile Sectors Accordion */}
+                          <AnimatePresence>
+                            {mobileSectorsExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25 }}
+                                className="overflow-hidden pl-4 pr-2 py-2 flex flex-col gap-2 bg-slate-50 rounded-lg mt-1 border border-slate-100"
+                              >
+                                {sectorItems.map((sec, idx) => (
+                                  <Link
+                                    key={idx}
+                                    href={sec.href}
+                                    className="flex items-center justify-between p-2 rounded-md hover:bg-white text-xs font-bold text-brand-950"
+                                  >
+                                    <span className="flex items-center gap-2">
+                                      <span className="text-xs">{sec.icon}</span>
+                                      <span>{sec.title}</span>
+                                    </span>
+                                    <FaArrowRight className="text-[10px] text-slate-400" />
+                                  </Link>
                                 ))}
                               </motion.div>
                             )}
