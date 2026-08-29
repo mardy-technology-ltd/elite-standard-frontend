@@ -202,8 +202,18 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/services/wsds" className="hover:text-accent transition-colors">
+                  Water Supply & Drainage
+                </Link>
+              </li>
+              <li>
                 <Link href="/services/wts" className="hover:text-accent transition-colors">
                   Water Treatment Systems
+                </Link>
+              </li>
+              <li>
+                <Link href="/services/rhs" className="hover:text-accent transition-colors">
+                  Renewable & Solar Solutions
                 </Link>
               </li>
             </ul>
