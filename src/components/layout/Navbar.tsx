@@ -37,7 +37,7 @@ export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Services", href: "/services", hasDropdown: true },
-  { label: "Products", href: "/products" },
+  { label: "Products", href: "/products", hasDropdown: true },
   { label: "Sectors", href: "/sectors", hasDropdown: true },
   { label: "Projects", href: "/projects" },
   { label: "Blog", href: "/blog" },
@@ -207,12 +207,14 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [sectorsDropdownOpen, setSectorsDropdownOpen] = useState(false);
+  const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<ServiceCategory>(serviceCategories[0]);
   const [mobileServicesExpanded, setMobileServicesExpanded] = useState(false);
   const [mobileSectorsExpanded, setMobileSectorsExpanded] = useState(false);
 
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const sectorsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const productsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -253,6 +255,17 @@ export default function Navbar() {
   const handleMouseLeaveSectors = () => {
     sectorsTimeoutRef.current = setTimeout(() => {
       setSectorsDropdownOpen(false);
+    }, 200);
+  };
+
+  const handleMouseEnterProducts = () => {
+    if (productsTimeoutRef.current) clearTimeout(productsTimeoutRef.current);
+    setProductsDropdownOpen(true);
+  };
+
+  const handleMouseLeaveProducts = () => {
+    productsTimeoutRef.current = setTimeout(() => {
+      setProductsDropdownOpen(false);
     }, 200);
   };
 
@@ -464,6 +477,86 @@ export default function Navbar() {
                 );
               }
 
+              if (item.label === "Products") {
+                return (
+                  <div
+                    key={item.href}
+                    onMouseEnter={handleMouseEnterProducts}
+                    onMouseLeave={handleMouseLeaveProducts}
+                    className="relative"
+                  >
+                    <Link
+                      href={item.href}
+                      className={`px-2 py-1.5 2xl:px-3 text-xs font-semibold rounded-md transition-all duration-150 inline-flex items-center gap-1.5 whitespace-nowrap ${
+                        isActive || productsDropdownOpen
+                          ? "text-brand-800 font-bold bg-brand-50"
+                          : "text-slate-600 hover:text-brand-800 hover:bg-slate-50"
+                      }`}
+                    >
+                      <span>{item.label}</span>
+                      <FaChevronDown
+                        className={`text-[10px] transition-transform duration-200 ${
+                          productsDropdownOpen ? "rotate-180 text-accent" : "text-slate-400"
+                        }`}
+                      />
+                    </Link>
+
+                    <AnimatePresence>
+                      {productsDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute top-full left-0 mt-1 w-[340px] bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-2 flex flex-col gap-1"
+                        >
+                          <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-900 flex items-center justify-between border-b border-slate-200 mb-1">
+                            <span>Reseller Catalog</span>
+                            <span className="text-accent text-[10px]">Select Product</span>
+                          </div>
+                          
+                          <Link
+                            href="/products/iron-removal-plant"
+                            className="group/item flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-150 hover:bg-brand-950 text-slate-700 hover:text-white"
+                          >
+                            <div className="flex items-center gap-3 flex-grow">
+                              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-sm bg-slate-200/60 group-hover/item:bg-brand-900 text-brand-800 group-hover/item:text-white transition-colors">
+                                <FaWater />
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-brand-950 group-hover/item:text-white transition-colors">Iron Removal Plant</span>
+                                <span className="text-[10px] line-clamp-1 text-slate-500 group-hover/item:text-slate-300 transition-colors">Residential & Commercial IR</span>
+                              </div>
+                            </div>
+                            <div className="pl-2 shrink-0">
+                              <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-slate-200 text-slate-600 group-hover/item:bg-accent group-hover/item:text-brand-950 transition-colors">IRP</span>
+                            </div>
+                          </Link>
+
+                          <Link
+                            href="/products/ro-system"
+                            className="group/item flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-150 hover:bg-brand-950 text-slate-700 hover:text-white"
+                          >
+                            <div className="flex items-center gap-3 flex-grow">
+                              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-sm bg-slate-200/60 group-hover/item:bg-brand-900 text-brand-800 group-hover/item:text-white transition-colors">
+                                <FaMicrochip />
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-brand-950 group-hover/item:text-white transition-colors">RO System</span>
+                                <span className="text-[10px] line-clamp-1 text-slate-500 group-hover/item:text-slate-300 transition-colors">Reverse Osmosis Packages</span>
+                              </div>
+                            </div>
+                            <div className="pl-2 shrink-0">
+                              <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-slate-200 text-slate-600 group-hover/item:bg-accent group-hover/item:text-brand-950 transition-colors">RO</span>
+                            </div>
+                          </Link>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              }
+
               if (item.label === "Sectors") {
                 return (
                   <div
@@ -502,17 +595,24 @@ export default function Navbar() {
                             <Link
                               key={idx}
                               href={sec.href}
-                              className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors group/sec"
+                              className="group/sec flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-150 hover:bg-brand-950 text-slate-700 hover:text-white"
                             >
-                              <div className="w-8 h-8 rounded-lg bg-slate-100 group-hover/sec:bg-white flex items-center justify-center shrink-0 border border-slate-200/50 shadow-sm transition-colors text-sm">
-                                {sec.icon}
+                              <div className="flex items-center gap-3 flex-grow">
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-sm bg-slate-200/60 group-hover/sec:bg-brand-900 text-brand-800 group-hover/sec:text-white transition-colors">
+                                  {sec.icon}
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-xs font-bold text-brand-950 group-hover/sec:text-white transition-colors">
+                                    {sec.title}
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 group-hover/sec:text-slate-300 transition-colors line-clamp-1">
+                                    {sec.desc}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex flex-col">
-                                <span className="text-xs font-bold text-brand-950 group-hover/sec:text-brand-800 transition-colors">
-                                  {sec.title}
-                                </span>
-                                <span className="text-[10px] text-slate-500 leading-normal mt-0.5 line-clamp-2">
-                                  {sec.desc}
+                              <div className="pl-2 shrink-0">
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-slate-200 text-slate-600 group-hover/sec:bg-accent group-hover/sec:text-brand-950 transition-colors">
+                                  SEC
                                 </span>
                               </div>
                             </Link>

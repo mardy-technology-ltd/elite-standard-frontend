@@ -44,6 +44,25 @@ export interface ServiceItem {
   };
 }
 
+export interface CatalogPackage {
+  level: string;
+  quantity: string;
+  range: string;
+  vendorPrice?: string;
+  resellingPrice?: string;
+}
+
+export interface CatalogCategory {
+  title: string;
+  packages: CatalogPackage[];
+}
+
+export interface CatalogData {
+  slug: string;
+  title: string;
+  categories: CatalogCategory[];
+}
+
 export interface ProductItem {
   id: string;
   slug: string;
@@ -1392,5 +1411,68 @@ export const blogsData: BlogItem[] = [
     summary: "A practical guide to passing Bangladesh Fire Service inspections and implementing UL-listed active fire protection systems.",
     content: "Fire safety is not merely a legal requirement; it is the cornerstone of workforce safety and brand reputation...",
     image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800&auto=format&fit=crop"
+  }
+];
+
+export const catalogDataList: CatalogData[] = [
+  {
+    slug: "iron-removal-plant",
+    title: "Iron Removal Plant",
+    categories: [
+      {
+        title: "Residential Water Treatment Solutions",
+        packages: [
+          { level: "Level 3", quantity: "500 LPH", range: "Small Family Solution" },
+          { level: "Level 6", quantity: "1000 LPH", range: "Medium Family Solution" },
+          { level: "Level 9", quantity: "2000 LPH", range: "Large Family Solution" }
+        ]
+      },
+      {
+        title: "Commercial Water Treatment Solutions",
+        packages: [
+          { level: "Level 3", quantity: "3000 LPH", range: "Apartment & Multi-Unit Solution" },
+          { level: "Level 6", quantity: "5000 LPH", range: "Residential Building Solution" },
+          { level: "Level 9", quantity: "10,000 LPH", range: "Office & Commercial Facility Solution" }
+        ]
+      },
+      {
+        title: "Industrial Water Treatment Solutions",
+        packages: [
+          { level: "Level 3", quantity: "20,000 LPH", range: "Small Industrial Solution" },
+          { level: "Level 6", quantity: "30,000 LPH", range: "Medium Industrial Production Solution" },
+          { level: "Level 9", quantity: "50,000+ LPH", range: "Large Industrial Manufacturing Solution" }
+        ]
+      }
+    ]
+  },
+  {
+    slug: "ro-system",
+    title: "RO System",
+    categories: [
+      {
+        title: "Residential Water Treatment Solutions",
+        packages: [
+          { level: "Level 3", quantity: "75-500 LPD", range: "Small Family Solution" },
+          { level: "Level 6", quantity: "1000 LPD", range: "Medium Family Solution" },
+          { level: "Level 9", quantity: "2000 LPD", range: "Large Family Solution" }
+        ]
+      },
+      {
+        title: "Commercial Water Treatment Solutions",
+        packages: [
+          { level: "Level 3", quantity: "3000 LPD", range: "Residential Building Solution" },
+          { level: "Level 6", quantity: "5000 LPD", range: "Apartment & Multi-Unit Solution" },
+          { level: "Level 9", quantity: "10,000 LPD", range: "Office & Commercial Facility Solution" }
+        ]
+      },
+      {
+        title: "Industrial Water Treatment Solutions",
+        packages: [
+          { level: "Level 3", quantity: "20,000 LPD", range: "Small Industrial Solution" },
+          { level: "Level 6", quantity: "30,000 LPD", range: "Medium Industrial Production Solution" },
+          { level: "Level 9", quantity: "50,000+ LPD", range: "Large Industrial Manufacturing Solution" }
+        ]
+      }
+    ]
   }
 ];
