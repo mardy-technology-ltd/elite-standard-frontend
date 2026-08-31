@@ -150,6 +150,34 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
               </div>
             </div>
 
+            {/* Packages Grid (if available) */}
+            {sub.packages && sub.packages.length > 0 && (
+              <div className="bg-white p-8 rounded-[32px] border border-slate-200/80 shadow-sm flex flex-col gap-6">
+                <h4 className="font-heading font-extrabold text-brand-950 text-base uppercase tracking-wider">
+                  Available Packages & Capacities
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {sub.packages.map((pkg, idx) => (
+                    <div
+                      key={idx}
+                      className="flex flex-col justify-between bg-slate-50 p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                    >
+                      <div>
+                        <h5 className="font-extrabold text-brand-900 text-lg mb-1">{pkg.capacity}</h5>
+                        <p className="font-semibold text-slate-700 text-[13px]">{pkg.name}</p>
+                        <p className="text-slate-500 text-[11px] mt-2 leading-relaxed">{pkg.target}</p>
+                      </div>
+                      <div className="mt-4 pt-4 border-t border-slate-200/60 flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100/50 px-2.5 py-1 rounded-md border border-emerald-200/50">
+                          {pkg.level}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Compliance Banner */}
             <div className="bg-brand-900 text-white p-6 rounded-2xl border border-brand-800 flex gap-4 items-center">
               <FaShieldAlt className="text-3xl text-accent shrink-0" />

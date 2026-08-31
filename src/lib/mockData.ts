@@ -1,3 +1,10 @@
+export interface PackageItem {
+  capacity: string;
+  name: string;
+  target: string;
+  level: string;
+}
+
 export interface SubServiceDetail {
   id: string;
   slug: string;
@@ -6,6 +13,7 @@ export interface SubServiceDetail {
   fullDesc: string;
   features: string[];
   image: string;
+  packages?: PackageItem[];
 }
 
 export interface SectorDetail {
@@ -1011,36 +1019,33 @@ export const servicesData: ServiceItem[] = [
     subServices: [
       {
         id: "ss-wts-1",
-        slug: "etp",
-        title: "Industrial ETP with ZLD Option",
-        shortDesc: "Effluent treatment plants for textile, chemical & pharma.",
-        fullDesc: "Custom biological activated sludge and chemical coagulation ETP plants designed to treat toxic industrial effluent below DoE discharge limits.",
+        slug: "irp",
+        title: "Iron Removal Plant",
+        shortDesc: "High-efficiency Iron Removal Plants for residential and commercial use.",
+        fullDesc: "Our Iron Removal Plants are designed to remove excess iron and other impurities from water, providing safe and clean water for all your needs.",
         features: [
-          "Extended aeration tanks & fine bubble diffusers",
-          "Coagulation & Flocculation clarification tanks",
-          "Filter press sludge dewatering units",
-          "Zero Liquid Discharge (ZLD) evaporator integration"
+          "Effective iron and manganese removal",
+          "Durable filtration media",
+          "Low maintenance and easy operation",
+          "Suitable for both domestic and industrial use"
         ],
-        image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800&auto=format&fit=crop",
+        packages: [
+          { capacity: "500 LPH", name: "Iron Removal Plant", target: "Small Family Solution", level: "Level 3" },
+          { capacity: "1000 LPH", name: "Iron Removal Plant", target: "Medium Family Solution", level: "Level 3" },
+          { capacity: "2000 LPH", name: "Iron Removal Plant", target: "Large Family Solution", level: "Level 3" },
+          { capacity: "3000 LPH", name: "Iron Removal Plant", target: "Apartment & Multi-Unit Solution", level: "Level 6" },
+          { capacity: "5000 LPH", name: "Iron Removal Plant", target: "Residential Building Solution", level: "Level 6" },
+          { capacity: "10,000 LPH", name: "Iron Removal Plant", target: "Office & Commercial Facility Solution", level: "Level 6" },
+          { capacity: "20,000 LPH", name: "Iron Removal Plant", target: "Small Industrial Solution", level: "Level 9" },
+          { capacity: "30,000 LPH", name: "Iron Removal Plant", target: "Medium Industrial Production Solution", level: "Level 9" },
+          { capacity: "50,000 LPH", name: "Iron Removal Plant", target: "Large Industrial Manufacturing Solution", level: "Level 9" }
+        ]
       },
       {
         id: "ss-wts-2",
-        slug: "stp",
-        title: "MBBR / MBR Sewage Treatment (STP)",
-        shortDesc: "Compact bio-reactor sewage treatment plants.",
-        fullDesc: "High-efficiency Moving Bed Biofilm Reactor (MBBR) and Membrane Bio-Reactor (MBR) STPs for commercial towers and residential townships.",
-        features: [
-          "Virgin polypropylene MBBR bio-carrier media",
-          "Submerged hollow-fiber MBR ultrafiltration membranes",
-          "Odorless operational design with acoustic blowers",
-          "Treated water recycling for toilet flushing & gardening"
-        ],
-        image: "https://images.unsplash.com/photo-1542013936693-884638332954?q=80&w=800&auto=format&fit=crop"
-      },
-      {
-        id: "ss-wts-3",
         slug: "ro",
-        title: "Reverse Osmosis (RO) Purification",
+        title: "Reverse Osmosis Plant",
         shortDesc: "Industrial RO plants for boiler feed & drinking water.",
         fullDesc: "High-pressure reverse osmosis plants removing dissolved solids (TDS), heavy metals, and salinity for industrial process water.",
         features: [
@@ -1049,21 +1054,18 @@ export const servicesData: ServiceItem[] = [
           "Antiscalant dosing & automatic membrane flush cycles",
           "Online TDS & Conductivity monitoring meters"
         ],
-        image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop"
-      },
-      {
-        id: "ss-wts-4",
-        slug: "dm",
-        title: "De-Mineralization (DM) Water Plant",
-        shortDesc: "Ion exchange resin beds for ultra-pure water.",
-        fullDesc: "Two-bed and mixed-bed deionizer systems producing high-purity water with conductivity <1.0 µS/cm for power plant boilers and labs.",
-        features: [
-          "Strong acid cation & strong base anion resin vessels",
-          "Degasser towers for carbon dioxide removal",
-          "Automated Acid / Caustic regeneration skids",
-          "Resin trap filters & pH neutralization tanks"
-        ],
-        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
+        packages: [
+          { capacity: "500 LPD", name: "Reverse Osmosis Plant", target: "Small Family Solution", level: "Level 3" },
+          { capacity: "1000 LPD", name: "Reverse Osmosis Plant", target: "Medium Family Solution", level: "Level 3" },
+          { capacity: "2000 LPD", name: "Reverse Osmosis Plant", target: "Large Family Solution", level: "Level 3" },
+          { capacity: "3000 LPD", name: "Reverse Osmosis Plant", target: "Apartment & Multi-Unit Solution", level: "Level 6" },
+          { capacity: "5000 LPD", name: "Reverse Osmosis Plant", target: "Residential Building Solution", level: "Level 6" },
+          { capacity: "10,000 LPD", name: "Reverse Osmosis Plant", target: "Office & Commercial Facility Solution", level: "Level 6" },
+          { capacity: "20,000 LPD", name: "Reverse Osmosis Plant", target: "Small Industrial Solution", level: "Level 9" },
+          { capacity: "30,000 LPD", name: "Reverse Osmosis Plant", target: "Medium Industrial Production Solution", level: "Level 9" },
+          { capacity: "50,000 LPD", name: "Reverse Osmosis Plant", target: "Large Industrial Manufacturing Solution", level: "Level 9" }
+        ]
       }
     ],
     faqs: [

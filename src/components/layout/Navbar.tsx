@@ -181,10 +181,8 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "Effluent treatment (ETP/ZLD), STP & RO plants.",
     icon: <FaWater className="text-teal-500" />,
     subServices: [
-      { title: "Industrial ETP with ZLD Option", desc: "Biological & chemical wastewater treatment", href: "/services/wts/etp" },
-      { title: "MBBR / MBR Sewage Treatment (STP)", desc: "Compact bio-reactor sewage plants", href: "/services/wts/stp" },
-      { title: "Reverse Osmosis (RO) Purification", desc: "High-recovery membrane desalination", href: "/services/wts/ro" },
-      { title: "De-Mineralization (DM) Water Plant", desc: "Cation/Anion ion exchange resins", href: "/services/wts/dm" },
+      { title: "Iron Removal Plant", desc: "High-efficiency Iron Removal Plants for residential and commercial use.", href: "/services/wts/irp" },
+      { title: "Reverse Osmosis Plant", desc: "High-pressure reverse osmosis plants", href: "/services/wts/ro" },
     ],
   },
   {
