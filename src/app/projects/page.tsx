@@ -78,7 +78,7 @@ const clientReferences = [
     monogram: "SU",
     icon: FaGraduationCap,
     bgColor: "bg-violet-50 text-violet-600 border-violet-100",
-    logo: "/images/partners/Sonargaon-University-logo.png",
+    logo: "/images/partners/Sonargaon-University-logo2.png",
   },
   {
     name: "Dhaka College",

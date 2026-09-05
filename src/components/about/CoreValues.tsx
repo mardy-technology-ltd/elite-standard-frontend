@@ -13,25 +13,25 @@ export interface ValueCard {
 
 export const coreValuesData: ValueCard[] = [
   {
-    icon: <FaShieldAlt className="text-2xl text-accent" />,
+    icon: <FaShieldAlt className="text-2xl" />,
     title: "Safety Above All",
     subtitle: "NFPA & BNBC Compliance",
     description: "Every blueprint and field installation strictly enforces zero-compromise fire safety and life-protection codes.",
   },
   {
-    icon: <FaAward className="text-2xl text-accent" />,
+    icon: <FaAward className="text-2xl" />,
     title: "Engineering Excellence",
     subtitle: "ISO 9001 Quality Standards",
     description: "Factory acceptance testing (FAT), thermal imaging, and pressure validation ensure precision performance.",
   },
   {
-    icon: <FaLeaf className="text-2xl text-accent" />,
+    icon: <FaLeaf className="text-2xl" />,
     title: "Sustainable Innovation",
     subtitle: "Green Building & Rooftop Solar",
     description: "We optimize HVAC COP ratings, integrate solar PV net metering, and lower industrial carbon footprints.",
   },
   {
-    icon: <FaHandshake className="text-2xl text-accent" />,
+    icon: <FaHandshake className="text-2xl" />,
     title: "Unwavering Integrity",
     subtitle: "Client Trust & Transparency",
     description: "Transparent BOQ estimates, genuine branded equipment supply, and dedicated post-commissioning maintenance.",
@@ -71,7 +71,7 @@ export default function CoreValues() {
               className="group bg-white p-7 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-card-hover hover:border-brand-800/40 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
-                <div className="w-12 h-12 rounded-xl bg-brand-900 flex items-center justify-center mb-6 group-hover:bg-accent group-hover:scale-105 transition-all duration-200 shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-brand-900 text-accent flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white group-hover:scale-105 transition-all duration-200 shrink-0">
                   {val.icon}
                 </div>
 

@@ -33,28 +33,28 @@ export const accreditationsData: AccreditationItem[] = [
     title: "Quality Management System Certification",
     issuer: "International Organization for Standardization",
     description: "Certified Quality System governing turnkey MEP design, equipment procurement, and field commissioning.",
-    icon: <FaAward className="text-2xl text-accent" />,
+    icon: <FaAward className="text-2xl" />,
   },
   {
     code: "FSCD Certified",
     title: "Fire Safety License & Enlistment",
     issuer: "Bangladesh Fire Service & Civil Defence",
     description: "Authorized contractor for installing active NFPA fire hydrant, sprinkler, and detection networks.",
-    icon: <FaShieldAlt className="text-2xl text-accent" />,
+    icon: <FaShieldAlt className="text-2xl" />,
   },
   {
     code: "BNBC 2020",
     title: "National Building Code Compliance",
     issuer: "Ministry of Housing & Public Works",
     description: "All structural, electrical, and HVAC blueprints fully conform to BNBC safety and environmental codes.",
-    icon: <FaBuilding className="text-2xl text-accent" />,
+    icon: <FaBuilding className="text-2xl" />,
   },
   {
     code: "IEB Corporate Member",
     title: "Institution of Engineers Bangladesh",
     issuer: "The Institution of Engineers, Bangladesh",
     description: "Corporate membership assuring all project engineers hold licensed PE credentials.",
-    icon: <FaCertificate className="text-2xl text-accent" />,
+    icon: <FaCertificate className="text-2xl" />,
   },
 ];
 
@@ -130,10 +130,10 @@ export default function Accreditations() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className="bg-slate-50 p-6 rounded-2xl border border-slate-200/80 hover:border-brand-800/40 shadow-sm transition-all duration-200 flex flex-col justify-between"
+                className="group bg-slate-50 p-6 rounded-2xl border border-slate-200/80 hover:border-brand-800/40 hover:shadow-card-hover shadow-sm transition-all duration-200 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-12 h-12 rounded-xl bg-brand-900 flex items-center justify-center mb-5 shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-brand-900 text-accent flex items-center justify-center mb-5 group-hover:bg-accent group-hover:text-white group-hover:scale-105 transition-all duration-200 shrink-0">
                     {item.icon}
                   </div>
 
