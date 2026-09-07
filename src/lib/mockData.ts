@@ -124,8 +124,8 @@ export interface Framework369Action {
 }
 
 export const framework369Data = {
-  badge: 'Signature "3-6-9 Law" Framework',
-  title: 'Engineering Excellence Powered by 3-6-9 Law',
+  badge: 'Integrated 3-6-9 Engineering Framework',
+  title: 'Engineering Excellence Powered by 3-6-9 Framework',
   subtitle: 'The Core Brand Philosophy & Operational Methodology of Elite Standard Limited',
   description: 'Our proprietary 3-6-9 operational framework integrates 3 Core Engineering Disciplines, 6 Systematic Execution Actions, and 9 Flagship MEP Services compliant with international standards.',
   solutions: [
