@@ -317,19 +317,19 @@ export default function Navbar() {
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-white/95 backdrop-blur-md shadow-md py-2"
-          : "bg-white py-3 border-b border-slate-100"
+          : "bg-white py-2 sm:py-2.5 border-b border-slate-100"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4 lg:gap-6">
           {/* Official Client Logo Badge + Company Name */}
-          <Link href="/" className="flex items-center gap-3.5 sm:gap-4 group shrink-0">
-            <div className="w-16 h-16 sm:w-18 sm:h-18 md:w-[76px] md:h-[76px] shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+          <Link href="/" className="flex items-center gap-3 sm:gap-3.5 group shrink-0">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-14 md:h-14 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
               <Image
                 src="/assets/logo.svg"
                 alt="Elite Standard Limited Logo"
-                width={80}
-                height={80}
+                width={60}
+                height={60}
                 className="w-full h-full object-contain"
                 priority
               />

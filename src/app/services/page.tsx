@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -32,9 +33,22 @@ const iconMap: Record<string, React.ReactNode> = {
   FaSun: <FaSun />,
 };
 
-export default function ServicesOverviewPage() {
+function ServicesOverviewContent() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<"all" | "mechanical" | "electrical" | "plumbing">("all");
+
+  useEffect(() => {
+    if (
+      categoryParam === "mechanical" ||
+      categoryParam === "electrical" ||
+      categoryParam === "plumbing"
+    ) {
+      setActiveCategory(categoryParam);
+    }
+  }, [categoryParam]);
 
   const filteredServices = servicesData.filter((s: ServiceItem) => {
     const matchesCategory = activeCategory === "all" || s.category === activeCategory;
@@ -179,5 +193,13 @@ export default function ServicesOverviewPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function ServicesOverviewPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 py-20 text-center text-slate-500 font-medium">Loading Services...</div>}>
+      <ServicesOverviewContent />
+    </Suspense>
   );
 }
