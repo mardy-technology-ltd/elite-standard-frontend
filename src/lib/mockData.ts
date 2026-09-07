@@ -26,6 +26,8 @@ export interface ServiceItem {
   id: string;
   slug: string;
   code: string;
+  category: 'mechanical' | 'electrical' | 'plumbing';
+  compliance: string[];
   title: string;
   subtitle: string;
   shortDescription: string;
@@ -101,11 +103,83 @@ export interface BlogItem {
   image: string;
 }
 
+export interface Framework369Solution {
+  code: string;
+  categoryKey: 'mechanical' | 'electrical' | 'plumbing';
+  title: string;
+  subtitle: string;
+  compliance: string[];
+  gradient: string;
+  accentColor: string;
+  icon: string;
+  servicesCount: number;
+}
+
+export interface Framework369Action {
+  step: number;
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: string;
+}
+
+export const framework369Data = {
+  badge: 'Signature "3-6-9 Law" Framework',
+  title: 'Engineering Excellence Powered by 3-6-9 Law',
+  subtitle: 'The Core Brand Philosophy & Operational Methodology of Elite Standard Limited',
+  description: 'Our proprietary 3-6-9 operational framework integrates 3 Core Engineering Disciplines, 6 Systematic Execution Actions, and 9 Flagship MEP Services compliant with international standards.',
+  solutions: [
+    {
+      code: 'M',
+      categoryKey: 'mechanical',
+      title: 'Mechanical Services',
+      subtitle: 'HVAC, Fire Protection & Utility Piping',
+      compliance: ['BNBC', 'ASHRAE', 'SMACNA', 'NFPA'],
+      gradient: 'from-blue-900 via-blue-800 to-indigo-950',
+      accentColor: '#3b82f6',
+      icon: 'FaCogs',
+      servicesCount: 3,
+    },
+    {
+      code: 'E',
+      categoryKey: 'electrical',
+      title: 'Electrical Services',
+      subtitle: 'Switchgear, Automation & Lighting',
+      compliance: ['BNBC', 'IEC', 'IEEE', 'NEC'],
+      gradient: 'from-slate-900 via-amber-950 to-amber-900',
+      accentColor: '#E59B24',
+      icon: 'FaBolt',
+      servicesCount: 3,
+    },
+    {
+      code: 'P',
+      categoryKey: 'plumbing',
+      title: 'Plumbing Services',
+      subtitle: 'Water Supply, Treatment & Harvesting',
+      compliance: ['BNBC', 'IPC'],
+      gradient: 'from-slate-900 via-cyan-950 to-blue-900',
+      accentColor: '#06b6d4',
+      icon: 'FaWater',
+      servicesCount: 3,
+    },
+  ] as Framework369Solution[],
+  actions: [
+    { step: 1, title: 'Designing', subtitle: 'CAD / BIM Blueprints', description: 'Precision heat load calculation, single-line diagrams, hydraulic pipe sizing & BIM modeling.', icon: 'FaDraftingCompass' },
+    { step: 2, title: 'Installing', subtitle: 'Site Execution', description: 'Compliant electro-mechanical assembly, UL/FM certified fitting, ducting & panel mounting.', icon: 'FaTools' },
+    { step: 3, title: 'Commissioning', subtitle: 'System Validation', description: 'Hydrostatic testing, air balancing, thermography, and DQ/IQ/OQ/PQ validation protocol execution.', icon: 'FaCheckCircle' },
+    { step: 4, title: 'Maintaining', subtitle: 'Preventive Care', description: 'Scheduled quarterly maintenance, thermal imaging audits & 24/7 SLA monitoring.', icon: 'FaShieldAlt' },
+    { step: 5, title: 'Servicing', subtitle: 'Emergency Response', description: 'Rapid fault diagnosis, emergency breakdown response, and component overhauls.', icon: 'FaWrench' },
+    { step: 6, title: 'Supplying', subtitle: 'Global OEM Sourcing', description: 'Direct procurement of genuine UL/FM listed components, chillers, VFDs, and switchgear.', icon: 'FaTruck' },
+  ] as Framework369Action[],
+};
+
 export const servicesData: ServiceItem[] = [
   {
     id: "s1",
     slug: "hvac",
     code: "HVAC",
+    category: "mechanical",
+    compliance: ["BNBC", "ASHRAE", "SMACNA", "NFPA"],
     title: "Heating, Ventilation & Air Conditioning",
     subtitle: "Industrial & Commercial Climate Control",
     shortDescription: "End-to-end HVAC design, VRF installation, cleanroom ventilation, and energy-efficient ducting systems.",
@@ -239,6 +313,8 @@ export const servicesData: ServiceItem[] = [
     id: "s2",
     slug: "fdps",
     code: "FDPS",
+    category: "mechanical",
+    compliance: ["BNBC", "ASHRAE", "SMACNA", "NFPA"],
     title: "Fire Detection & Protection System",
     subtitle: "NFPA-Compliant Life Safety Systems",
     shortDescription: "Automated fire sprinkler, addressable alarm, hydrant network, and gas suppression engineering.",
@@ -368,6 +444,8 @@ export const servicesData: ServiceItem[] = [
     id: "s3",
     slug: "guds",
     code: "GUDS",
+    category: "mechanical",
+    compliance: ["BNBC", "ASHRAE", "SMACNA", "NFPA"],
     title: "Gas & Utility Distribution System",
     subtitle: "Safe Gas & Industrial Utility Pipelines",
     shortDescription: "Turnkey LPG, LNG, natural gas, medical gas, and industrial utility pipeline design and installation.",
@@ -499,6 +577,8 @@ export const servicesData: ServiceItem[] = [
     id: "s4",
     slug: "pdcp",
     code: "PDCP",
+    category: "electrical",
+    compliance: ["BNBC", "IEC", "IEEE", "NEC"],
     title: "Power Distribution & Control Panel",
     subtitle: "Custom Switchgear & Electrical Panels",
     shortDescription: "LT/HT panels, PFI plants, Motor Control Centers (MCC), and smart power distribution boards.",
@@ -628,7 +708,9 @@ export const servicesData: ServiceItem[] = [
     id: "s5",
     slug: "eels",
     code: "EELS",
-    title: "Electrical & Lighting Systems",
+    category: "electrical",
+    compliance: ["BNBC", "IEC", "IEEE", "NEC"],
+    title: "Energy-Efficient Lighting Systems",
     subtitle: "Precision Industrial & Architectural Lighting",
     shortDescription: "Substation setup, cable tray routing, lightning protection, and smart LED lighting networks.",
     fullDescription: "Comprehensive electrical engineering including HT substations, transformer installation, earth grounding networks, and energy-saving smart lighting solutions.",
@@ -757,7 +839,9 @@ export const servicesData: ServiceItem[] = [
     id: "s6",
     slug: "iba",
     code: "IBA",
-    title: "Industrial Building Automation",
+    category: "electrical",
+    compliance: ["BNBC", "IEC", "IEEE", "NEC"],
+    title: "Industrial & Building Automation",
     subtitle: "Smart Factory & BMS Integration",
     shortDescription: "PLC programming, SCADA monitoring, IoT sensors, and centralized facility management systems.",
     fullDescription: "Empowering modern industries with smart automation, real-time sensor tracking, centralized SCADA software, and building management systems (BMS).",
@@ -886,7 +970,9 @@ export const servicesData: ServiceItem[] = [
     id: "s7",
     slug: "wsds",
     code: "WSDS",
-    title: "Water Supply & Drainage Systems",
+    category: "plumbing",
+    compliance: ["BNBC", "IPC"],
+    title: "Water Supply & Drainage System",
     subtitle: "Commercial & Industrial Plumbing Engineering",
     shortDescription: "Hydro-pneumatic pumping stations, hot/cold water supply, drainage networks, and stormwater harvest.",
     fullDescription: "Reliable plumbing and drainage engineering for high-rise residential, commercial hubs, and industrial factories, ensuring optimal pressure and hygienic water distribution.",
@@ -1013,7 +1099,9 @@ export const servicesData: ServiceItem[] = [
     id: "s8",
     slug: "wts",
     code: "WTS",
-    title: "Water Treatment Systems",
+    category: "plumbing",
+    compliance: ["BNBC", "IPC"],
+    title: "Water Treatment Solutions",
     subtitle: "ETP, STP & WTP Engineering Solutions",
     shortDescription: "Effluent treatment plants (ETP), sewage treatment (STP), and reverse osmosis (RO) purification.",
     fullDescription: "Sustainable environmental engineering offering industrial ETPs, bio-reactor STPs, and RO purification plants to meet strict DoE environmental discharge standards.",
@@ -1130,7 +1218,9 @@ export const servicesData: ServiceItem[] = [
     id: "s9",
     slug: "rhs",
     code: "RHS",
-    title: "Renewable & Solar Solutions",
+    category: "plumbing",
+    compliance: ["BNBC", "IPC"],
+    title: "Rainwater Harvesting Systems",
     subtitle: "Rooftop Solar & Green Power Generation",
     shortDescription: "On-grid rooftop solar PV plants, net metering installation, and industrial solar integration.",
     fullDescription: "Empowering businesses to reduce electricity bills with high-efficiency rooftop solar PV installations, net metering, and clean solar power storage systems.",

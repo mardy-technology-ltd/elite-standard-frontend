@@ -3,50 +3,50 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  FaPencilRuler,
-  FaTools,
-  FaClipboardCheck,
   FaShieldAlt,
+  FaProjectDiagram,
+  FaUserCheck,
   FaHeadset,
   FaBoxes,
+  FaChartLine,
 } from "react-icons/fa";
 
-const pillars = [
-  {
-    icon: FaPencilRuler,
-    title: "1. Designing",
-    description: "We develop efficient, safe, and future-ready designs based on facility requirements, complying with BNBC, NFPA, ASHRAE, and international codes.",
-    badge: "Core Action 1",
-  },
-  {
-    icon: FaTools,
-    title: "2. Installing",
-    description: "We ensure accurate and reliable installations of Mechanical, Electrical, and Plumbing systems using modern technology and skilled engineering professionals.",
-    badge: "Core Action 2",
-  },
-  {
-    icon: FaClipboardCheck,
-    title: "3. Commissioning",
-    description: "We perform complete testing and verification before system handover to ensure optimal performance and absolute safety compliance.",
-    badge: "Core Action 3",
-  },
+const trustPillars = [
   {
     icon: FaShieldAlt,
-    title: "4. Maintaining",
-    description: "We provide regular preventive and predictive maintenance programs to ensure long-term system reliability, safety, and operational efficiency.",
-    badge: "Core Action 4",
+    title: "100% Code & Standard Compliance",
+    description: "Every engineering blueprint and field installation strictly complies with BNBC, NFPA, ASHRAE, SMACNA, IEC, IEEE, NEC, and IPC standards.",
+    badge: "Safety & Quality",
+  },
+  {
+    icon: FaProjectDiagram,
+    title: "Turnkey Single-Point Responsibility",
+    description: "From concept design, heat load calculation, and CAD/BIM modeling to procurement, installation, commissioning, and maintenance — all under one umbrella.",
+    badge: "End-to-End Execution",
+  },
+  {
+    icon: FaUserCheck,
+    title: "Certified Veteran MEP Engineers",
+    description: "Our core engineering team comprises seasoned electro-mechanical professionals with extensive expertise across high-rise, commercial, and pharmaceutical facilities.",
+    badge: "Engineering Excellence",
   },
   {
     icon: FaHeadset,
-    title: "5. Servicing",
-    description: "We deliver prompt and dependable engineering services to resolve critical issues quickly and maintain smooth, uninterrupted facility operations.",
-    badge: "Core Action 5",
+    title: "24/7 SLA & Rapid Emergency Response",
+    description: "Dedicated round-the-clock technical support, quick fault diagnostics, and rapid emergency breakdown recovery teams to ensure zero operational downtime.",
+    badge: "Zero Downtime SLA",
   },
   {
     icon: FaBoxes,
-    title: "6. Supplying",
-    description: "We source and supply high-quality materials and trusted equipment to support durable, energy-efficient, and long-term engineering solutions.",
-    badge: "Core Action 6",
+    title: "Direct OEM Sourcing & Authentic Parts",
+    description: "We procure UL/FM certified switchgear, VRF outdoor units, chillers, and pumps directly from tier-1 manufacturers with genuine OEM warranties.",
+    badge: "Genuine Procurement",
+  },
+  {
+    icon: FaChartLine,
+    title: "Energy Audit & Cost Efficiency Optimization",
+    description: "Smart VFD motor controls, psychrometric balancing, and BMS telemetry designed to minimize energy consumption and maximize facility ROI.",
+    badge: "Sustainability & ROI",
   },
 ];
 
@@ -69,13 +69,13 @@ export default function WhyChooseUs() {
           </h2>
 
           <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-            Our engineering workflow is built on 6 Core Project Actions, executed in strict compliance with BNBC, NFPA, ASHRAE, SMACNA, IEC, IEEE, NEC, and IPC standards.
+            We deliver uncompromising electro-mechanical engineering solutions backed by international safety compliance, certified technical leadership, and round-the-clock facility support.
           </p>
         </div>
 
-        {/* 6 Grid Cards */}
+        {/* 6 Trust Grid Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {pillars.map((pillar, idx) => {
+          {trustPillars.map((pillar, idx) => {
             const Icon = pillar.icon;
             return (
               <motion.div

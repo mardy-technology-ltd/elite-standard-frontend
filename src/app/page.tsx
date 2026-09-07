@@ -1,10 +1,9 @@
 import React from "react";
 import HeroBanner from "@/components/home/HeroBanner";
 import CompanyIntro from "@/components/home/CompanyIntro";
+import Framework369 from "@/components/home/Framework369";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
-import OurServices from "@/components/home/OurServices";
 import OurSectors from "@/components/home/OurSectors";
-import EngineeringProcess from "@/components/home/EngineeringProcess";
 import FeaturedProjects from "@/components/home/FeaturedProjects";
 import ProductsSummary from "@/components/home/ProductsSummary";
 import TestimonialsAndPartners from "@/components/home/TestimonialsAndPartners";
@@ -20,31 +19,28 @@ export default function HomePage() {
       {/* 2. Company Introduction */}
       <CompanyIntro />
 
-      {/* 3. Why Choose Elite Standard Limited */}
-      <WhyChooseUs />
+      {/* 3. Signature 3-6-9 Law Framework */}
+      <Framework369 />
 
-      {/* 4. Our Services (9 MEP Domains) */}
-      <OurServices />
+      {/* 4. Why Choose Elite Standard Limited */}
+      <WhyChooseUs />
 
       {/* 5. Our Sectors (Industries Served) */}
       <OurSectors />
 
-      {/* 6. Engineering Process (4-Step Workflow) */}
-      <EngineeringProcess />
-
-      {/* 7. Featured Projects */}
+      {/* 6. Featured Projects */}
       <FeaturedProjects />
 
-      {/* 8. Products & Equipment Summary */}
+      {/* 7. Products & Equipment Summary */}
       <ProductsSummary />
 
-      {/* 9. Client Testimonials & Brand Partners */}
+      {/* 8. Client Testimonials & Brand Partners */}
       <TestimonialsAndPartners />
 
-      {/* 10. Latest Engineering Blogs */}
+      {/* 9. Latest Engineering Blogs */}
       <LatestBlogs />
 
-      {/* 11. Lead Generation Contact CTA */}
+      {/* 10. Lead Generation Contact CTA */}
       <ContactCTA />
     </div>
   );

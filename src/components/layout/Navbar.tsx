@@ -201,6 +201,46 @@ export const serviceCategories: ServiceCategory[] = [
   },
 ];
 
+export interface MepPillar {
+  id: string;
+  code: "M" | "E" | "P";
+  title: string;
+  subtitle: string;
+  compliance: string[];
+  icon: React.ReactNode;
+  categories: ServiceCategory[];
+}
+
+export const mepPillars: MepPillar[] = [
+  {
+    id: "mechanical",
+    code: "M",
+    title: "Mechanical Services",
+    subtitle: "HVAC, Fire Protection & Gas Systems",
+    compliance: ["BNBC", "ASHRAE", "SMACNA", "NFPA"],
+    icon: <FaSnowflake className="text-sky-400" />,
+    categories: [serviceCategories[0], serviceCategories[1], serviceCategories[2]],
+  },
+  {
+    id: "electrical",
+    code: "E",
+    title: "Electrical Services",
+    subtitle: "Switchgear, Automation & Lighting",
+    compliance: ["BNBC", "IEC", "IEEE", "NEC"],
+    icon: <FaBolt className="text-amber-400" />,
+    categories: [serviceCategories[3], serviceCategories[4], serviceCategories[5]],
+  },
+  {
+    id: "plumbing",
+    code: "P",
+    title: "Plumbing Services",
+    subtitle: "Water Distribution, Treatment & Harvesting",
+    compliance: ["BNBC", "IPC"],
+    icon: <FaWater className="text-cyan-400" />,
+    categories: [serviceCategories[6], serviceCategories[7], serviceCategories[8]],
+  },
+];
+
 export default function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -209,6 +249,7 @@ export default function Navbar() {
   const [sectorsDropdownOpen, setSectorsDropdownOpen] = useState(false);
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<ServiceCategory>(serviceCategories[0]);
+  const [activePillar, setActivePillar] = useState<MepPillar | null>(null);
   const [mobileServicesExpanded, setMobileServicesExpanded] = useState(false);
   const [mobileSectorsExpanded, setMobileSectorsExpanded] = useState(false);
 
@@ -234,6 +275,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
     setServicesDropdownOpen(false);
     setSectorsDropdownOpen(false);
+    setActivePillar(null);
   }, [pathname]);
 
   const handleMouseEnterDropdown = () => {
@@ -244,6 +286,7 @@ export default function Navbar() {
   const handleMouseLeaveDropdown = () => {
     dropdownTimeoutRef.current = setTimeout(() => {
       setServicesDropdownOpen(false);
+      setActivePillar(null);
     }, 200);
   };
 
@@ -341,135 +384,154 @@ export default function Navbar() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.98 }}
                           transition={{ duration: 0.2 }}
-                          className="absolute top-full left-0 mt-1 w-[820px] bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 grid grid-cols-12"
+                          className={`absolute top-full left-0 mt-1 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 transition-all duration-300 flex ${
+                            activePillar ? "w-[840px]" : "w-[360px]"
+                          }`}
                         >
-                          {/* Left Panel: 9 Core Services List */}
-                          <div className="col-span-6 bg-slate-50 p-4 border-r border-slate-200/80 flex flex-col gap-1 max-h-[480px] overflow-y-auto custom-scrollbar">
-                            <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-900 flex items-center justify-between border-b border-slate-200 mb-1">
-                              <span>9 Core MEP Services</span>
-                              <span className="text-accent text-[10px]">Select Category</span>
-                            </div>
+                          {/* Left Panel: 3 Core MEP Pillars */}
+                          <div className="w-[360px] shrink-0 bg-white p-3 border-r border-slate-200/80 flex flex-col justify-between">
+                            <div>
+                              <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-900 flex items-center justify-between border-b border-slate-200 mb-2">
+                                <span>3 Integrated Solutions</span>
+                                <span className="text-accent text-[10px] font-mono font-bold">3-6-9 LAW</span>
+                              </div>
 
-                            {serviceCategories.map((cat) => {
-                              const isSelected = activeCategory.id === cat.id;
+                              <div className="flex flex-col gap-1">
+                                {mepPillars.map((pillar) => {
+                                  const isSelected = activePillar?.id === pillar.id;
 
-                              return (
-                                <div
-                                  key={cat.id}
-                                  onMouseEnter={() => setActiveCategory(cat)}
-                                  className={`group/item flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-150 ${
-                                    isSelected
-                                      ? "bg-brand-950 text-white shadow-md"
-                                      : "hover:bg-white text-slate-700 hover:text-brand-950"
-                                  }`}
-                                >
-                                  <Link
-                                    href={`/services/${cat.slug}`}
-                                    className="flex items-center gap-3 flex-grow"
-                                  >
+                                  return (
                                     <div
-                                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-sm ${
-                                        isSelected ? "bg-brand-900" : "bg-slate-200/60 group-hover/item:bg-brand-50"
+                                      key={pillar.id}
+                                      onMouseEnter={() => setActivePillar(pillar)}
+                                      className={`group/item flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 border ${
+                                        isSelected
+                                          ? "bg-slate-100/90 border-slate-200/90 shadow-sm"
+                                          : "bg-white border-transparent hover:bg-slate-50 hover:border-slate-200/50"
                                       }`}
                                     >
-                                      {cat.icon}
-                                    </div>
-                                    <div className="flex flex-col">
-                                      <div className="flex items-center gap-1.5">
-                                        <span
-                                          className={`text-xs font-bold ${
-                                            isSelected ? "text-white" : "text-brand-950 group-hover/item:text-brand-800"
+                                      <div className="flex items-center gap-3 flex-grow">
+                                        <div
+                                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-base transition-colors ${
+                                            isSelected
+                                              ? "bg-white text-brand-900 shadow-sm"
+                                              : "bg-slate-100 text-brand-800 group-hover/item:bg-slate-200/70"
                                           }`}
                                         >
-                                          {cat.title}
+                                          {pillar.icon}
+                                        </div>
+                                        <div className="flex flex-col">
+                                          <span className="text-xs font-bold text-slate-900 group-hover/item:text-brand-950 transition-colors">
+                                            {pillar.title}
+                                          </span>
+                                          <span className="text-[10px] text-slate-400 line-clamp-1 group-hover/item:text-slate-500 transition-colors">
+                                            {pillar.subtitle}
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      <div className="pl-2 shrink-0">
+                                        <span
+                                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider transition-colors ${
+                                            isSelected
+                                              ? "bg-slate-200 text-slate-800"
+                                              : "bg-slate-100 text-slate-500 group-hover/item:bg-slate-200 group-hover/item:text-slate-700"
+                                          }`}
+                                        >
+                                          {pillar.code}
                                         </span>
                                       </div>
-                                      <span
-                                        className={`text-[10px] line-clamp-1 ${
-                                          isSelected ? "text-slate-300" : "text-slate-500"
-                                        }`}
-                                      >
-                                        {cat.shortDesc}
-                                      </span>
                                     </div>
-                                  </Link>
+                                  );
+                                })}
+                              </div>
+                            </div>
 
-                                  <div className="pl-2 shrink-0">
-                                    <span
-                                      className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold ${
-                                        isSelected
-                                          ? "bg-accent text-brand-950"
-                                          : "bg-slate-200 text-slate-600 group-hover/item:bg-accent/20 group-hover/item:text-brand-900"
-                                      }`}
-                                    >
-                                      {cat.code}
-                                    </span>
-                                  </div>
-                                </div>
-                              );
-                            })}
-
-                            <div className="pt-2 mt-1 border-t border-slate-200">
+                            <div className="pt-2 mt-2 border-t border-slate-200">
                               <Link
                                 href="/services"
-                                className="w-full inline-flex items-center justify-center gap-2 bg-brand-900 hover:bg-brand-800 text-white text-xs font-bold py-2.5 rounded-lg transition-colors"
+                                className="w-full inline-flex items-center justify-center gap-2 bg-brand-900 hover:bg-brand-800 text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-sm"
                               >
-                                <span>Browse All Services Directory</span>
+                                <span>Explore All Services</span>
                                 <FaArrowRight className="text-[10px] text-accent" />
                               </Link>
                             </div>
                           </div>
 
-                          {/* Right Panel: Fly-out Nested Sub-Services */}
-                          <div className="col-span-6 p-5 bg-white flex flex-col justify-between">
-                            <div>
-                              <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-                                <div className="flex items-center gap-2">
-                                  <span className="w-6 h-6 rounded bg-brand-50 flex items-center justify-center text-xs">
-                                    {activeCategory.icon}
-                                  </span>
-                                  <h4 className="font-heading font-extrabold text-sm text-brand-950">
-                                    {activeCategory.code} Sub-Specialties
-                                  </h4>
-                                </div>
-                                <Link
-                                  href={`/services/${activeCategory.slug}`}
-                                  className="text-[11px] font-bold text-brand-800 hover:text-accent flex items-center gap-1"
-                                >
-                                  <span>View Page</span>
-                                  <FaChevronRight className="text-[9px]" />
-                                </Link>
-                              </div>
+                          {/* Right Panel: Flyout 3 Flagship Services of Selected Pillar */}
+                          <AnimatePresence>
+                            {activePillar && (
+                              <motion.div
+                                initial={{ opacity: 0, width: 0 }}
+                                animate={{ opacity: 1, width: 480 }}
+                                exit={{ opacity: 0, width: 0 }}
+                                transition={{ duration: 0.22 }}
+                                className="overflow-hidden bg-white"
+                              >
+                                <div className="w-[480px] p-4 flex flex-col justify-between h-full bg-slate-50/50">
+                                  <div>
+                                    <div className="flex items-center justify-between pb-2.5 border-b border-slate-200/80 mb-3">
+                                      <div className="flex items-center gap-2">
+                                        <span className="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center text-xs text-brand-800">
+                                          {activePillar.icon}
+                                        </span>
+                                        <div>
+                                          <h4 className="font-heading font-extrabold text-xs text-brand-950">
+                                            {activePillar.title}
+                                          </h4>
+                                          <p className="text-[9px] text-slate-500 font-mono">
+                                            Codes: {activePillar.compliance.join(", ")}
+                                          </p>
+                                        </div>
+                                      </div>
 
-                              <div className="flex flex-col gap-2.5">
-                                {activeCategory.subServices.map((sub, idx) => (
-                                  <Link
-                                    key={idx}
-                                    href={sub.href}
-                                    className="p-3 rounded-xl border border-slate-100 hover:border-brand-800/40 hover:bg-slate-50/80 transition-all duration-150 group/sub flex items-start gap-3"
-                                  >
-                                    <span className="w-5 h-5 rounded-full bg-accent/20 text-brand-900 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5 group-hover/sub:bg-accent group-hover/sub:text-brand-950 transition-colors">
-                                      0{idx + 1}
-                                    </span>
-                                    <div>
-                                      <h5 className="text-xs font-bold text-brand-950 group-hover/sub:text-brand-800 transition-colors flex items-center gap-1.5">
-                                        <span>{sub.title}</span>
-                                      </h5>
-                                      <p className="text-[10px] text-slate-500 mt-0.5">{sub.desc}</p>
+                                      <Link
+                                        href={`/services?category=${activePillar.id}`}
+                                        className="text-[10px] font-bold text-brand-800 hover:text-accent flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-slate-200 hover:border-accent transition-colors"
+                                      >
+                                        <span>View Category</span>
+                                        <FaChevronRight className="text-[8px]" />
+                                      </Link>
                                     </div>
-                                  </Link>
-                                ))}
-                              </div>
-                            </div>
 
-                            <div className="mt-4 pt-3 border-t border-slate-100 bg-brand-50 p-3 rounded-xl flex items-center gap-3">
-                              <FaShieldAlt className="text-accent text-base shrink-0" />
-                              <div className="text-[10px] text-brand-900">
-                                <span className="font-bold block">ISO 9001 Certified Design</span>
-                                <span className="text-slate-500">Fully compliant with BNBC & NFPA codes</span>
-                              </div>
-                            </div>
-                          </div>
+                                    <div className="flex flex-col gap-2">
+                                      {activePillar.categories.map((cat) => (
+                                        <Link
+                                          key={cat.id}
+                                          href={`/services/${cat.slug}`}
+                                          className="group/sub flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 bg-white border border-slate-200/80 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm"
+                                        >
+                                          <div className="flex items-center gap-3 flex-grow">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover/sub:bg-brand-950 group-hover/sub:text-accent flex items-center justify-center shrink-0 text-base text-slate-700 transition-colors">
+                                              {cat.icon}
+                                            </div>
+                                            <div className="flex flex-col">
+                                              <span className="text-xs font-bold text-slate-900 group-hover/sub:text-brand-900 transition-colors">
+                                                {cat.title}
+                                              </span>
+                                              <span className="text-[10px] text-slate-400 line-clamp-1">
+                                                {cat.shortDesc}
+                                              </span>
+                                            </div>
+                                          </div>
+                                          <div className="pl-2 shrink-0">
+                                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 group-hover/sub:bg-accent group-hover/sub:text-brand-950 transition-colors">
+                                              {cat.code}
+                                            </span>
+                                          </div>
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  <div className="pt-2.5 border-t border-slate-200/80 flex items-center justify-between text-[10px] text-slate-500 font-medium">
+                                    <span>Sectors: Residential • Commercial • Industrial</span>
+                                    <span className="text-brand-900 font-bold">27 Sub-Sections</span>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -508,7 +570,7 @@ export default function Navbar() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.98 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute top-full left-0 mt-1 w-[340px] bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-2 flex flex-col gap-1"
+                          className="absolute top-full left-0 mt-1 w-[360px] bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-3 flex flex-col gap-1"
                         >
                           <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-900 flex items-center justify-between border-b border-slate-200 mb-1">
                             <span>Reseller Catalog</span>
@@ -517,37 +579,37 @@ export default function Navbar() {
                           
                           <Link
                             href="/products/iron-removal-plant"
-                            className="group/item flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-150 hover:bg-brand-950 text-slate-700 hover:text-white"
+                            className="group/item flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 border border-transparent hover:bg-slate-50 hover:border-slate-200/60"
                           >
                             <div className="flex items-center gap-3 flex-grow">
-                              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-sm bg-slate-200/60 group-hover/item:bg-brand-900 text-brand-800 group-hover/item:text-white transition-colors">
+                              <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 text-base text-cyan-600 group-hover/item:bg-slate-200/70 transition-colors">
                                 <FaWater />
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-xs font-bold text-brand-950 group-hover/item:text-white transition-colors">Iron Removal Plant</span>
-                                <span className="text-[10px] line-clamp-1 text-slate-500 group-hover/item:text-slate-300 transition-colors">Residential & Commercial IR</span>
+                                <span className="text-xs font-bold text-slate-900 group-hover/item:text-brand-950 transition-colors">Iron Removal Plant</span>
+                                <span className="text-[10px] text-slate-400 line-clamp-1 group-hover/item:text-slate-500 transition-colors">Residential & Commercial IR</span>
                               </div>
                             </div>
                             <div className="pl-2 shrink-0">
-                              <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-slate-200 text-slate-600 group-hover/item:bg-accent group-hover/item:text-brand-950 transition-colors">IRP</span>
+                              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 group-hover/item:bg-slate-200 group-hover/item:text-slate-700 transition-colors">IRP</span>
                             </div>
                           </Link>
 
                           <Link
                             href="/products/ro-system"
-                            className="group/item flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-150 hover:bg-brand-950 text-slate-700 hover:text-white"
+                            className="group/item flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 border border-transparent hover:bg-slate-50 hover:border-slate-200/60"
                           >
                             <div className="flex items-center gap-3 flex-grow">
-                              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-sm bg-slate-200/60 group-hover/item:bg-brand-900 text-brand-800 group-hover/item:text-white transition-colors">
+                              <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 text-base text-blue-600 group-hover/item:bg-slate-200/70 transition-colors">
                                 <FaMicrochip />
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-xs font-bold text-brand-950 group-hover/item:text-white transition-colors">RO System</span>
-                                <span className="text-[10px] line-clamp-1 text-slate-500 group-hover/item:text-slate-300 transition-colors">Reverse Osmosis Packages</span>
+                                <span className="text-xs font-bold text-slate-900 group-hover/item:text-brand-950 transition-colors">RO System</span>
+                                <span className="text-[10px] text-slate-400 line-clamp-1 group-hover/item:text-slate-500 transition-colors">Reverse Osmosis Packages</span>
                               </div>
                             </div>
                             <div className="pl-2 shrink-0">
-                              <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-slate-200 text-slate-600 group-hover/item:bg-accent group-hover/item:text-brand-950 transition-colors">RO</span>
+                              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 group-hover/item:bg-slate-200 group-hover/item:text-slate-700 transition-colors">RO</span>
                             </div>
                           </Link>
                         </motion.div>
@@ -589,29 +651,29 @@ export default function Navbar() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.98 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute top-full left-0 mt-1 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-3 flex flex-col gap-1"
+                          className="absolute top-full left-0 mt-1 w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-3 flex flex-col gap-1"
                         >
                           {sectorItems.map((sec, idx) => (
                             <Link
                               key={idx}
                               href={sec.href}
-                              className="group/sec flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-150 hover:bg-brand-950 text-slate-700 hover:text-white"
+                              className="group/sec flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 border border-transparent hover:bg-slate-50 hover:border-slate-200/60"
                             >
                               <div className="flex items-center gap-3 flex-grow">
-                                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-sm bg-slate-200/60 group-hover/sec:bg-brand-900 text-brand-800 group-hover/sec:text-white transition-colors">
+                                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 text-base group-hover/sec:bg-slate-200/70 transition-colors">
                                   {sec.icon}
                                 </div>
                                 <div className="flex flex-col">
-                                  <span className="text-xs font-bold text-brand-950 group-hover/sec:text-white transition-colors">
+                                  <span className="text-xs font-bold text-slate-900 group-hover/sec:text-brand-950 transition-colors">
                                     {sec.title}
                                   </span>
-                                  <span className="text-[10px] text-slate-500 group-hover/sec:text-slate-300 transition-colors line-clamp-1">
+                                  <span className="text-[10px] text-slate-400 line-clamp-1 group-hover/sec:text-slate-500 transition-colors">
                                     {sec.desc}
                                   </span>
                                 </div>
                               </div>
                               <div className="pl-2 shrink-0">
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-slate-200 text-slate-600 group-hover/sec:bg-accent group-hover/sec:text-brand-950 transition-colors">
+                                <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 group-hover/sec:bg-slate-200 group-hover/sec:text-slate-700 transition-colors">
                                   SEC
                                 </span>
                               </div>
@@ -734,30 +796,34 @@ export default function Navbar() {
                                 animate={{ height: "auto", opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
                                 transition={{ duration: 0.25 }}
-                                className="overflow-hidden pl-4 pr-2 py-2 flex flex-col gap-2 bg-slate-50 rounded-lg mt-1 border border-slate-100"
+                                className="overflow-hidden pl-3 pr-2 py-2 flex flex-col gap-3 bg-slate-50 rounded-lg mt-1 border border-slate-100"
                               >
-                                {serviceCategories.map((cat) => (
-                                  <div key={cat.id} className="flex flex-col border-b border-slate-200/60 pb-2 last:border-0 last:pb-0">
-                                    <Link
-                                      href={`/services/${cat.slug}`}
-                                      className="flex items-center justify-between p-2 rounded-md hover:bg-white text-xs font-bold text-brand-950"
-                                    >
+                                {mepPillars.map((pillar) => (
+                                  <div key={pillar.id} className="flex flex-col border-b border-slate-200/80 pb-2.5 last:border-0 last:pb-0">
+                                    <div className="flex items-center justify-between px-2.5 py-1.5 font-extrabold text-xs text-brand-950 bg-slate-200/70 rounded-md mb-1.5">
                                       <span className="flex items-center gap-2">
-                                        <span className="text-xs">{cat.icon}</span>
-                                        <span>{cat.title} ({cat.code})</span>
+                                        <span className="text-xs">{pillar.icon}</span>
+                                        <span>{pillar.title}</span>
                                       </span>
-                                      <FaArrowRight className="text-[10px] text-slate-400" />
-                                    </Link>
+                                      <span className="px-1.5 py-0.5 rounded bg-brand-950 text-accent font-mono text-[9px] font-bold">
+                                        {pillar.code}
+                                      </span>
+                                    </div>
 
-                                    <div className="pl-6 flex flex-col gap-1 mt-1">
-                                      {cat.subServices.map((sub, sIdx) => (
+                                    <div className="flex flex-col gap-1 pl-2">
+                                      {pillar.categories.map((cat) => (
                                         <Link
-                                          key={sIdx}
-                                          href={sub.href}
-                                          className="text-[11px] text-slate-600 hover:text-accent py-0.5 flex items-center gap-1.5"
+                                          key={cat.id}
+                                          href={`/services/${cat.slug}`}
+                                          className="flex items-center justify-between p-1.5 rounded-md hover:bg-white text-xs font-semibold text-slate-800 hover:text-brand-900"
                                         >
-                                          <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-                                          <span>{sub.title}</span>
+                                          <span className="flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                                            <span>{cat.title}</span>
+                                          </span>
+                                          <span className="text-[9px] font-mono px-1 py-0.5 rounded bg-slate-200 text-slate-600">
+                                            {cat.code}
+                                          </span>
                                         </Link>
                                       ))}
                                     </div>
