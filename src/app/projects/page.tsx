@@ -182,9 +182,6 @@ export default function ProjectsPage() {
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-brand-950 bg-accent px-3 py-1.5 rounded-md shadow-md">
                   Landmark National Infrastructure
                 </span>
-                <span className="text-[10px] font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-md border border-white/20 backdrop-blur-md">
-                  Real Project Site Photos (ESL)
-                </span>
               </div>
 
               {/* Bottom Info & Thumbnail Gallery Selector */}
