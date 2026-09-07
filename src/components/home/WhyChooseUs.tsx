@@ -10,7 +10,6 @@ import {
   FaBoxes,
   FaChartLine,
 } from "react-icons/fa";
-import ThreeDCard from "@/components/ui/ThreeDCard";
 
 const trustPillars = [
   {
@@ -79,40 +78,40 @@ export default function WhyChooseUs() {
           {trustPillars.map((pillar, idx) => {
             const Icon = pillar.icon;
             return (
-              <ThreeDCard key={idx} maxTilt={10}>
-                <motion.div
-                  initial={{ opacity: 0, y: 25 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className="group bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-card-hover hover:border-brand-800/40 transition-all duration-300 flex flex-col justify-between relative overflow-hidden h-full"
-                >
-                  {/* Accent Top Border Bar on Hover */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-800 to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -8, transition: { duration: 0.25, ease: "easeOut" } }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.08 }}
+                className="group bg-white p-8 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-2xl hover:border-brand-800/40 transition-shadow duration-300 flex flex-col justify-between relative overflow-hidden h-full cursor-pointer"
+              >
+                {/* Accent Top Border Bar on Hover */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-800 to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
 
-                  <div>
-                    {/* Icon & Badge Header */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="w-14 h-14 rounded-xl bg-brand-50 group-hover:bg-brand-900 flex items-center justify-center text-brand-800 group-hover:text-accent transition-colors duration-300 shadow-inner">
-                        <Icon className="text-2xl" />
-                      </div>
-                      <span className="text-[11px] font-bold text-brand-800 bg-brand-50 group-hover:bg-accent/20 group-hover:text-brand-900 px-3 py-1 rounded-full uppercase tracking-wider transition-colors">
-                        {pillar.badge}
-                      </span>
+                <div>
+                  {/* Icon & Badge Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="w-14 h-14 rounded-xl bg-brand-50 group-hover:bg-brand-900 flex items-center justify-center text-brand-800 group-hover:text-accent transition-colors duration-300 shadow-inner">
+                      <Icon className="text-2xl" />
                     </div>
-
-                    {/* Title */}
-                    <h3 className="font-heading text-xl font-bold text-brand-950 mb-3 group-hover:text-brand-800 transition-colors">
-                      {pillar.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-slate-600 text-sm leading-relaxed">
-                      {pillar.description}
-                    </p>
+                    <span className="text-[11px] font-bold text-brand-800 bg-brand-50 group-hover:bg-accent/20 group-hover:text-brand-900 px-3 py-1 rounded-full uppercase tracking-wider transition-colors">
+                      {pillar.badge}
+                    </span>
                   </div>
-                </motion.div>
-              </ThreeDCard>
+
+                  {/* Title */}
+                  <h3 className="font-heading text-xl font-bold text-brand-950 mb-3 group-hover:text-brand-800 transition-colors">
+                    {pillar.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    {pillar.description}
+                  </p>
+                </div>
+              </motion.div>
             );
           })}
         </div>

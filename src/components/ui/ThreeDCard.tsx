@@ -12,7 +12,7 @@ interface ThreeDCardProps {
 export default function ThreeDCard({
   children,
   className = "",
-  maxTilt = 12,
+  maxTilt = 6,
 }: ThreeDCardProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [rotateX, setRotateX] = useState(0);
@@ -53,22 +53,25 @@ export default function ThreeDCard({
       animate={{
         rotateX: rotateX,
         rotateY: rotateY,
-        scale: isHovered ? 1.02 : 1,
+        scale: isHovered ? 1.015 : 1,
       }}
       transition={{
         type: "spring",
-        stiffness: 300,
-        damping: 20,
+        stiffness: 400,
+        damping: 25,
       }}
       style={{
         transformStyle: "preserve-3d",
-        perspective: "1000px",
+        perspective: "1200px",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
       }}
       className={`relative transition-shadow duration-300 ${
         isHovered ? "shadow-2xl z-20" : ""
       } ${className}`}
     >
-      <div style={{ transform: isHovered ? "translateZ(20px)" : "translateZ(0px)" }} className="transition-transform duration-300">
+      <div className="w-full h-full">
         {children}
       </div>
     </motion.div>
