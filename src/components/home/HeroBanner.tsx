@@ -166,7 +166,7 @@ export default function HeroBanner() {
             <div className="relative z-10 flex items-center justify-between">
               <div className="inline-flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-accent/40 text-[11px] font-bold text-accent shadow-md">
                 <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                <span>3D Isometric Building Telemetry</span>
+                <span>Real-Time Building Automation</span>
               </div>
               <span className="text-[10px] font-mono font-extrabold text-emerald-400 bg-slate-900/90 px-2.5 py-1 rounded-md border border-slate-800 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
@@ -179,15 +179,15 @@ export default function HeroBanner() {
               <div className="w-16 h-16 rounded-2xl bg-brand-900/90 border border-accent/40 flex items-center justify-center text-accent text-2xl mx-auto shadow-2xl shadow-accent/20 group-hover:scale-110 transition-transform duration-300">
                 <FaBuilding />
               </div>
-              <span className="block text-xs font-bold text-slate-200 uppercase tracking-widest mt-3">
-                Smart MEP Building Matrix
+              <span className="block text-xs font-extrabold text-white uppercase tracking-widest mt-3">
+                Integrated MEP Building Matrix
               </span>
-              <div className="flex items-center justify-center gap-3 text-[10px] font-semibold text-slate-400 mt-1">
-                <span className="text-sky-400">❄️ HVAC Airflow</span>
-                <span>•</span>
-                <span className="text-amber-400">⚡ Power Grid</span>
-                <span>•</span>
-                <span className="text-teal-400">🚰 Water Riser</span>
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[10px] font-semibold text-slate-300 mt-1.5">
+                <span className="text-sky-400 flex items-center gap-1">❄️ Central HVAC</span>
+                <span className="text-slate-600">•</span>
+                <span className="text-amber-400 flex items-center gap-1">⚡ LT/HT Power</span>
+                <span className="text-slate-600">•</span>
+                <span className="text-teal-400 flex items-center gap-1">🚰 Utility Pipelines</span>
               </div>
             </div>
 
@@ -198,11 +198,11 @@ export default function HeroBanner() {
                   <FaShieldAlt />
                 </div>
                 <div>
-                  <span className="block text-xs font-extrabold text-white">BNBC & NFPA 100%</span>
-                  <span className="block text-[10px] text-slate-400">Safety & Quality Guaranteed</span>
+                  <span className="block text-xs font-extrabold text-white">100% Code & Safety Compliant</span>
+                  <span className="block text-[10px] text-slate-400">BNBC, NFPA & ASHRAE Standards</span>
                 </div>
               </div>
-              <span className="text-xs font-bold text-accent">500+ Projects</span>
+              <span className="text-xs font-bold text-accent bg-accent/10 px-2.5 py-1 rounded-lg border border-accent/20">500+ Landmark Projects</span>
             </div>
           </motion.div>
         </div>
