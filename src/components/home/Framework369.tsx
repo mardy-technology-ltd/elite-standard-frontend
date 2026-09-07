@@ -15,12 +15,15 @@ import {
   FaTruck,
   FaArrowRight,
   FaChevronRight,
-  FaShieldVirus,
   FaStar,
+  FaLayerGroup,
+  FaProjectDiagram,
+  FaThLarge,
 } from "react-icons/fa";
 import { framework369Data, servicesData } from "@/lib/mockData";
 
 export default function Framework369() {
+  const [activeFrameworkTab, setActiveFrameworkTab] = useState<"solutions" | "actions" | "services">("solutions");
   const [activeCategory, setActiveCategory] = useState<"all" | "mechanical" | "electrical" | "plumbing">("all");
 
   const filteredServices = servicesData.filter(
@@ -67,7 +70,7 @@ export default function Framework369() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -100,210 +103,269 @@ export default function Framework369() {
           </motion.p>
         </div>
 
-        {/* --- PART 1: THE 3 INTEGRATED SOLUTIONS (MEP) --- */}
-        <div className="mb-20">
-          <div className="mb-8">
-            <span className="text-accent font-extrabold text-xs uppercase tracking-widest block mb-1">
-              Integrated Engineering Solutions
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-bold text-white">
-              Mechanical, Electrical & Plumbing (MEP) Pillars
-            </h3>
-          </div>
+        {/* --- MAIN INTERACTIVE FRAMEWORK TAB SWITCHER --- */}
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+          <button
+            onClick={() => setActiveFrameworkTab("solutions")}
+            className={`px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold transition-all duration-200 flex items-center gap-2.5 border ${
+              activeFrameworkTab === "solutions"
+                ? "bg-accent text-slate-950 border-accent shadow-lg shadow-accent/20 scale-105"
+                : "bg-slate-800/80 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            <FaLayerGroup className="text-sm" />
+            <span>3 Integrated Solutions</span>
+          </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {framework369Data.solutions.map((sol, idx) => (
-              <motion.div
-                key={sol.code}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="group relative bg-slate-800/80 backdrop-blur-xl border border-slate-700/60 rounded-2xl p-6 sm:p-8 hover:border-accent/60 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 w-28 h-28 bg-white/5 rounded-bl-full pointer-events-none group-hover:bg-accent/10 transition-colors" />
+          <button
+            onClick={() => setActiveFrameworkTab("actions")}
+            className={`px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold transition-all duration-200 flex items-center gap-2.5 border ${
+              activeFrameworkTab === "actions"
+                ? "bg-accent text-slate-950 border-accent shadow-lg shadow-accent/20 scale-105"
+                : "bg-slate-800/80 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            <FaProjectDiagram className="text-sm" />
+            <span>6 Core Execution Actions</span>
+          </button>
 
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-14 h-14 rounded-xl bg-slate-900/90 border border-slate-700 flex items-center justify-center shadow-inner">
-                    {getSolutionIcon(sol.icon)}
-                  </div>
-                  <span className="text-4xl font-black text-slate-700/80 group-hover:text-accent/40 transition-colors">
-                    {sol.code}
-                  </span>
-                </div>
+          <button
+            onClick={() => setActiveFrameworkTab("services")}
+            className={`px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold transition-all duration-200 flex items-center gap-2.5 border ${
+              activeFrameworkTab === "services"
+                ? "bg-accent text-slate-950 border-accent shadow-lg shadow-accent/20 scale-105"
+                : "bg-slate-800/80 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            <FaThLarge className="text-sm" />
+            <span>9 Flagship Services</span>
+          </button>
+        </div>
 
-                <h4 className="text-xl font-extrabold text-white mb-1 group-hover:text-accent transition-colors">
-                  {sol.title}
-                </h4>
-                <p className="text-xs text-slate-400 font-medium mb-4">{sol.subtitle}</p>
+        {/* --- TAB CONTENT PANELS --- */}
+        <AnimatePresence mode="wait">
+          {/* TAB 1: 3 INTEGRATED SOLUTIONS */}
+          {activeFrameworkTab === "solutions" && (
+            <motion.div
+              key="tab-solutions"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="mb-8 text-center max-w-xl mx-auto">
+                <span className="text-accent font-extrabold text-xs uppercase tracking-widest block mb-1">
+                  Integrated Engineering Pillars
+                </span>
+                <h3 className="text-2xl font-bold text-white">
+                  Mechanical, Electrical & Plumbing (MEP)
+                </h3>
+              </div>
 
-                <div className="mb-6">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-                    International Codes & Compliance:
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {sol.compliance.map((code) => (
-                      <span
-                        key={code}
-                        className="px-2.5 py-0.5 rounded-md bg-slate-900/90 text-slate-300 text-xs font-mono font-semibold border border-slate-700/80"
-                      >
-                        {code}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-700/50 flex items-center justify-between text-xs text-slate-400">
-                  <span className="font-semibold text-slate-300">{sol.servicesCount} Flagship Services</span>
-                  <Link
-                    href={`/services?category=${sol.categoryKey}`}
-                    className="inline-flex items-center gap-1.5 text-accent font-semibold hover:underline"
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                {framework369Data.solutions.map((sol, idx) => (
+                  <motion.div
+                    key={sol.code}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: idx * 0.1 }}
+                    className="group relative bg-slate-800/80 backdrop-blur-xl border border-slate-700/60 rounded-2xl p-6 sm:p-8 hover:border-accent/60 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
                   >
-                    Explore <FaChevronRight className="w-2.5 h-2.5" />
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+                    <div className="absolute top-0 right-0 w-28 h-28 bg-white/5 rounded-bl-full pointer-events-none group-hover:bg-accent/10 transition-colors" />
 
-        {/* --- PART 2: THE 6 CORE ACTIONS --- */}
-        <div className="mb-20">
-          <div className="mb-10">
-            <span className="text-accent font-extrabold text-xs uppercase tracking-widest block mb-1">
-              Core Execution Workflow
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-bold text-white">
-              End-to-End Engineering Execution
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              From concept blueprinting to long-term operational supply & maintenance
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-            {framework369Data.actions.map((act, idx) => (
-              <motion.div
-                key={act.step}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.08 }}
-                className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-4 sm:p-5 flex flex-col justify-between hover:bg-slate-800 hover:border-accent/50 transition-all duration-300 group"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="w-7 h-7 rounded-full bg-accent/20 text-accent font-bold text-xs flex items-center justify-center border border-accent/40">
-                      0{act.step}
-                    </span>
-                    <div className="p-2 rounded-lg bg-slate-900 border border-slate-700/80 group-hover:scale-110 transition-transform">
-                      {getActionIcon(act.icon)}
-                    </div>
-                  </div>
-                  <h4 className="text-base font-extrabold text-white mb-1 group-hover:text-accent transition-colors">
-                    {act.title}
-                  </h4>
-                  <p className="text-[11px] text-accent/80 font-semibold mb-2">{act.subtitle}</p>
-                  <p className="text-[11px] text-slate-400 leading-snug line-clamp-3 font-light">
-                    {act.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* --- PART 3: THE 9 FLAGSHIP SERVICES --- */}
-        <div>
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
-            <div>
-              <span className="text-accent font-extrabold text-xs uppercase tracking-widest block mb-1">
-                Flagship Service Portfolio
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-bold text-white">
-                Comprehensive Engineering Services
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                Each service covers Residential, Commercial, and Industrial sectors
-              </p>
-            </div>
-
-            {/* Category Tabs */}
-            <div className="flex flex-wrap gap-2 bg-slate-800/90 p-1.5 rounded-xl border border-slate-700">
-              {(
-                [
-                  { id: "all", label: "All Services (9)" },
-                  { id: "mechanical", label: "Mechanical (3)" },
-                  { id: "electrical", label: "Electrical (3)" },
-                  { id: "plumbing", label: "Plumbing (3)" },
-                ] as const
-              ).map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveCategory(tab.id)}
-                  className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
-                    activeCategory === tab.id
-                      ? "bg-accent text-slate-950 font-bold shadow-md"
-                      : "text-slate-300 hover:text-white hover:bg-slate-700/60"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence mode="popLayout">
-              {filteredServices.map((service, idx) => (
-                <motion.div
-                  key={service.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3, delay: idx * 0.05 }}
-                  className="bg-slate-800/80 border border-slate-700/70 rounded-2xl p-6 hover:border-accent/70 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-accent font-mono font-bold text-xs">
-                        {service.code}
-                      </span>
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-slate-900/90 text-slate-300 border border-slate-700">
-                        {service.category}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="w-14 h-14 rounded-xl bg-slate-900/90 border border-slate-700 flex items-center justify-center shadow-inner">
+                        {getSolutionIcon(sol.icon)}
+                      </div>
+                      <span className="text-4xl font-black text-slate-700/80 group-hover:text-accent/40 transition-colors">
+                        {sol.code}
                       </span>
                     </div>
 
-                    <h4 className="text-lg font-extrabold text-white mb-2 group-hover:text-accent transition-colors line-clamp-1">
-                      {service.title}
+                    <h4 className="text-xl font-extrabold text-white mb-1 group-hover:text-accent transition-colors">
+                      {sol.title}
                     </h4>
-                    <p className="text-xs text-slate-300 mb-4 line-clamp-2 leading-relaxed">
-                      {service.shortDescription}
-                    </p>
+                    <p className="text-xs text-slate-400 font-medium mb-4">{sol.subtitle}</p>
 
-                    <div className="flex flex-wrap gap-1.5 mb-6">
-                      {service.compliance.map((c) => (
-                        <span key={c} className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900/80 text-slate-400">
-                          {c}
-                        </span>
-                      ))}
+                    <div className="mb-6">
+                      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">
+                        International Codes & Compliance:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {sol.compliance.map((code) => (
+                          <span
+                            key={code}
+                            className="px-2.5 py-0.5 rounded-md bg-slate-900/90 text-slate-300 text-xs font-mono font-semibold border border-slate-700/80"
+                          >
+                            {code}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  <Link
-                    href={`/services/${service.slug}`}
-                    className="inline-flex items-center justify-between w-full pt-4 border-t border-slate-700/60 text-xs font-bold text-accent group-hover:text-white transition-colors"
+                    <div className="pt-4 border-t border-slate-700/50 flex items-center justify-between text-xs text-slate-400">
+                      <span className="font-semibold text-slate-300">{sol.servicesCount} Flagship Services</span>
+                      <Link
+                        href={`/services?category=${sol.categoryKey}`}
+                        className="inline-flex items-center gap-1.5 text-accent font-semibold hover:underline"
+                      >
+                        Explore <FaChevronRight className="w-2.5 h-2.5" />
+                      </Link>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* TAB 2: 6 CORE EXECUTION ACTIONS (WORKFLOW TIMELINE) */}
+          {activeFrameworkTab === "actions" && (
+            <motion.div
+              key="tab-actions"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="mb-8 text-center max-w-xl mx-auto">
+                <span className="text-accent font-extrabold text-xs uppercase tracking-widest block mb-1">
+                  Core Execution Workflow
+                </span>
+                <h3 className="text-2xl font-bold text-white">
+                  6-Stage Systematic Engineering Lifecycle
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {framework369Data.actions.map((act, idx) => (
+                  <motion.div
+                    key={act.step}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: idx * 0.08 }}
+                    className="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-6 hover:border-accent/60 transition-all duration-300 group flex flex-col justify-between"
                   >
-                    <span>View Service & Sectors</span>
-                    <FaArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="w-8 h-8 rounded-xl bg-accent/20 text-accent font-bold text-xs flex items-center justify-center border border-accent/40">
+                          0{act.step}
+                        </span>
+                        <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-700/80 group-hover:scale-110 transition-transform">
+                          {getActionIcon(act.icon)}
+                        </div>
+                      </div>
+
+                      <h4 className="text-lg font-extrabold text-white mb-1 group-hover:text-accent transition-colors">
+                        {act.title}
+                      </h4>
+                      <p className="text-xs text-accent/90 font-semibold mb-3">{act.subtitle}</p>
+                      <p className="text-xs text-slate-300 leading-relaxed font-light">
+                        {act.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* TAB 3: 9 FLAGSHIP SERVICES */}
+          {activeFrameworkTab === "services" && (
+            <motion.div
+              key="tab-services"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                  <span className="text-accent font-extrabold text-xs uppercase tracking-widest block mb-1">
+                    Flagship Service Portfolio
+                  </span>
+                  <h3 className="text-2xl font-bold text-white">
+                    9 Specialized Electro-Mechanical Services
+                  </h3>
+                </div>
+
+                {/* Category Sub-Tabs */}
+                <div className="flex flex-wrap gap-1.5 bg-slate-800/90 p-1.5 rounded-xl border border-slate-700">
+                  {(
+                    [
+                      { id: "all", label: "All (9)" },
+                      { id: "mechanical", label: "Mechanical (3)" },
+                      { id: "electrical", label: "Electrical (3)" },
+                      { id: "plumbing", label: "Plumbing (3)" },
+                    ] as const
+                  ).map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveCategory(tab.id)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                        activeCategory === tab.id
+                          ? "bg-accent text-slate-950 font-bold shadow-md"
+                          : "text-slate-300 hover:text-white hover:bg-slate-700/60"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Services Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <AnimatePresence mode="popLayout">
+                  {filteredServices.map((service, idx) => (
+                    <motion.div
+                      key={service.id}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3, delay: idx * 0.05 }}
+                      className="bg-slate-800/80 border border-slate-700/70 rounded-2xl p-6 hover:border-accent/70 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-accent font-mono font-bold text-xs">
+                            {service.code}
+                          </span>
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-slate-900/90 text-slate-300 border border-slate-700">
+                            {service.category}
+                          </span>
+                        </div>
+
+                        <h4 className="text-lg font-extrabold text-white mb-2 group-hover:text-accent transition-colors line-clamp-1">
+                          {service.title}
+                        </h4>
+                        <p className="text-xs text-slate-300 mb-4 line-clamp-2 leading-relaxed">
+                          {service.shortDescription}
+                        </p>
+
+                        <div className="flex flex-wrap gap-1.5 mb-6">
+                          {service.compliance.map((c) => (
+                            <span key={c} className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900/80 text-slate-400">
+                              {c}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <Link
+                        href={`/services/${service.slug}`}
+                        className="inline-flex items-center justify-between w-full pt-4 border-t border-slate-700/60 text-xs font-bold text-accent group-hover:text-white transition-colors"
+                      >
+                        <span>View Service & Sectors</span>
+                        <FaArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
