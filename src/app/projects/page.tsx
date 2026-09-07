@@ -119,17 +119,19 @@ export default function ProjectsPage() {
 
   const filteredProjects = projectsData.filter((project) => {
     if (selectedFilter === "All") return true;
-    if (selectedFilter === "Infrastructure") return project.category.includes("Infrastructure");
-    if (selectedFilter === "HVAC & Cleanroom") return project.category.includes("HVAC");
-    if (selectedFilter === "Power Distribution") return project.category.includes("Power");
-    if (selectedFilter === "Fire Protection") return project.category.includes("Fire");
+    if (selectedFilter === "Infrastructure") return project.category.toLowerCase().includes("infra");
+    if (selectedFilter === "HVAC & Cleanroom") return project.category.toLowerCase().includes("hvac") || project.category.toLowerCase().includes("cleanroom");
+    if (selectedFilter === "Power Distribution") return project.category.toLowerCase().includes("power") || project.category.toLowerCase().includes("automation");
+    if (selectedFilter === "Fire Protection") return project.category.toLowerCase().includes("fire");
     return true;
   });
 
   // Extract Dhaka Metro Rail as main showcase project
   const metroRailProject = projectsData.find((p) => p.slug === "dhaka-metro-rail-mep");
-  // The rest of the projects
-  const standardProjects = filteredProjects.filter((p) => p.slug !== "dhaka-metro-rail-mep");
+  // Include metro rail in standard projects grid when a specific filter is selected so grid is never empty
+  const standardProjects = selectedFilter === "All"
+    ? filteredProjects.filter((p) => p.slug !== "dhaka-metro-rail-mep")
+    : filteredProjects;
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-800 pb-24">
