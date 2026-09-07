@@ -112,6 +112,7 @@ const clientReferences = [
 
 export default function ProjectsPage() {
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [activeMetroImage, setActiveMetroImage] = useState<string>("/images/projects/metro-rail/IBAESL.png");
 
   // Filter Categories list
   const categories = ["All", "Infrastructure", "HVAC & Cleanroom", "Power Distribution", "Fire Protection"];
@@ -165,21 +166,66 @@ export default function ProjectsPage() {
             transition={{ duration: 0.6 }}
             className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-0"
           >
-            {/* Project Image */}
-            <div
-              className="lg:col-span-6 min-h-[300px] lg:min-h-[480px] bg-cover bg-center relative"
-              style={{
-                backgroundImage: `url('${metroRailProject.image}')`,
-              }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-950/85 via-brand-950/30 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 text-white flex flex-col gap-2">
-                <span className="w-fit text-[10px] font-extrabold uppercase tracking-widest text-brand-950 bg-accent px-3 py-1.5 rounded-md">
+            {/* Project Image & Gallery Switcher */}
+            <div className="lg:col-span-6 min-h-[340px] lg:min-h-[500px] flex flex-col justify-between p-6 relative overflow-hidden bg-slate-900">
+              {/* Background preview image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-all duration-500 transform hover:scale-105"
+                style={{
+                  backgroundImage: `url('${activeMetroImage}')`,
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-950/95 via-brand-950/40 to-black/30" />
+
+              {/* Top Category Badge */}
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-brand-950 bg-accent px-3 py-1.5 rounded-md shadow-md">
                   Landmark National Infrastructure
                 </span>
-                <h2 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight">
-                  Dhaka Metro Rail DMRTDP Line 6
-                </h2>
+                <span className="text-[10px] font-bold text-white bg-slate-900/80 px-2.5 py-1 rounded-md border border-white/20 backdrop-blur-md">
+                  Real Project Site Photos (ESL)
+                </span>
+              </div>
+
+              {/* Bottom Info & Thumbnail Gallery Selector */}
+              <div className="relative z-10 flex flex-col gap-3">
+                <div>
+                  <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-white tracking-tight drop-shadow-md">
+                    Dhaka Metro Rail DMRTDP Line 6
+                  </h2>
+                  <p className="text-xs text-slate-300 font-medium">CP-3 & CP-4 Station Infrastructure & Depots</p>
+                </div>
+
+                {/* Interactive Thumbnails (IBA & RHS) */}
+                {metroRailProject.gallery && (
+                  <div className="pt-2 border-t border-white/15">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-accent block mb-2">
+                      Click to View Field Site Photos (IBA & RHS):
+                    </span>
+                    <div className="grid grid-cols-6 gap-2">
+                      {metroRailProject.gallery.map((item, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setActiveMetroImage(item.image)}
+                          className={`relative rounded-lg overflow-hidden border-2 h-12 transition-all duration-200 ${
+                            activeMetroImage === item.image
+                              ? "border-accent scale-105 shadow-lg shadow-accent/30 ring-2 ring-accent/40"
+                              : "border-white/30 opacity-70 hover:opacity-100 hover:border-white"
+                          }`}
+                        >
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute bottom-0 inset-x-0 bg-brand-950/80 text-[8px] text-white font-bold text-center py-0.5 uppercase truncate">
+                            {item.category} {idx % 3 + 1}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

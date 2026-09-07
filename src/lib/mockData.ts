@@ -87,6 +87,7 @@ export interface ProjectItem {
   completionDate: string;
   description: string;
   image: string;
+  gallery?: { title: string; image: string; category: string }[];
   scope: string[];
 }
 
@@ -1419,12 +1420,20 @@ export const projectsData: ProjectItem[] = [
     client: "Dhaka Mass Transit Company Limited (DMTC)",
     location: "Dhaka, Bangladesh",
     completionDate: "June 2026",
-    description: "Design, instrumentation, utility management, and Rainwater Harvesting Systems (RHS) installation for station infrastructure and depots.",
-    image: "https://images.unsplash.com/photo-1542013936693-884638332954?q=80&w=800&auto=format&fit=crop",
+    description: "Design, instrumentation, utility management, and Rainwater Harvesting Systems (RHS) installation for station infrastructure and depots across CP-3 and CP-4.",
+    image: "/images/projects/metro-rail/IBAESL.png",
+    gallery: [
+      { title: "Building Automation & Instrumentation (IBA 1)", image: "/images/projects/metro-rail/IBAESL.png", category: "IBA" },
+      { title: "IBA Control Panel & Field Instrumentation (IBA 2)", image: "/images/projects/metro-rail/IBA 2 ESL.png", category: "IBA" },
+      { title: "IBA Substation & Depot Control (IBA 3)", image: "/images/projects/metro-rail/IBA 3ESL.png", category: "IBA" },
+      { title: "Rainwater Harvesting System Network (RHS 1)", image: "/images/projects/metro-rail/RHSESL.png", category: "RHS" },
+      { title: "RHS Pumping Station & Underground Piping (RHS 2)", image: "/images/projects/metro-rail/RHS 2ESL.png", category: "RHS" },
+      { title: "RHS Filtration & Storage Installation (RHS 3)", image: "/images/projects/metro-rail/RHS 3ESL.png", category: "RHS" },
+    ],
     scope: [
       "Building Automation & Instrumentation (IBA Designing)",
       "Station Rainwater Harvesting Systems (RHS Servicing)",
-      "High-pressure utility drainage integration"
+      "High-pressure utility drainage & depot integration"
     ]
   },
   {
