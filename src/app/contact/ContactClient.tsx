@@ -471,15 +471,15 @@ export default function ContactClient() {
               <div className="px-4 py-3 flex items-center gap-2 border-b border-slate-100 mb-3.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-accent" />
                 <h3 className="font-heading font-extrabold text-xs sm:text-sm text-brand-950 uppercase tracking-wider">
-                  Amtola HQ Map View
+                  Head Office Map View
                 </h3>
               </div>
 
               {/* Embedded Interactive Iframe */}
               <div className="w-full h-[320px] sm:h-[400px] rounded-2xl overflow-hidden border border-slate-200 relative shadow-inner">
                 <iframe
-                  title="Elite Standard Limited headquarters map locator"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.053150534241!2d90.388835!3d23.816694!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c71167b07ef9%3A0x6cfab0c8b05cf14e!2sAmtola%2C+Dhaka+1216!5e0!3m2!1sen!2sbd!4v1680000000000!5m2!1sen!2sbd"
+                  title="Elite Standard Limited head office map locator"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.1098679058694!2d90.36557067602419!3d23.783851288289457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c10060269aab%3A0xd3a19e7a429e98f2!2sElite%20Standard%20Limited!5e0!3m2!1sen!2sbd!4v1710000000000!5m2!1sen!2sbd"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

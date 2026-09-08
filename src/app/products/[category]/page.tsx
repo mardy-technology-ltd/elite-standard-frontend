@@ -1,7 +1,14 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { catalogDataList } from "@/lib/mockData";
-import { FaFileInvoiceDollar } from "react-icons/fa";
+import {
+  FaWater,
+  FaCheckCircle,
+  FaArrowRight,
+  FaFileInvoiceDollar,
+  FaBoxes,
+  FaTachometerAlt,
+} from "react-icons/fa";
 
 export function generateStaticParams() {
   return catalogDataList.map((cat) => ({
@@ -17,55 +24,108 @@ export default function CatalogPage({ params }: { params: { category: string } }
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-8 pb-16">
+    <div className="min-h-screen bg-slate-50/60 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-brand-950 mb-4">{catalog.title}</h1>
-          <p className="text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Elite Standard Limited will promote and sell your water purification solutions through our official website and physical marketing channels and you will provide us with a special reseller price for all confirmed orders.
-          </p>
+        {/* Modern Glassmorphic Hero Banner */}
+        <div className="bg-brand-950 text-white rounded-3xl p-8 sm:p-12 mb-12 relative overflow-hidden shadow-2xl border border-brand-900">
+          {/* Subtle background glow & grid decorative overlays */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-brand-800/40 rounded-full blur-2xl pointer-events-none" />
+          
+          <div className="relative z-10 max-w-3xl flex flex-col gap-4">
+            <div className="inline-flex items-center gap-2 bg-brand-900/90 border border-brand-800 px-3.5 py-1.5 rounded-full text-xs font-bold text-accent uppercase tracking-widest w-fit shadow-sm">
+              <FaWater className="text-xs text-accent" />
+              <span>Engineering Product Catalog</span>
+            </div>
+            
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+              {catalog.title}
+            </h1>
+            
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Explore full technical package specifications, capacity ranges, and custom engineering options delivered by Elite Standard Limited.
+            </p>
+          </div>
         </div>
 
-        {/* Pricing Tables */}
-        <div className="space-y-12">
+        {/* Modern Product Catalog Cards & Tables */}
+        <div className="space-y-10">
           {catalog.categories.map((cat, idx) => (
-            <div key={idx} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              {/* Category Header */}
-              <div className="bg-[#5eaee5] px-6 py-4 border-b border-[#3081b7]">
-                <h2 className="text-lg font-bold text-white uppercase tracking-wider">{cat.title}</h2>
+            <div
+              key={idx}
+              className="bg-white rounded-3xl shadow-xl border border-slate-200/90 overflow-hidden transition-all duration-300 hover:shadow-2xl"
+            >
+              {/* Category Header Bar */}
+              <div className="bg-gradient-to-r from-brand-950 via-brand-900 to-slate-900 px-6 sm:px-8 py-5 border-b border-brand-800/60 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent text-lg shadow-inner">
+                    <FaBoxes />
+                  </div>
+                  <div>
+                    <h2 className="font-heading text-lg sm:text-xl font-bold text-white uppercase tracking-wide">
+                      {cat.title}
+                    </h2>
+                    <span className="text-xs text-slate-400 font-medium">
+                      Technical Specs & Capacity Options
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-brand-900/80 px-3.5 py-1.5 rounded-full border border-brand-800 text-xs font-bold text-accent uppercase tracking-wider">
+                  {cat.packages.length} Packages Available
+                </div>
               </div>
-              
-              {/* Table */}
+
+              {/* Modern Table */}
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[700px]">
+                <table className="w-full text-left border-collapse min-w-[650px]">
                   <thead>
-                    <tr className="bg-slate-100 text-brand-950 text-[13px] uppercase tracking-wider">
-                      <th className="px-6 py-4 border-b border-r border-slate-300 font-extrabold w-32">Packages</th>
-                      <th className="px-6 py-4 border-b border-r border-slate-300 font-extrabold">Quantity</th>
-                      <th className="px-6 py-4 border-b border-r border-slate-300 font-extrabold">Ranges</th>
-                      <th className="px-6 py-4 border-b border-r border-slate-300 font-extrabold w-48 text-center bg-slate-50">Vendor Price/unit</th>
-                      <th className="px-6 py-4 border-b border-slate-300 font-extrabold w-48 text-center bg-slate-50">Re-selling Price/unit</th>
+                    <tr className="bg-slate-100/90 text-brand-950 text-xs uppercase tracking-wider font-extrabold border-b border-slate-200">
+                      <th className="px-6 py-4 w-40">Package Tier</th>
+                      <th className="px-6 py-4 w-52">Flow Rate / Capacity</th>
+                      <th className="px-6 py-4">Application & Scope Range</th>
+                      <th className="px-6 py-4 text-right w-44">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="text-sm">
+                  <tbody className="divide-y divide-slate-100 text-sm">
                     {cat.packages.map((pkg, pIdx) => (
-                      <tr key={pIdx} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4 border-b border-r border-slate-300 font-semibold text-brand-800 bg-white">
-                          {pkg.level}
+                      <tr
+                        key={pIdx}
+                        className="hover:bg-slate-50/80 transition-colors duration-200 group"
+                      >
+                        {/* Package Tier Badge */}
+                        <td className="px-6 py-5">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-950 text-accent font-extrabold text-xs tracking-wide shadow-sm border border-brand-900">
+                            {pkg.level}
+                          </span>
                         </td>
-                        <td className="px-6 py-4 border-b border-r border-slate-300 font-medium text-slate-700 bg-white">
-                          {pkg.quantity}
+
+                        {/* Quantity / Flow Rate */}
+                        <td className="px-6 py-5">
+                          <div className="flex items-center gap-2 font-heading font-extrabold text-brand-950 text-sm">
+                            <FaTachometerAlt className="text-slate-400 text-xs group-hover:text-accent transition-colors" />
+                            <span>{pkg.quantity}</span>
+                          </div>
                         </td>
-                        <td className="px-6 py-4 border-b border-r border-slate-300 text-slate-600 bg-white">
-                          {pkg.range}
+
+                        {/* Description / Scope Range */}
+                        <td className="px-6 py-5">
+                          <div className="flex items-center gap-2 text-slate-700 text-xs sm:text-sm font-medium">
+                            <FaCheckCircle className="text-emerald-500 text-xs shrink-0" />
+                            <span>{pkg.range}</span>
+                          </div>
                         </td>
-                        <td className="px-6 py-4 border-b border-r border-slate-300 text-center text-slate-400 font-mono text-xs bg-white">
-                          {pkg.vendorPrice || "---"}
-                        </td>
-                        <td className="px-6 py-4 border-b border-slate-300 text-center text-slate-400 font-mono text-xs bg-white">
-                          {pkg.resellingPrice || "---"}
+
+                        {/* Action CTA Link */}
+                        <td className="px-6 py-5 text-right">
+                          <a
+                            href="/contact?type=quote"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-brand-950 hover:text-white font-bold text-xs transition-all duration-200 group/btn shadow-sm"
+                          >
+                            <span>Get Quote</span>
+                            <FaArrowRight className="text-[10px] text-slate-400 group-hover/btn:text-accent group-hover/btn:translate-x-0.5 transition-all" />
+                          </a>
                         </td>
                       </tr>
                     ))}
@@ -76,20 +136,28 @@ export default function CatalogPage({ params }: { params: { category: string } }
           ))}
         </div>
 
-        {/* Footer Note */}
-        <div className="mt-12 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#5eaee5]/20 rounded-full flex items-center justify-center shrink-0">
-              <FaFileInvoiceDollar className="text-[#3081b7] text-xl" />
+        {/* Modern Footer Quote Card */}
+        <div className="mt-14 bg-white p-8 sm:p-10 rounded-3xl border border-slate-200/90 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+          <div className="flex items-center gap-5">
+            <div className="w-14 h-14 rounded-2xl bg-brand-950 text-accent flex items-center justify-center shrink-0 shadow-lg border border-brand-900">
+              <FaFileInvoiceDollar className="text-2xl" />
             </div>
-            <div>
-              <h3 className="font-bold text-brand-950">Partnership Inquiry</h3>
-              <p className="text-xs text-slate-500 mt-1">Please contact us to negotiate or update vendor pricing terms.</p>
+            <div className="flex flex-col gap-1">
+              <h3 className="font-heading font-extrabold text-brand-950 text-lg">
+                Custom Engineering & Turnkey BOQ Quotes
+              </h3>
+              <p className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-xl">
+                Need customized plant capacity calculations, commercial BOQs, or industrial water treatment system schematics? Consult with our engineering team.
+              </p>
             </div>
           </div>
-          <button className="px-6 py-2.5 bg-brand-900 hover:bg-brand-800 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
-            Contact Sales Team
-          </button>
+          <a
+            href="/contact?type=quote"
+            className="inline-flex items-center gap-2 px-7 py-3.5 bg-brand-950 hover:bg-brand-900 text-white font-heading font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-2xl transition-all duration-300 shadow-xl hover:shadow-brand-950/20 shrink-0 border border-brand-900 group"
+          >
+            <span>Request Custom BOQ</span>
+            <FaArrowRight className="text-xs text-accent group-hover:translate-x-1 transition-transform" />
+          </a>
         </div>
 
       </div>
