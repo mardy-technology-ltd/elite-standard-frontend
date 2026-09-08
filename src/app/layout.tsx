@@ -4,6 +4,7 @@ import "./globals.css";
 import TopBar from "@/components/layout/TopBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import FloatingSocials from "@/components/layout/FloatingSocials";
 import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
@@ -54,6 +55,7 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-grow">{children}</main>
         <Footer />
+        <FloatingSocials />
         <Analytics />
       </body>
     </html>
