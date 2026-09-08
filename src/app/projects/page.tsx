@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaMapMarkerAlt,
@@ -124,10 +124,23 @@ const clientReferences = [
 ];
 
 export default function ProjectsPage() {
-  const [activeMetroImage, setActiveMetroImage] = useState<string>("/images/projects/metro-rail/IBAESL.png");
+  const [activeIdx, setActiveIdx] = useState<number>(0);
 
   // Extract Dhaka Metro Rail as main showcase project
   const metroRailProject = projectsData.find((p) => p.slug === "dhaka-metro-rail-mep");
+
+  // Automatic slideshow timer (3.5 seconds)
+  useEffect(() => {
+    if (!metroRailProject?.gallery || metroRailProject.gallery.length === 0) return;
+    const interval = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % (metroRailProject.gallery?.length || 1));
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [metroRailProject]);
+
+  const activeMetroImage =
+    metroRailProject?.gallery?.[activeIdx]?.image || "/images/projects/metro-rail/IBAESL.png";
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-800 pb-24">
@@ -166,14 +179,21 @@ export default function ProjectsPage() {
           >
             {/* Project Image & Gallery Switcher */}
             <div className="lg:col-span-6 min-h-[340px] lg:min-h-[500px] flex flex-col justify-between p-6 relative overflow-hidden bg-slate-900">
-              {/* Background preview image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-all duration-500 transform hover:scale-105"
-                style={{
-                  backgroundImage: `url('${activeMetroImage}')`,
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-950/95 via-brand-950/40 to-black/30" />
+              {/* Animated Background preview image */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeMetroImage}
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url('${activeMetroImage}')`,
+                  }}
+                />
+              </AnimatePresence>
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-950/95 via-brand-950/40 to-black/30 pointer-events-none" />
 
               {/* Top Category Badge */}
               <div className="relative z-10 flex items-center justify-between">
@@ -195,15 +215,15 @@ export default function ProjectsPage() {
                 {metroRailProject.gallery && (
                   <div className="pt-2 border-t border-white/15">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-accent block mb-2">
-                      Click to View Field Site Photos (IBA & RHS):
+                      Auto-Sliding Field Site Photos (IBA & RHS):
                     </span>
                     <div className="grid grid-cols-6 gap-2">
                       {metroRailProject.gallery.map((item, idx) => (
                         <button
                           key={idx}
-                          onClick={() => setActiveMetroImage(item.image)}
+                          onClick={() => setActiveIdx(idx)}
                           className={`relative rounded-lg overflow-hidden border-2 h-12 transition-all duration-200 ${
-                            activeMetroImage === item.image
+                            activeIdx === idx
                               ? "border-accent scale-105 shadow-lg shadow-accent/30 ring-2 ring-accent/40"
                               : "border-white/30 opacity-70 hover:opacity-100 hover:border-white"
                           }`}
