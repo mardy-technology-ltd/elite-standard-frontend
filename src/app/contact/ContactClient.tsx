@@ -149,11 +149,11 @@ export default function ContactClient() {
             <div className="flex flex-col gap-1.5">
               <h3 className="font-heading font-extrabold text-brand-950 text-base">Business Hours</h3>
               <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                Sunday – Thursday:<br />
+                Saturday – Thursday:<br />
                 <span className="font-semibold text-brand-950">9:00 AM – 6:00 PM</span>
               </p>
               <span className="text-slate-400 text-[10px] sm:text-xs font-semibold block mt-1">
-                Friday & Saturday &bull; Closed
+                Friday &bull; Closed
               </span>
             </div>
           </motion.div>

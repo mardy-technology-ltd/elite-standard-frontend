@@ -25,7 +25,7 @@ export default function TopBar() {
 
           <div className="hidden lg:flex items-center gap-2 text-slate-400">
             <FaClock className="text-slate-400 text-[11px]" />
-            <span>Sun - Thu: 9:00 AM - 6:00 PM</span>
+            <span>Sat - Thu: 9:00 AM - 6:00 PM</span>
           </div>
 
           <div className="hidden xl:flex items-center gap-2 text-slate-400">
