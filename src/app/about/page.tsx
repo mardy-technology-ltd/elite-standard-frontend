@@ -3,7 +3,6 @@ import { Metadata } from "next";
 import AboutHero from "@/components/about/AboutHero";
 import CompanyStory from "@/components/about/CompanyStory";
 import CoreValues from "@/components/about/CoreValues";
-import CompanyTimeline from "@/components/about/CompanyTimeline";
 import LeadershipTeam from "@/components/about/LeadershipTeam";
 import CorporateStructure from "@/components/about/CorporateStructure";
 import Accreditations from "@/components/about/Accreditations";
@@ -33,9 +32,6 @@ export default function AboutPage() {
 
       {/* 3. Core Corporate Values */}
       <CoreValues />
-
-      {/* 4. Growth Milestone Timeline */}
-      <CompanyTimeline />
 
       {/* 5. Executive Leadership Team */}
       <LeadershipTeam />

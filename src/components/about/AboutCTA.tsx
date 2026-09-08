@@ -27,15 +27,15 @@ export default function AboutCTA() {
               Consult with our senior engineering directors for turnkey MEP design, cleanroom HVAC, and industrial power distribution solutions.
             </p>
 
-            <div className="pt-2 flex flex-wrap items-center gap-6 text-xs text-slate-400">
-              <div className="flex items-center gap-2">
+            <div className="pt-2 flex flex-wrap items-center gap-6 text-xs text-slate-300">
+              <a href="tel:+8801313663311" className="flex items-center gap-2 hover:text-accent transition-colors">
                 <FaPhoneAlt className="text-accent" />
-                <span>Sales Hotline: +880 1700-000000</span>
-              </div>
-              <div className="flex items-center gap-2">
+                <span>Hotline: +880 1313-663311</span>
+              </a>
+              <a href="mailto:elitestandardlimited@gmail.com" className="flex items-center gap-2 hover:text-accent transition-colors">
                 <FaEnvelope className="text-accent" />
-                <span>info@elitestandard.com</span>
-              </div>
+                <span>elitestandardlimited@gmail.com</span>
+              </a>
             </div>
           </div>
 

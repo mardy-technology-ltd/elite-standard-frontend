@@ -26,11 +26,11 @@ export default function CompanyStory() {
             </div>
 
             <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-brand-950 tracking-tight leading-tight">
-              Pioneering <span className="text-gradient">MEP & Industrial Engineering</span> Solutions Since 2012
+              Pioneering <span className="text-gradient">MEP & Industrial Engineering</span> Solutions
             </h2>
 
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed font-normal">
-              Founded over a decade ago, Elite Standard Limited has evolved into a leading MEP contractor and industrial machinery integrator in Bangladesh. We combine rigorous mathematical modeling, international safety standards (NFPA, BNBC, SMACNA), and turnkey field execution.
+              Elite Standard Limited is a leading MEP contractor and industrial machinery integrator in Bangladesh. We combine rigorous mathematical modeling, international safety standards (NFPA, BNBC, SMACNA), and turnkey field execution.
             </p>
 
             {/* Mission & Vision Cards */}
@@ -55,25 +55,9 @@ export default function CompanyStory() {
                 </p>
               </div>
             </div>
-
-            {/* Key Statistics */}
-            <div className="pt-6 border-t border-slate-100 grid grid-cols-3 gap-4 text-center sm:text-left">
-              <div>
-                <span className="font-heading font-extrabold text-3xl sm:text-4xl text-brand-900 block">14+</span>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Years of Mastery</span>
-              </div>
-              <div>
-                <span className="font-heading font-extrabold text-3xl sm:text-4xl text-accent block">250+</span>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Turnkey Projects</span>
-              </div>
-              <div>
-                <span className="font-heading font-extrabold text-3xl sm:text-4xl text-brand-900 block">85+</span>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Certified Engineers</span>
-              </div>
-            </div>
           </motion.div>
 
-          {/* Right Column: High-Res Image & Overlay Card */}
+          {/* Right Column: High-Res Image */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -90,17 +74,6 @@ export default function CompanyStory() {
                 sizes="(max-width: 1024px) 100vw, 40vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-transparent" />
-            </div>
-
-            {/* Floating Badge */}
-            <div className="absolute -bottom-6 -left-6 bg-white p-5 rounded-2xl shadow-xl border border-slate-200 max-w-xs hidden sm:flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-brand-900 text-accent flex items-center justify-center shrink-0">
-                <FaHistory className="text-xl" />
-              </div>
-              <div>
-                <span className="font-extrabold text-sm text-brand-950 block">Established 2012</span>
-                <span className="text-xs text-slate-500">Banani, Dhaka, Bangladesh</span>
-              </div>
             </div>
           </motion.div>
         </div>
