@@ -25,10 +25,10 @@ import { framework369Data, servicesData } from "@/lib/mockData";
 
 export default function Framework369() {
   const [activeFrameworkTab, setActiveFrameworkTab] = useState<"solutions" | "actions" | "services">("solutions");
-  const [activeCategory, setActiveCategory] = useState<"all" | "mechanical" | "electrical" | "plumbing">("all");
+  const [activeCategory, setActiveCategory] = useState<"mechanical" | "electrical" | "plumbing">("mechanical");
 
   const filteredServices = servicesData.filter(
-    (service) => activeCategory === "all" || service.category === activeCategory
+    (service) => service.category === activeCategory
   );
 
   const getSolutionIcon = (iconName: string) => {
@@ -331,10 +331,9 @@ export default function Framework369() {
                   </h3>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 bg-slate-800/90 p-1.5 rounded-xl border border-slate-700">
+                <div className="flex flex-wrap gap-1.5 bg-slate-800/90 p-1.5 rounded-xl border border-slate-700 relative">
                   {(
                     [
-                      { id: "all", label: "All (9)" },
                       { id: "mechanical", label: "Mechanical (3)" },
                       { id: "electrical", label: "Electrical (3)" },
                       { id: "plumbing", label: "Plumbing (3)" },
@@ -343,28 +342,42 @@ export default function Framework369() {
                     <button
                       key={tab.id}
                       onClick={() => setActiveCategory(tab.id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                      className={`relative px-4 py-2 rounded-lg text-xs font-bold transition-colors duration-200 ${
                         activeCategory === tab.id
-                          ? "bg-accent text-slate-950 font-bold shadow-md"
-                          : "text-slate-300 hover:text-white hover:bg-slate-700/60"
+                          ? "text-slate-950"
+                          : "text-slate-300 hover:text-white"
                       }`}
                     >
-                      {tab.label}
+                      {activeCategory === tab.id && (
+                        <motion.span
+                          layoutId="categoryActivePill"
+                          transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                          className="absolute inset-0 bg-accent rounded-lg shadow-md -z-0"
+                        />
+                      )}
+                      <span className="relative z-10">{tab.label}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <motion.div
+                key={activeCategory}
+                initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
                 <AnimatePresence mode="popLayout">
                   {filteredServices.map((service, idx) => (
                     <ThreeDCard key={service.id} maxTilt={6} className="h-full">
                       <motion.div
                         layout
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.3, delay: idx * 0.05 }}
+                        initial={{ opacity: 0, y: 25, scale: 0.92 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -20, scale: 0.92 }}
+                        transition={{ duration: 0.35, delay: idx * 0.08, ease: "easeOut" }}
                         className="h-full bg-slate-800/95 border border-slate-700/80 rounded-3xl p-6 hover:border-slate-600 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
                       >
                         <div>
@@ -404,7 +417,7 @@ export default function Framework369() {
                     </ThreeDCard>
                   ))}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
