@@ -21,6 +21,7 @@ import {
   FaHeartbeat,
   FaNetworkWired,
 } from "react-icons/fa";
+import Image from "next/image";
 import { projectsData, ProjectItem } from "@/lib/mockData";
 
 const clientReferences = [
@@ -30,7 +31,7 @@ const clientReferences = [
     monogram: "PI",
     icon: FaNetworkWired,
     bgColor: "bg-blue-50 text-blue-600 border-blue-100",
-    logo: "/images/partners/Projukti-International-Logo1.jpeg",
+    logo: "/images/clients/projukti-international.jpeg",
   },
   {
     name: "Padma Bank Limited",
@@ -38,7 +39,7 @@ const clientReferences = [
     monogram: "PBL",
     icon: FaUniversity,
     bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100",
-    logo: "/images/partners/Padma-Bank-Limited-logo.png",
+    logo: "/images/clients/padma-bank.webp",
   },
   {
     name: "IFIC Bank Limited",
@@ -46,7 +47,7 @@ const clientReferences = [
     monogram: "IFIC",
     icon: FaUniversity,
     bgColor: "bg-cyan-50 text-cyan-600 border-cyan-100",
-    logo: "/images/partners/IFIC-Bank-Limited-Logo.png",
+    logo: "/images/clients/ific-bank.jpg",
   },
   {
     name: "Bank Asia Limited",
@@ -54,7 +55,7 @@ const clientReferences = [
     monogram: "BAL",
     icon: FaUniversity,
     bgColor: "bg-indigo-50 text-indigo-600 border-indigo-100",
-    logo: "/images/partners/bank_asia_logo-2.png",
+    logo: "/images/clients/bank-asia.jpg",
   },
   {
     name: "Aarong (BRAC Enterprise)",
@@ -62,7 +63,7 @@ const clientReferences = [
     monogram: "AAR",
     icon: FaShoppingBag,
     bgColor: "bg-amber-50 text-amber-700 border-amber-100",
-    logo: "/images/partners/aarong-logo.png",
+    logo: "/images/clients/aarong.jpg",
   },
   {
     name: "Sky Air",
@@ -70,7 +71,7 @@ const clientReferences = [
     monogram: "SA",
     icon: FaPlane,
     bgColor: "bg-sky-50 text-sky-600 border-sky-100",
-    logo: "/images/partners/Sky-Air.png",
+    logo: "/images/clients/sky-air.jpg",
   },
   {
     name: "Sonargaon University",
@@ -78,7 +79,7 @@ const clientReferences = [
     monogram: "SU",
     icon: FaGraduationCap,
     bgColor: "bg-violet-50 text-violet-600 border-violet-100",
-    logo: "/images/partners/Sonargaon-University-logo2.png",
+    logo: "/images/clients/sonargaon-university.png",
   },
   {
     name: "Dhaka College",
@@ -86,7 +87,7 @@ const clientReferences = [
     monogram: "DC",
     icon: FaGraduationCap,
     bgColor: "bg-rose-50 text-rose-600 border-rose-100",
-    logo: "/images/partners/dhaka-college-logo-png.png",
+    logo: "/images/clients/dhaka-college.webp",
   },
   {
     name: "MIST (Military Institute of Science and Technology)",
@@ -94,7 +95,7 @@ const clientReferences = [
     monogram: "MIST",
     icon: FaShieldAlt,
     bgColor: "bg-lime-50 text-lime-700 border-lime-200",
-    logo: "/images/partners/MIST-(Military-Institute-of-Science-and-Technology).png",
+    logo: "/images/clients/mist.jpg",
   },
   {
     name: "Mansons Pharma",
@@ -102,7 +103,7 @@ const clientReferences = [
     monogram: "MP",
     icon: FaCapsules,
     bgColor: "bg-teal-50 text-teal-600 border-teal-100",
-    logo: "/images/partners/Mansons-Pharma-Logo.png",
+    logo: "/images/clients/mansons-pharma.png",
   },
   {
     name: "Biotech Associates",
@@ -110,7 +111,7 @@ const clientReferences = [
     monogram: "BA",
     icon: FaDna,
     bgColor: "bg-purple-50 text-purple-600 border-purple-100",
-    logo: "/images/partners/Biotech-Associates-logo.png",
+    logo: "/images/clients/biotech-associates.jpg",
   },
   {
     name: "Global Health BD",
@@ -118,29 +119,32 @@ const clientReferences = [
     monogram: "GH",
     icon: FaHeartbeat,
     bgColor: "bg-red-50 text-red-600 border-red-100",
-    logo: "/images/partners/Global-Health-BD-logo.png",
+    logo: "/images/clients/global-health.png",
   },
 ];
 
 export default function ProjectsPage() {
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [activeMetroImage, setActiveMetroImage] = useState<string>("/images/projects/metro-rail/IBAESL.png");
 
   // Filter Categories list
   const categories = ["All", "Infrastructure", "HVAC & Cleanroom", "Power Distribution", "Fire Protection"];
 
   const filteredProjects = projectsData.filter((project) => {
     if (selectedFilter === "All") return true;
-    if (selectedFilter === "Infrastructure") return project.category.includes("Infrastructure");
-    if (selectedFilter === "HVAC & Cleanroom") return project.category.includes("HVAC");
-    if (selectedFilter === "Power Distribution") return project.category.includes("Power");
-    if (selectedFilter === "Fire Protection") return project.category.includes("Fire");
+    if (selectedFilter === "Infrastructure") return project.category.toLowerCase().includes("infra");
+    if (selectedFilter === "HVAC & Cleanroom") return project.category.toLowerCase().includes("hvac") || project.category.toLowerCase().includes("cleanroom");
+    if (selectedFilter === "Power Distribution") return project.category.toLowerCase().includes("power") || project.category.toLowerCase().includes("automation");
+    if (selectedFilter === "Fire Protection") return project.category.toLowerCase().includes("fire");
     return true;
   });
 
   // Extract Dhaka Metro Rail as main showcase project
   const metroRailProject = projectsData.find((p) => p.slug === "dhaka-metro-rail-mep");
-  // The rest of the projects
-  const standardProjects = filteredProjects.filter((p) => p.slug !== "dhaka-metro-rail-mep");
+  // Include metro rail in standard projects grid when a specific filter is selected so grid is never empty
+  const standardProjects = selectedFilter === "All"
+    ? filteredProjects.filter((p) => p.slug !== "dhaka-metro-rail-mep")
+    : filteredProjects;
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-800 pb-24">
@@ -177,21 +181,63 @@ export default function ProjectsPage() {
             transition={{ duration: 0.6 }}
             className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-0"
           >
-            {/* Project Image */}
-            <div
-              className="lg:col-span-6 min-h-[300px] lg:min-h-[480px] bg-cover bg-center relative"
-              style={{
-                backgroundImage: `url('${metroRailProject.image}')`,
-              }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-950/85 via-brand-950/30 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 text-white flex flex-col gap-2">
-                <span className="w-fit text-[10px] font-extrabold uppercase tracking-widest text-brand-950 bg-accent px-3 py-1.5 rounded-md">
+            {/* Project Image & Gallery Switcher */}
+            <div className="lg:col-span-6 min-h-[340px] lg:min-h-[500px] flex flex-col justify-between p-6 relative overflow-hidden bg-slate-900">
+              {/* Background preview image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-all duration-500 transform hover:scale-105"
+                style={{
+                  backgroundImage: `url('${activeMetroImage}')`,
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-950/95 via-brand-950/40 to-black/30" />
+
+              {/* Top Category Badge */}
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-brand-950 bg-accent px-3 py-1.5 rounded-md shadow-md">
                   Landmark National Infrastructure
                 </span>
-                <h2 className="font-heading text-2xl sm:text-3xl font-extrabold tracking-tight">
-                  Dhaka Metro Rail DMRTDP Line 6
-                </h2>
+              </div>
+
+              {/* Bottom Info & Thumbnail Gallery Selector */}
+              <div className="relative z-10 flex flex-col gap-3">
+                <div>
+                  <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-white tracking-tight drop-shadow-md">
+                    Dhaka Metro Rail DMRTDP Line 6
+                  </h2>
+                  <p className="text-xs text-slate-300 font-medium">CP-3 & CP-4 Station Infrastructure & Depots</p>
+                </div>
+
+                {/* Interactive Thumbnails (IBA & RHS) */}
+                {metroRailProject.gallery && (
+                  <div className="pt-2 border-t border-white/15">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-accent block mb-2">
+                      Click to View Field Site Photos (IBA & RHS):
+                    </span>
+                    <div className="grid grid-cols-6 gap-2">
+                      {metroRailProject.gallery.map((item, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setActiveMetroImage(item.image)}
+                          className={`relative rounded-lg overflow-hidden border-2 h-12 transition-all duration-200 ${
+                            activeMetroImage === item.image
+                              ? "border-accent scale-105 shadow-lg shadow-accent/30 ring-2 ring-accent/40"
+                              : "border-white/30 opacity-70 hover:opacity-100 hover:border-white"
+                          }`}
+                        >
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute bottom-0 inset-x-0 bg-brand-950/80 text-[8px] text-white font-bold text-center py-0.5 uppercase truncate">
+                            {item.category} {idx % 3 + 1}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -408,12 +454,18 @@ export default function ProjectsPage() {
                   className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center gap-4 text-center hover:border-brand-900/30 hover:bg-white hover:shadow-md group transition-all"
                 >
                   {/* Styled Corporate Logo Badge */}
-                  <div className="w-16 h-16 bg-white rounded-full flex flex-col items-center justify-center relative border border-slate-200 shadow-sm p-2 transition-transform duration-300 group-hover:scale-125 group-hover:shadow-lg group-hover:border-accent/50 z-10">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl p-2 bg-white border border-slate-200 shadow-sm flex items-center justify-center relative transition-transform group-hover:scale-105 group-hover:border-brand-800/40 group-hover:shadow-md overflow-hidden">
                     {client.logo ? (
-                      <img src={client.logo} alt={client.name} className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110" />
+                      <Image
+                        src={client.logo}
+                        alt={client.name}
+                        width={72}
+                        height={72}
+                        className="max-h-full max-w-full object-contain"
+                      />
                     ) : (
-                      <div className={`w-full h-full rounded-full flex flex-col items-center justify-center ${client.bgColor}`}>
-                        <ClientIcon className="text-lg opacity-85 transition-transform group-hover:scale-110" />
+                      <div className={`w-full h-full rounded-xl flex flex-col items-center justify-center relative ${client.bgColor}`}>
+                        <ClientIcon className="text-xl opacity-85" />
                         <span className="text-[9px] font-extrabold uppercase tracking-tighter absolute -bottom-1 px-1.5 py-0.5 rounded bg-brand-950 text-white leading-none scale-90 border border-brand-800 shadow-sm">
                           {client.monogram}
                         </span>

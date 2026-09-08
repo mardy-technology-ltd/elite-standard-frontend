@@ -69,7 +69,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-28 pb-20">
+    <div className="min-h-screen bg-slate-50 pt-0 pb-20">
       {/* 1. Header Hero Panel */}
       <section className="bg-brand-950 text-white py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-10" />

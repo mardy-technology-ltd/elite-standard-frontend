@@ -14,8 +14,8 @@ const mainLinks = [
   { label: "Industry Sectors", href: "/sectors", desc: "Residential, commercial, and industrial segments we serve." },
   { label: "Featured Projects", href: "/projects", desc: " Landmark engineering projects completed across Bangladesh." },
   { label: "Products Catalog", href: "/products", desc: "Premium MEP machinery, switchgear, fire safety pumps, and climate control units." },
-  { label: "Engineering Blog", href: "/blog", desc: "Technical articles, guides, energy saving strategies, and news." },
-  { label: "Careers & Hiring", href: "/career", desc: "Job openings and career opportunities for specialists." },
+  // { label: "Engineering Blog", href: "/blog", desc: "Technical articles, guides, energy saving strategies, and news." },
+  // { label: "Careers & Hiring", href: "/career", desc: "Job openings and career opportunities for specialists." },
   { label: "Contact Us", href: "/contact", desc: "Get in touch or request a detailed BOQ quote." },
 ];
 
@@ -39,7 +39,7 @@ const legalLinks = [
 
 export default function SitemapPage() {
   return (
-    <main className="min-h-screen bg-slate-50 pt-28 pb-20">
+    <main className="min-h-screen bg-slate-50 pt-8 md:pt-12 pb-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href="/"

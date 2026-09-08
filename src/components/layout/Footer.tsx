@@ -147,16 +147,16 @@ export default function Footer() {
                   Engineering Products
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link href="/blog" className="hover:text-accent transition-colors">
                   News & Insights
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link href="/career" className="hover:text-accent transition-colors">
                   Careers & Hiring
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/contact" className="hover:text-accent transition-colors">
                   Contact Us

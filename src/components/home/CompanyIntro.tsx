@@ -21,16 +21,16 @@ export default function CompanyIntro() {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-100">
               {/* High-res Engineering Showcase Image */}
-              <div className="relative h-[420px] sm:h-[480px] w-full">
+              <div className="relative h-[420px] sm:h-[480px] w-full bg-slate-100">
                 <Image
-                  src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=1200&auto=format&fit=crop"
+                  src="/images/company-info.png"
                   alt="Elite Standard Limited Engineering Facility"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-950/50 via-transparent to-transparent" />
               </div>
             </div>
 
