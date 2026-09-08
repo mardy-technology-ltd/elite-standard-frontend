@@ -497,7 +497,7 @@ export default function ContactClient() {
                 Engineering Integrity
               </h4>
               <p className="text-slate-400 text-xs leading-relaxed">
-                Elite Standard Limited operates under strict ISO 9001:2015 specifications. All MEP design schematics and BOQ estimates are compiled in absolute compliance with NFPA guidelines, ASHRAE guidelines, and BNBC standards.
+                Elite Standard Limited operates under strict engineering specifications. All MEP design schematics and BOQ estimates are compiled in accordance with standard engineering guidelines.
               </p>
             </div>
           </div>

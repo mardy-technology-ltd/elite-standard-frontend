@@ -66,11 +66,6 @@ export default function Footer() {
               Elite Standard Limited is a premier engineering solutions provider specializing in comprehensive MEP (Mechanical, Electrical & Plumbing) design, HVAC, fire protection, industrial automation, and power distribution systems.
             </p>
 
-            <div className="flex items-center gap-2 text-xs text-amber-400 bg-brand-900/60 p-3 rounded-lg border border-brand-800/50 w-fit">
-              <FaShieldAlt className="text-accent text-sm" />
-              <span className="font-semibold">ISO 9001:2015 & Fire Safety Certified Enterprise</span>
-            </div>
-
             <a
               href="/elite-standard-profile.pdf"
               download="Elite_Standard_Limited_Profile.pdf"

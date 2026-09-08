@@ -12,12 +12,12 @@ import AboutCTA from "@/components/about/AboutCTA";
 export const metadata: Metadata = {
   title: "About Us | Elite Standard Limited | MEP Engineering Leader",
   description:
-    "Learn about Elite Standard Limited's history, mission, leadership team, ISO 9001 certifications, and 14+ years of MEP & industrial engineering excellence in Bangladesh.",
+    "Learn about Elite Standard Limited's history, mission, leadership team, engineering standards, and 14+ years of MEP & industrial engineering excellence in Bangladesh.",
   keywords: [
     "About Elite Standard Limited",
     "MEP Contractor Dhaka",
     "Engineering Company Bangladesh",
-    "ISO 9001 MEP Contractor",
+    "Turnkey MEP Contractor",
     "HVAC Engineers Banani",
   ],
 };

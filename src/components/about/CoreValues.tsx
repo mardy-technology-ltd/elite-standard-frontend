@@ -21,7 +21,7 @@ export const coreValuesData: ValueCard[] = [
   {
     icon: <FaAward className="text-2xl" />,
     title: "Engineering Excellence",
-    subtitle: "ISO 9001 Quality Standards",
+    subtitle: "Strict Quality Assurance",
     description: "Factory acceptance testing (FAT), thermal imaging, and pressure validation ensure precision performance.",
   },
   {

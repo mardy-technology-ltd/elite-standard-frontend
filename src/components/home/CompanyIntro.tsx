@@ -57,13 +57,6 @@ export default function CompanyIntro() {
               </div>
             </motion.div>
 
-            {/* Secondary Badge (Top Left Overlay) */}
-            <div className="absolute top-6 left-6 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-xl shadow-lg border border-slate-200/80 flex items-center gap-2.5">
-              <FaBuilding className="text-brand-800 text-lg" />
-              <span className="text-xs font-bold text-brand-950 uppercase tracking-wider">
-                ISO 9001:2015 Certified
-              </span>
-            </div>
           </motion.div>
 
           {/* Right Side: Corporate Text Content */}

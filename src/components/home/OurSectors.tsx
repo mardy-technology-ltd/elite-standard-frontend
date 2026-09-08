@@ -21,7 +21,6 @@ const sectors = [
     description: "Centralized HVAC, high-speed BBT power distribution, and NFPA life safety for multi-story office complexes.",
     icon: FaBuilding,
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop",
-    projectsCount: "140+ Projects",
   },
   {
     id: "sec2",
@@ -29,7 +28,6 @@ const sectors = [
     description: "ISO 7 cleanroom HVAC, HEPA filtration, positive pressure control, and purified water piping.",
     icon: FaFlaskVial,
     image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
-    projectsCount: "65+ Projects",
   },
   {
     id: "sec3",
@@ -37,7 +35,6 @@ const sectors = [
     description: "Heavy-duty power distribution panels, high-pressure fire hydrants, biological ETPs, and SCADA automation.",
     icon: FaIndustry,
     image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800&auto=format&fit=crop",
-    projectsCount: "180+ Projects",
   },
   {
     id: "sec4",
@@ -45,7 +42,6 @@ const sectors = [
     description: "Medical gas pipelines, isolated power systems (IPS), emergency generator sync, and laminar airflow operating rooms.",
     icon: FaHospital,
     image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop",
-    projectsCount: "45+ Projects",
   },
   {
     id: "sec5",
@@ -53,7 +49,6 @@ const sectors = [
     description: "Precision AC cooling, N+1 redundant generator banks, FM200 gas suppression, and power monitoring.",
     icon: FaServer,
     image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
-    projectsCount: "35+ Projects",
   },
   {
     id: "sec6",
@@ -61,7 +56,6 @@ const sectors = [
     description: "Industrial rooftop solar PV arrays, net metering integration, and high-efficiency inverter synchronization.",
     icon: FaSun,
     image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=800&auto=format&fit=crop",
-    projectsCount: "50+ Projects",
   },
 ];
 
@@ -112,11 +106,6 @@ export default function OurSectors() {
 
                 {/* Dark Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/75 to-brand-950/30 group-hover:from-brand-950 group-hover:via-brand-950/90 transition-all duration-300" />
-
-                {/* Top Badge */}
-                <div className="absolute top-5 right-5 bg-brand-900/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-accent/30 text-[11px] font-bold text-accent">
-                  {sector.projectsCount}
-                </div>
 
                 {/* Card Content (Bottom Aligned) */}
                 <div className="absolute inset-0 p-8 flex flex-col justify-end gap-3">

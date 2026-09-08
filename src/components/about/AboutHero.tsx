@@ -39,11 +39,6 @@ export default function AboutHero() {
           transition={{ duration: 0.6 }}
           className="max-w-3xl flex flex-col gap-4"
         >
-          <div className="flex items-center gap-2 text-xs text-amber-400 font-semibold bg-brand-900/80 px-3.5 py-1.5 rounded-md border border-brand-800 w-fit">
-            <FaShieldAlt className="text-accent text-xs" />
-            <span>ISO 9001:2015 & Fire Safety Certified Enterprise</span>
-          </div>
-
           <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
             Engineering Excellence, <span className="text-gradient">Building Tomorrow</span>
           </h1>

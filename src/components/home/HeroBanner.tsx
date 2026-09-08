@@ -179,7 +179,7 @@ export default function HeroBanner() {
               <div className="w-16 h-16 rounded-2xl bg-brand-900/90 border border-accent/40 flex items-center justify-center text-accent text-2xl mx-auto shadow-2xl shadow-accent/20 group-hover:scale-110 transition-transform duration-300">
                 <FaBuilding />
               </div>
-              <span className="block text-xs font-extrabold text-white uppercase tracking-widest mt-3">
+              <span className="block text-xs font-extrabold text-white uppercase tracking-widest mt-24">
                 Integrated MEP Building Matrix
               </span>
               <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[10px] font-semibold text-slate-300 mt-1.5">
@@ -202,7 +202,6 @@ export default function HeroBanner() {
                   <span className="block text-[10px] text-slate-400">BNBC, NFPA & ASHRAE Standards</span>
                 </div>
               </div>
-              <span className="text-xs font-bold text-accent bg-accent/10 px-2.5 py-1 rounded-lg border border-accent/20">500+ Landmark Projects</span>
             </div>
           </motion.div>
         </div>

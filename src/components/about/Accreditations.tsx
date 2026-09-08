@@ -29,10 +29,10 @@ export interface EngineeringCodeItem {
 
 export const accreditationsData: AccreditationItem[] = [
   {
-    code: "ISO 9001:2015",
-    title: "Quality Management System Certification",
-    issuer: "International Organization for Standardization",
-    description: "Certified Quality System governing turnkey MEP design, equipment procurement, and field commissioning.",
+    code: "MEP Turnkey",
+    title: "Turnkey Engineering Solutions",
+    issuer: "Elite Standard Limited",
+    description: "End-to-end electro-mechanical engineering solutions governing design, procurement, and field commissioning.",
     icon: <FaAward className="text-2xl" />,
   },
   {

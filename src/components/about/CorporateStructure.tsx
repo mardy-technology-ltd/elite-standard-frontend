@@ -339,7 +339,7 @@ export default function CorporateStructure() {
                     Uniform Technical Deployment Across All 3 MEP Divisions
                   </h3>
                   <p className="text-slate-500 text-xs max-w-2xl leading-relaxed">
-                    To maintain strict ISO 9001 and compliance engineering standards, each of our three primary divisions (**Mechanical, Electrical, Plumbing**) is permanently staffed with this standard 9-member specialist team structure for every turnkey contract.
+                    To maintain strict quality and compliance engineering standards, each of our three primary divisions (**Mechanical, Electrical, Plumbing**) is permanently staffed with this standard 9-member specialist team structure for every turnkey contract.
                   </p>
                 </div>
 

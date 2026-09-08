@@ -52,10 +52,6 @@ export default function ServiceBanner({ service }: ServiceBannerProps) {
             <span className="px-3 py-1 rounded-md bg-accent text-brand-950 font-extrabold text-xs tracking-wider uppercase">
               Code: {service.code}
             </span>
-            <div className="flex items-center gap-1.5 text-xs text-amber-400 font-semibold bg-brand-900/80 px-3 py-1 rounded-md border border-brand-800">
-              <FaShieldAlt className="text-accent text-xs" />
-              <span>BNBC & ISO Certified</span>
-            </div>
           </div>
 
           <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
