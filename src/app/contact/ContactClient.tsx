@@ -94,7 +94,7 @@ export default function ContactClient() {
               <FaMapMarkerAlt className="text-xl" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <h3 className="font-heading font-extrabold text-brand-950 text-base">Headquarters Address</h3>
+              <h3 className="font-heading font-extrabold text-brand-950 text-base">Head Office Address</h3>
               <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
                 House: 187/9, Kamal Soroni Road, Amtola, Dhaka-1216, Bangladesh.
               </p>
