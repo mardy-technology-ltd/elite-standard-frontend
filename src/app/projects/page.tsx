@@ -124,27 +124,10 @@ const clientReferences = [
 ];
 
 export default function ProjectsPage() {
-  const [selectedFilter, setSelectedFilter] = useState("All");
   const [activeMetroImage, setActiveMetroImage] = useState<string>("/images/projects/metro-rail/IBAESL.png");
-
-  // Filter Categories list
-  const categories = ["All", "Infrastructure", "HVAC & Cleanroom", "Power Distribution", "Fire Protection"];
-
-  const filteredProjects = projectsData.filter((project) => {
-    if (selectedFilter === "All") return true;
-    if (selectedFilter === "Infrastructure") return project.category.toLowerCase().includes("infra");
-    if (selectedFilter === "HVAC & Cleanroom") return project.category.toLowerCase().includes("hvac") || project.category.toLowerCase().includes("cleanroom");
-    if (selectedFilter === "Power Distribution") return project.category.toLowerCase().includes("power") || project.category.toLowerCase().includes("automation");
-    if (selectedFilter === "Fire Protection") return project.category.toLowerCase().includes("fire");
-    return true;
-  });
 
   // Extract Dhaka Metro Rail as main showcase project
   const metroRailProject = projectsData.find((p) => p.slug === "dhaka-metro-rail-mep");
-  // Include metro rail in standard projects grid when a specific filter is selected so grid is never empty
-  const standardProjects = selectedFilter === "All"
-    ? filteredProjects.filter((p) => p.slug !== "dhaka-metro-rail-mep")
-    : filteredProjects;
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-800 pb-24">
@@ -173,7 +156,7 @@ export default function ProjectsPage() {
       </section>
 
       {/* 2. Main Featured Case Study: Dhaka Metro Rail */}
-      {metroRailProject && (selectedFilter === "All" || selectedFilter === "Infrastructure") && (
+      {metroRailProject && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -304,125 +287,7 @@ export default function ProjectsPage() {
         </section>
       )}
 
-      {/* 3. Category Filter buttons */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-200 pb-6">
-          <div className="flex flex-col gap-1">
-            <h3 className="font-heading font-extrabold text-xl text-brand-950">
-              Completed Project Portfolio
-            </h3>
-            <p className="text-slate-500 text-xs sm:text-sm">
-              Filter case studies by mechanical, electrical, plumbing, or infrastructure category.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedFilter(cat)}
-                className={`px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
-                  selectedFilter === cat
-                    ? "bg-brand-950 text-white border-brand-950 shadow-md"
-                    : "bg-white text-slate-600 border-slate-200 hover:text-brand-950 hover:bg-slate-50"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Portfolio Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[250px]">
-        <AnimatePresence mode="wait">
-          {standardProjects.length > 0 ? (
-            <motion.div
-              key={selectedFilter}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {standardProjects.map((project) => (
-                <article
-                  key={project.id}
-                  className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-shadow flex flex-col justify-between group"
-                >
-                  <div className="flex flex-col">
-                    {/* Project Image banner */}
-                    <div
-                      className="h-56 bg-cover bg-center relative"
-                      style={{
-                        backgroundImage: `url('${project.image}')`,
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-brand-950/70 to-transparent" />
-                      <span className="absolute bottom-4 left-4 text-[10px] font-extrabold uppercase tracking-widest text-brand-950 bg-accent px-2.5 py-1 rounded-md">
-                        {project.category}
-                      </span>
-                    </div>
-
-                    {/* Content area */}
-                    <div className="p-6 flex flex-col gap-4">
-                      <h4 className="font-heading font-bold text-lg text-brand-950 group-hover:text-accent transition-colors leading-snug">
-                        {project.title}
-                      </h4>
-                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-3">
-                        {project.description}
-                      </p>
-
-                      {/* Specs */}
-                      <div className="pt-2 flex flex-col gap-2">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-                          Deliverables:
-                        </span>
-                        <ul className="flex flex-col gap-1.5 text-xs text-slate-700">
-                          {project.scope.map((item, idx) => (
-                            <li key={idx} className="flex items-center gap-2">
-                              <FaCheckCircle className="text-accent shrink-0 text-xs" />
-                              <span className="font-medium line-clamp-1">{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Metadata footer */}
-                  <div className="p-5 bg-slate-50 border-t border-slate-100 grid grid-cols-2 gap-2 text-[11px] text-slate-500 font-semibold rounded-b-2xl">
-                    <div className="flex items-center gap-1.5 truncate">
-                      <FaBuilding className="text-slate-400 shrink-0" />
-                      <span className="truncate">{project.client}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 justify-end">
-                      <FaMapMarkerAlt className="text-slate-400 shrink-0" />
-                      <span>{project.location}</span>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-16 bg-white border border-slate-200 rounded-2xl flex flex-col items-center gap-3"
-            >
-              <FaFolderOpen className="text-slate-300 text-4xl" />
-              <h4 className="font-heading font-bold text-lg text-brand-950">
-                No standard projects in this category
-              </h4>
-              <p className="text-slate-500 text-sm">
-                Try selecting a different filter category from the filter list above.
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </section>
-
-      {/* 5. Corporate References (Logos / Badge grid) */}
+      {/* 3. Corporate References (Logos / Badge grid) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
         <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-md">
           {/* Header */}
