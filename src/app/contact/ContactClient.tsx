@@ -99,12 +99,13 @@ export default function ContactClient() {
                 House: 187/9, Kamal Soroni Road, Amtola, Dhaka-1216, Bangladesh.
               </p>
               <a
-                href="https://maps.google.com/?q=Amtola,+Dhaka,+Bangladesh"
+                href="https://www.google.com/maps/place/Elite+Standard+Limited/@23.7838464,90.3681456,17z/data=!3m1!4b1!4m6!3m5!1s0x3755c10060269aab:0xd3a19e7a429e98f2!8m2!3d23.7838464!4d90.3681456!16s%2Fg%2F11mykpd0b9?entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-bold text-brand-800 hover:text-accent mt-1 transition-colors self-start"
+                className="text-xs font-bold text-brand-800 hover:text-accent mt-1 transition-colors self-start flex items-center gap-1 group/map"
               >
-                View on Google Maps &rarr;
+                <span>View on Google Maps</span>
+                <span className="group-hover/map:translate-x-1 transition-transform">&rarr;</span>
               </a>
             </div>
           </motion.div>
