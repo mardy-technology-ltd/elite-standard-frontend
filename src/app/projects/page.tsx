@@ -21,6 +21,7 @@ import {
   FaHeartbeat,
   FaNetworkWired,
 } from "react-icons/fa";
+import Image from "next/image";
 import { projectsData, ProjectItem } from "@/lib/mockData";
 
 const clientReferences = [
@@ -30,6 +31,7 @@ const clientReferences = [
     monogram: "PI",
     icon: FaNetworkWired,
     bgColor: "bg-blue-50 text-blue-600 border-blue-100",
+    logo: "/images/clients/projukti-international.jpeg",
   },
   {
     name: "Padma Bank Limited",
@@ -37,6 +39,7 @@ const clientReferences = [
     monogram: "PBL",
     icon: FaUniversity,
     bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    logo: "/images/clients/padma-bank.webp",
   },
   {
     name: "IFIC Bank Limited",
@@ -44,6 +47,7 @@ const clientReferences = [
     monogram: "IFIC",
     icon: FaUniversity,
     bgColor: "bg-cyan-50 text-cyan-600 border-cyan-100",
+    logo: "/images/clients/ific-bank.jpg",
   },
   {
     name: "Bank Asia Limited",
@@ -51,6 +55,7 @@ const clientReferences = [
     monogram: "BAL",
     icon: FaUniversity,
     bgColor: "bg-indigo-50 text-indigo-600 border-indigo-100",
+    logo: "/images/clients/bank-asia.jpg",
   },
   {
     name: "Aarong (BRAC Enterprise)",
@@ -58,6 +63,7 @@ const clientReferences = [
     monogram: "AAR",
     icon: FaShoppingBag,
     bgColor: "bg-amber-50 text-amber-700 border-amber-100",
+    logo: "/images/clients/aarong.jpg",
   },
   {
     name: "Sky Air",
@@ -65,6 +71,7 @@ const clientReferences = [
     monogram: "SA",
     icon: FaPlane,
     bgColor: "bg-sky-50 text-sky-600 border-sky-100",
+    logo: "/images/clients/sky-air.jpg",
   },
   {
     name: "Sonargaon University",
@@ -72,6 +79,7 @@ const clientReferences = [
     monogram: "SU",
     icon: FaGraduationCap,
     bgColor: "bg-violet-50 text-violet-600 border-violet-100",
+    logo: "/images/clients/sonargaon-university.png",
   },
   {
     name: "Dhaka College",
@@ -79,6 +87,7 @@ const clientReferences = [
     monogram: "DC",
     icon: FaGraduationCap,
     bgColor: "bg-rose-50 text-rose-600 border-rose-100",
+    logo: "/images/clients/dhaka-college.webp",
   },
   {
     name: "MIST (Military Institute of Science and Technology)",
@@ -86,6 +95,7 @@ const clientReferences = [
     monogram: "MIST",
     icon: FaShieldAlt,
     bgColor: "bg-lime-50 text-lime-700 border-lime-200",
+    logo: "/images/clients/mist.jpg",
   },
   {
     name: "Mansons Pharma",
@@ -93,6 +103,7 @@ const clientReferences = [
     monogram: "MP",
     icon: FaCapsules,
     bgColor: "bg-teal-50 text-teal-600 border-teal-100",
+    logo: "/images/clients/mansons-pharma.png",
   },
   {
     name: "Biotech Associates",
@@ -100,6 +111,7 @@ const clientReferences = [
     monogram: "BA",
     icon: FaDna,
     bgColor: "bg-purple-50 text-purple-600 border-purple-100",
+    logo: "/images/clients/biotech-associates.jpg",
   },
   {
     name: "Global Health BD",
@@ -107,6 +119,7 @@ const clientReferences = [
     monogram: "GH",
     icon: FaHeartbeat,
     bgColor: "bg-red-50 text-red-600 border-red-100",
+    logo: "/images/clients/global-health.png",
   },
 ];
 
@@ -441,11 +454,23 @@ export default function ProjectsPage() {
                   className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center gap-4 text-center hover:border-brand-900/30 hover:bg-white hover:shadow-md group transition-all"
                 >
                   {/* Styled Corporate Logo Badge */}
-                  <div className={`w-14 h-14 rounded-full flex flex-col items-center justify-center relative border shadow-sm ${client.bgColor} transition-transform group-hover:scale-105`}>
-                    <ClientIcon className="text-lg opacity-85" />
-                    <span className="text-[9px] font-extrabold uppercase tracking-tighter absolute -bottom-1 px-1.5 py-0.5 rounded bg-brand-950 text-white leading-none scale-90 border border-brand-800 shadow-sm">
-                      {client.monogram}
-                    </span>
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl p-2 bg-white border border-slate-200 shadow-sm flex items-center justify-center relative transition-transform group-hover:scale-105 group-hover:border-brand-800/40 group-hover:shadow-md overflow-hidden">
+                    {client.logo ? (
+                      <Image
+                        src={client.logo}
+                        alt={client.name}
+                        width={72}
+                        height={72}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    ) : (
+                      <div className={`w-full h-full rounded-xl flex flex-col items-center justify-center relative ${client.bgColor}`}>
+                        <ClientIcon className="text-xl opacity-85" />
+                        <span className="text-[9px] font-extrabold uppercase tracking-tighter absolute -bottom-1 px-1.5 py-0.5 rounded bg-brand-950 text-white leading-none scale-90 border border-brand-800 shadow-sm">
+                          {client.monogram}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-1.5 mt-1">

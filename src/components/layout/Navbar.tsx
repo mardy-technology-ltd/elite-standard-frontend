@@ -40,8 +40,8 @@ export const navItems: NavItem[] = [
   { label: "Products", href: "/products", hasDropdown: true },
   { label: "Sectors", href: "/sectors", hasDropdown: true },
   { label: "Projects", href: "/projects" },
-  { label: "Blog", href: "/blog" },
-  { label: "Career", href: "/career" },
+  // { label: "Blog", href: "/blog" },
+  // { label: "Career", href: "/career" },
   { label: "Contact", href: "/contact" },
 ];
 

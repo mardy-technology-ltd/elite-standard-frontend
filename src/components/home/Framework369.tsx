@@ -203,59 +203,64 @@ export default function Framework369() {
                 {framework369Data.solutions.map((sol, idx) => {
                   const theme = getSolutionTheme(sol.code);
                   return (
-                    <ThreeDCard key={sol.code} maxTilt={6} className="h-full">
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: idx * 0.1 }}
-                        className={`group relative h-full bg-slate-800/95 border border-slate-700/80 rounded-3xl p-6 sm:p-8 ${theme.cardBorder} shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer`}
-                      >
-                        <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full pointer-events-none ${theme.bgGlow} transition-colors duration-300`} />
+                    <Link
+                      key={sol.code}
+                      href={`/services?category=${sol.categoryKey}`}
+                      className="block h-full group"
+                    >
+                      <ThreeDCard maxTilt={6} className="h-full">
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: idx * 0.1 }}
+                          className={`group relative h-full bg-slate-800/95 border border-slate-700/80 rounded-3xl p-6 sm:p-8 ${theme.cardBorder} shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer`}
+                        >
+                          <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full pointer-events-none ${theme.bgGlow} transition-colors duration-300`} />
 
-                        <div>
-                          <div className="flex items-center justify-between mb-6">
-                            <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center shadow-lg group-hover:scale-105 transition-all duration-300 ${theme.iconBox}`}>
-                              {getSolutionIcon(sol.icon)}
+                          <div>
+                            <div className="flex items-center justify-between mb-6">
+                              <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center shadow-lg group-hover:scale-105 transition-all duration-300 ${theme.iconBox}`}>
+                                {getSolutionIcon(sol.icon)}
+                              </div>
+                              <span className={`text-4xl font-black text-slate-700/90 ${theme.codeText} transition-colors duration-300 font-mono`}>
+                                {sol.code}
+                              </span>
                             </div>
-                            <span className={`text-4xl font-black text-slate-700/90 ${theme.codeText} transition-colors duration-300 font-mono`}>
-                              {sol.code}
-                            </span>
+
+                            <h4 className={`text-xl font-extrabold text-white mb-1 ${theme.textAccent} transition-colors`}>
+                              {sol.title}
+                            </h4>
+                            <p className="text-xs text-slate-400 font-medium mb-4">{sol.subtitle}</p>
+
+                            <div className="mb-6">
+                              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">
+                                International Codes & Compliance:
+                              </span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {sol.compliance.map((code) => (
+                                  <span
+                                    key={code}
+                                    className="px-2.5 py-0.5 rounded-md bg-slate-900/90 text-slate-300 text-xs font-mono font-semibold border border-slate-700/80 group-hover:border-slate-600 transition-colors"
+                                  >
+                                    {code}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
                           </div>
 
-                          <h4 className={`text-xl font-extrabold text-white mb-1 ${theme.textAccent} transition-colors`}>
-                            {sol.title}
-                          </h4>
-                          <p className="text-xs text-slate-400 font-medium mb-4">{sol.subtitle}</p>
-
-                          <div className="mb-6">
-                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-                              International Codes & Compliance:
-                            </span>
-                            <div className="flex flex-wrap gap-1.5">
-                              {sol.compliance.map((code) => (
-                                <span
-                                  key={code}
-                                  className="px-2.5 py-0.5 rounded-md bg-slate-900/90 text-slate-300 text-xs font-mono font-semibold border border-slate-700/80 group-hover:border-slate-600 transition-colors"
-                                >
-                                  {code}
-                                </span>
-                              ))}
+                          <div className="pt-4 border-t border-slate-700/50 flex items-center justify-between text-xs text-slate-400">
+                            <span className="font-semibold text-slate-300">{sol.servicesCount} Flagship Services</span>
+                            <div
+                              className={`inline-flex items-center gap-1.5 font-bold group-hover:translate-x-1 transition-transform ${theme.buttonColor}`}
+                            >
+                              <span>Explore</span>
+                              <FaChevronRight className="w-2.5 h-2.5" />
                             </div>
                           </div>
-                        </div>
-
-                        <div className="pt-4 border-t border-slate-700/50 flex items-center justify-between text-xs text-slate-400">
-                          <span className="font-semibold text-slate-300">{sol.servicesCount} Flagship Services</span>
-                          <Link
-                            href={`/services?category=${sol.categoryKey}`}
-                            className={`inline-flex items-center gap-1.5 font-bold group-hover:translate-x-1 transition-transform ${theme.buttonColor}`}
-                          >
-                            <span>Explore</span>
-                            <FaChevronRight className="w-2.5 h-2.5" />
-                          </Link>
-                        </div>
-                      </motion.div>
-                    </ThreeDCard>
+                        </motion.div>
+                      </ThreeDCard>
+                    </Link>
                   );
                 })}
               </div>
@@ -371,50 +376,55 @@ export default function Framework369() {
               >
                 <AnimatePresence mode="popLayout">
                   {filteredServices.map((service, idx) => (
-                    <ThreeDCard key={service.id} maxTilt={6} className="h-full">
-                      <motion.div
-                        layout
-                        initial={{ opacity: 0, y: 25, scale: 0.92 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -20, scale: 0.92 }}
-                        transition={{ duration: 0.35, delay: idx * 0.08, ease: "easeOut" }}
-                        className="h-full bg-slate-800/95 border border-slate-700/80 rounded-3xl p-6 hover:border-slate-600 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
-                      >
-                        <div>
-                          <div className="flex items-center justify-between mb-4">
-                            <span className="px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-accent font-mono font-bold text-xs">
-                              {service.code}
-                            </span>
-                            <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-slate-900/90 text-slate-300 border border-slate-700">
-                              {service.category}
-                            </span>
-                          </div>
-
-                          <h4 className="text-lg font-extrabold text-white mb-2 group-hover:text-accent transition-colors line-clamp-1">
-                            {service.title}
-                          </h4>
-                          <p className="text-xs text-slate-300 mb-4 line-clamp-2 leading-relaxed">
-                            {service.shortDescription}
-                          </p>
-
-                          <div className="flex flex-wrap gap-1.5 mb-6">
-                            {service.compliance.map((c) => (
-                              <span key={c} className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900/80 text-slate-400">
-                                {c}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        <Link
-                          href={`/services/${service.slug}`}
-                          className="inline-flex items-center justify-between w-full pt-4 border-t border-slate-700/60 text-xs font-bold text-accent group-hover:text-white transition-colors"
+                    <Link
+                      key={service.id}
+                      href={`/services/${service.slug}`}
+                      className="block h-full group"
+                    >
+                      <ThreeDCard maxTilt={6} className="h-full">
+                        <motion.div
+                          layout
+                          initial={{ opacity: 0, y: 25, scale: 0.92 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -20, scale: 0.92 }}
+                          transition={{ duration: 0.35, delay: idx * 0.08, ease: "easeOut" }}
+                          className="h-full bg-slate-800/95 border border-slate-700/80 rounded-3xl p-6 hover:border-slate-600 hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer"
                         >
-                          <span>View Service & Sectors</span>
-                          <FaArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                      </motion.div>
-                    </ThreeDCard>
+                          <div>
+                            <div className="flex items-center justify-between mb-4">
+                              <span className="px-3 py-1 rounded-md bg-slate-900 border border-slate-700 text-accent font-mono font-bold text-xs">
+                                {service.code}
+                              </span>
+                              <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-slate-900/90 text-slate-300 border border-slate-700">
+                                {service.category}
+                              </span>
+                            </div>
+
+                            <h4 className="text-lg font-extrabold text-white mb-2 group-hover:text-accent transition-colors line-clamp-1">
+                              {service.title}
+                            </h4>
+                            <p className="text-xs text-slate-300 mb-4 line-clamp-2 leading-relaxed">
+                              {service.shortDescription}
+                            </p>
+
+                            <div className="flex flex-wrap gap-1.5 mb-6">
+                              {service.compliance.map((c) => (
+                                <span key={c} className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900/80 text-slate-400">
+                                  {c}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div
+                            className="inline-flex items-center justify-between w-full pt-4 border-t border-slate-700/60 text-xs font-bold text-accent group-hover:text-white transition-colors"
+                          >
+                            <span>View Service & Sectors</span>
+                            <FaArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </motion.div>
+                      </ThreeDCard>
+                    </Link>
                   ))}
                 </AnimatePresence>
               </motion.div>

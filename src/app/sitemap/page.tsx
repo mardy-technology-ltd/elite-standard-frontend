@@ -14,8 +14,8 @@ const mainLinks = [
   { label: "Industry Sectors", href: "/sectors", desc: "Residential, commercial, and industrial segments we serve." },
   { label: "Featured Projects", href: "/projects", desc: " Landmark engineering projects completed across Bangladesh." },
   { label: "Products Catalog", href: "/products", desc: "Premium MEP machinery, switchgear, fire safety pumps, and climate control units." },
-  { label: "Engineering Blog", href: "/blog", desc: "Technical articles, guides, energy saving strategies, and news." },
-  { label: "Careers & Hiring", href: "/career", desc: "Job openings and career opportunities for specialists." },
+  // { label: "Engineering Blog", href: "/blog", desc: "Technical articles, guides, energy saving strategies, and news." },
+  // { label: "Careers & Hiring", href: "/career", desc: "Job openings and career opportunities for specialists." },
   { label: "Contact Us", href: "/contact", desc: "Get in touch or request a detailed BOQ quote." },
 ];
 

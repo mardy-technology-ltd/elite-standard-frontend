@@ -38,7 +38,7 @@ export default function HomePage() {
       <TestimonialsAndPartners />
 
       {/* 9. Latest Engineering Blogs */}
-      <LatestBlogs />
+      {/* <LatestBlogs /> */}
 
       {/* 10. Lead Generation Contact CTA */}
       <ContactCTA />
