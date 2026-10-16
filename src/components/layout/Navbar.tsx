@@ -38,7 +38,7 @@ export const navItems: NavItem[] = [
   { label: "About Us", href: "/about" },
   { label: "Services", href: "/services", hasDropdown: true },
   { label: "Products", href: "/products", hasDropdown: true },
-  { label: "Sectors", href: "/sectors", hasDropdown: true },
+  // { label: "Sectors", href: "/sectors", hasDropdown: true },
   { label: "Projects", href: "/projects" },
   // { label: "Blog", href: "/blog" },
   // { label: "Career", href: "/career" },
