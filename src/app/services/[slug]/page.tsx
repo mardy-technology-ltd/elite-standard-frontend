@@ -9,7 +9,6 @@ import ServiceSubSpecialties from "@/components/services/ServiceSubSpecialties";
 import ServiceChallenges from "@/components/services/ServiceChallenges";
 import ServiceScope from "@/components/services/ServiceScope";
 import ServiceFaq from "@/components/services/ServiceFaq";
-import ServiceRelatedProducts from "@/components/services/ServiceRelatedProducts";
 import ServiceCTA from "@/components/services/ServiceCTA";
 
 interface ServicePageProps {
@@ -84,10 +83,7 @@ export default function ServiceDetailPage({ params }: ServicePageProps) {
       {/* 6. Frequently Asked Questions */}
       <ServiceFaq service={service} />
 
-      {/* 7. Related Products */}
-      <ServiceRelatedProducts serviceSlug={service.slug} />
-
-      {/* 8. Action Buttons / CTA */}
+      {/* 7. Action Buttons / CTA */}
       <ServiceCTA service={service} />
     </main>
   );

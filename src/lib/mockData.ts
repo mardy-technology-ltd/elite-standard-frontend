@@ -1573,5 +1573,79 @@ export const catalogDataList: CatalogData[] = [
         ]
       }
     ]
+  },
+  {
+    slug: "vrf-climate",
+    title: "VRF/VRV Tropical Multi-Split Systems",
+    categories: [
+      {
+        title: "Residential & Luxury Villa Climate Solutions",
+        packages: [
+          { level: "Level 3", quantity: "4 - 6 HP", range: "Luxury Apartment & Duplex Living" },
+          { level: "Level 6", quantity: "8 - 10 HP", range: "Multi-Zone Villa & Penthouse" },
+          { level: "Level 9", quantity: "12 - 16 HP", range: "Premium Residential Compound" }
+        ]
+      },
+      {
+        title: "Commercial & Office Climate Solutions",
+        packages: [
+          { level: "Level 3", quantity: "18 - 24 HP", range: "Boutique Office & Clinic Facility" },
+          { level: "Level 6", quantity: "28 - 36 HP", range: "Corporate Office Floor System" },
+          { level: "Level 9", quantity: "40 - 48 HP", range: "Multi-Story Commercial Building" }
+        ]
+      },
+      {
+        title: "Industrial & Hospitality Climate Solutions",
+        packages: [
+          { level: "Level 3", quantity: "50 - 54 HP", range: "Cleanroom & Pharmaceutical AHU Integration" },
+          { level: "Level 6", quantity: "56 - 60 HP", range: "Hotel & Conference Center Bank" },
+          { level: "Level 9", quantity: "64+ HP Modular Bank", range: "Mega Industrial Plant & Logistics Hub" }
+        ]
+      }
+    ]
+  },
+  {
+    slug: "fire-pump-skid",
+    title: "UL/FM Certified Fire Pump Skids",
+    categories: [
+      {
+        title: "Residential & Commercial Building Packages",
+        packages: [
+          { level: "Level 3", quantity: "250 - 500 GPM", range: "Low-Rise Residential & Small Retail" },
+          { level: "Level 6", quantity: "750 GPM", range: "Mid-Rise Commercial Tower" },
+          { level: "Level 9", quantity: "1000 GPM", range: "High-Rise Commercial Complex" }
+        ]
+      },
+      {
+        title: "Industrial & Manufacturing Fire Stations",
+        packages: [
+          { level: "Level 3", quantity: "1250 - 1500 GPM", range: "Garments, Textile & Light Factory" },
+          { level: "Level 6", quantity: "1750 - 2000 GPM", range: "Heavy Industrial Manufacturing Facility" },
+          { level: "Level 9", quantity: "2500+ GPM Packaged Skid", range: "Chemical, Refinery & Mega Logistics Depot" }
+        ]
+      }
+    ]
+  },
+  {
+    slug: "lt-switchgear",
+    title: "Form-4 Type Tested LT Switchgear Panels",
+    categories: [
+      {
+        title: "Commercial Sub-Distribution Boards",
+        packages: [
+          { level: "Level 3", quantity: "250A - 630A", range: "Commercial Floor Sub-Distribution" },
+          { level: "Level 6", quantity: "800A - 1250A", range: "Medium Commercial Facility Main Board" },
+          { level: "Level 9", quantity: "1600A", range: "Corporate Headquarters Power Incomer" }
+        ]
+      },
+      {
+        title: "Industrial & High-Capacity Main LT Switchboards",
+        packages: [
+          { level: "Level 3", quantity: "2000A - 2500A", range: "Factory Main LT Panel with Automatic PFI" },
+          { level: "Level 6", quantity: "3200A", range: "Heavy Industrial Process Plant Switchboard" },
+          { level: "Level 9", quantity: "4000A Form-4B", range: "Grid Substation & High-Capacity Industrial Main" }
+        ]
+      }
+    ]
   }
 ];
