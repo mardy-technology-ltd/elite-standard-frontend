@@ -1483,6 +1483,86 @@ export const projectsData: ProjectItem[] = [
       "4000A Compact Copper Busbar Trunking",
       "Automatic PFI Plant with 0.99 PF achievement"
     ]
+  },
+  {
+    id: "proj5",
+    slug: "padma-bank-datacenter-mep",
+    title: "Padma Bank Head Office Data Center Infrastructure",
+    category: "Power Distribution",
+    client: "Padma Bank Limited",
+    location: "Motijheel C/A, Dhaka",
+    completionDate: "May 2025",
+    description: "Precision cooling, dual redundant UPS power distribution, FM-200 clean agent fire suppression, and environmental telemetry for Tier-III banking data center.",
+    image: "https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=800&auto=format&fit=crop",
+    scope: [
+      "Dual 60kVA Online UPS Redundancy",
+      "In-Row Precision Air Conditioning (PAC)",
+      "FM-200 Automatic Fire Suppression Skid"
+    ]
+  },
+  {
+    id: "proj6",
+    slug: "aarong-flagship-vrf-mep",
+    title: "Aarong Flagship Megastore Central HVAC & Fire Protection",
+    category: "HVAC & Cleanroom",
+    client: "Aarong (BRAC Enterprise)",
+    location: "Uttara Sector 3, Dhaka",
+    completionDate: "September 2025",
+    description: "450 HP VRF multi-split climate installation, duct air balancing, wet-pipe sprinkler alarm check valves, and emergency egress ventilation.",
+    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop",
+    scope: [
+      "450 HP Tropical Inverter VRF Units",
+      "NFPA 13 Wet Sprinkler & Hydrant Line",
+      "Centralized BACnet BMS Smart Scheduling"
+    ]
+  },
+  {
+    id: "proj7",
+    slug: "mist-engineering-research-lab",
+    title: "MIST High-Voltage Power Substation & Hydraulic Lab",
+    category: "Infrastructure MEP & Automation",
+    client: "Military Institute of Science and Technology (MIST)",
+    location: "Mirpur Cantonment, Dhaka",
+    completionDate: "February 2026",
+    description: "Complete MEP contracting for advanced engineering laboratory, including 11kV substation, compressed air network, and multi-grade water treatment plant.",
+    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
+    scope: [
+      "11kV Substation & Synchronization Switchgear",
+      "10,000 LPH Multi-Grade Water Treatment Plant",
+      "Compressor Air Loop & Lab Gas Distribution"
+    ]
+  },
+  {
+    id: "proj8",
+    slug: "sonargaon-university-campus-hvac",
+    title: "Sonargaon University Permanent Campus Central HVAC & Utility",
+    category: "HVAC & Cleanroom",
+    client: "Sonargaon University",
+    location: "Tejgaon, Dhaka",
+    completionDate: "October 2025",
+    description: "Energy-efficient centralized VRF climate system, acoustic duct attenuators, fresh air ventilation, and high-capacity electrical distribution.",
+    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop",
+    scope: [
+      "Multi-Zone Variable Refrigerant Flow (VRF)",
+      "Acoustic Treated Air Distribution Ducts",
+      "Main LT Distribution Switchboard Panels"
+    ]
+  },
+  {
+    id: "proj9",
+    slug: "mansons-pharma-sterile-cleanroom",
+    title: "Mansons Pharma Sterile Cleanroom Class 10,000 MEP Setup",
+    category: "HVAC & Cleanroom",
+    client: "Mansons Pharma Ltd.",
+    location: "BSCIC Industrial Estate, Tongi",
+    completionDate: "December 2025",
+    description: "Turnkey GMP-compliant pharmaceutical cleanroom MEP execution with HEPA terminal filters, positive airlocks, and RO/EDI purified water piping.",
+    image: "https://images.unsplash.com/photo-1542013936693-884638332954?q=80&w=800&auto=format&fit=crop",
+    scope: [
+      "Class 10,000 / ISO 7 Sterile Cleanroom HVAC",
+      "Double-Pass Reverse Osmosis (RO) Plant",
+      "SS316L Orbital Welded Pure Water Distribution"
+    ]
   }
 ];
 
