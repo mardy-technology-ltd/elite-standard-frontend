@@ -9,7 +9,7 @@ import { FaTag, FaCheck, FaArrowRight } from "react-icons/fa";
 
 export default function ProductsSummary() {
   return (
-    <section className="py-24 bg-slate-50 text-slate-800 relative">
+    <section className="py-24 bg-gradient-to-b from-[#eef3f9] via-slate-100 to-[#eaf0f8] border-t border-slate-200/90 text-slate-800 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">

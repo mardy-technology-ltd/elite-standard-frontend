@@ -25,6 +25,8 @@ import {
   FaShieldAlt,
   FaHome,
   FaBuilding,
+  FaBriefcase,
+  FaNewspaper,
 } from "react-icons/fa";
 
 export interface NavItem {
@@ -38,12 +40,34 @@ export const navItems: NavItem[] = [
   { label: "About Us", href: "/about" },
   { label: "Services", href: "/services", hasDropdown: true },
   { label: "Products", href: "/products", hasDropdown: true },
-  // { label: "Sectors", href: "/sectors", hasDropdown: true },
   { label: "Projects", href: "/projects" },
-  // { label: "Blog", href: "/blog" },
-  { label: "Career", href: "/career" },
-  { label: "Newsletter", href: "/newsletter" },
+  { label: "More", href: "/more", hasDropdown: true },
   { label: "Contact", href: "/contact" },
+];
+
+export interface MoreItem {
+  title: string;
+  desc: string;
+  href: string;
+  badge: string;
+  icon: React.ReactNode;
+}
+
+export const moreItems: MoreItem[] = [
+  {
+    title: "Careers & Recruitment",
+    desc: "Explore MEP engineering vacancies & open positions",
+    href: "/career",
+    badge: "HIRING",
+    icon: <FaBriefcase className="text-amber-500" />,
+  },
+  {
+    title: "Engineering Newsletter",
+    desc: "Technical bulletins, HVAC insights & code compliance",
+    href: "/newsletter",
+    badge: "WEEKLY",
+    icon: <FaNewspaper className="text-blue-500" />,
+  },
 ];
 
 export interface SectorItem {
@@ -247,16 +271,16 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
-  const [sectorsDropdownOpen, setSectorsDropdownOpen] = useState(false);
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
+  const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<ServiceCategory>(serviceCategories[0]);
   const [activePillar, setActivePillar] = useState<MepPillar | null>(null);
   const [mobileServicesExpanded, setMobileServicesExpanded] = useState(false);
-  const [mobileSectorsExpanded, setMobileSectorsExpanded] = useState(false);
+  const [mobileMoreExpanded, setMobileMoreExpanded] = useState(false);
 
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const sectorsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const productsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const moreTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -275,7 +299,8 @@ export default function Navbar() {
   useEffect(() => {
     setMobileMenuOpen(false);
     setServicesDropdownOpen(false);
-    setSectorsDropdownOpen(false);
+    setProductsDropdownOpen(false);
+    setMoreDropdownOpen(false);
     setActivePillar(null);
   }, [pathname]);
 
@@ -291,17 +316,6 @@ export default function Navbar() {
     }, 200);
   };
 
-  const handleMouseEnterSectors = () => {
-    if (sectorsTimeoutRef.current) clearTimeout(sectorsTimeoutRef.current);
-    setSectorsDropdownOpen(true);
-  };
-
-  const handleMouseLeaveSectors = () => {
-    sectorsTimeoutRef.current = setTimeout(() => {
-      setSectorsDropdownOpen(false);
-    }, 200);
-  };
-
   const handleMouseEnterProducts = () => {
     if (productsTimeoutRef.current) clearTimeout(productsTimeoutRef.current);
     setProductsDropdownOpen(true);
@@ -310,6 +324,17 @@ export default function Navbar() {
   const handleMouseLeaveProducts = () => {
     productsTimeoutRef.current = setTimeout(() => {
       setProductsDropdownOpen(false);
+    }, 200);
+  };
+
+  const handleMouseEnterMore = () => {
+    if (moreTimeoutRef.current) clearTimeout(moreTimeoutRef.current);
+    setMoreDropdownOpen(true);
+  };
+
+  const handleMouseLeaveMore = () => {
+    moreTimeoutRef.current = setTimeout(() => {
+      setMoreDropdownOpen(false);
     }, 200);
   };
 
@@ -348,10 +373,13 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1.5 shrink">
             {navItems.map((item) => {
+              const isMoreActive =
+                item.label === "More" &&
+                (pathname.startsWith("/career") || pathname.startsWith("/newsletter"));
               const isActive =
                 item.href === "/"
                   ? pathname === "/"
-                  : pathname.startsWith(item.href);
+                  : isMoreActive || (item.href !== "/more" && pathname.startsWith(item.href));
 
               if (item.label === "Services") {
                 return (
@@ -620,18 +648,19 @@ export default function Navbar() {
                 );
               }
 
-              if (item.label === "Sectors") {
+              if (item.label === "More") {
                 return (
                   <div
-                    key={item.href}
-                    onMouseEnter={handleMouseEnterSectors}
-                    onMouseLeave={handleMouseLeaveSectors}
+                    key={item.label}
+                    onMouseEnter={handleMouseEnterMore}
+                    onMouseLeave={handleMouseLeaveMore}
                     className="relative"
                   >
-                    <Link
-                      href={item.href}
-                      className={`px-2 py-1.5 2xl:px-3 text-xs font-semibold rounded-md transition-all duration-150 inline-flex items-center gap-1.5 whitespace-nowrap ${
-                        isActive || sectorsDropdownOpen
+                    <button
+                      type="button"
+                      onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
+                      className={`px-2 py-1.5 2xl:px-3 text-xs font-semibold rounded-md transition-all duration-150 inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                        isActive || moreDropdownOpen
                           ? "text-brand-800 font-bold bg-brand-50"
                           : "text-slate-600 hover:text-brand-800 hover:bg-slate-50"
                       }`}
@@ -639,43 +668,47 @@ export default function Navbar() {
                       <span>{item.label}</span>
                       <FaChevronDown
                         className={`text-[10px] transition-transform duration-200 ${
-                          sectorsDropdownOpen ? "rotate-180 text-accent" : "text-slate-400"
+                          moreDropdownOpen ? "rotate-180 text-accent" : "text-slate-400"
                         }`}
                       />
-                    </Link>
+                    </button>
 
-                    {/* Sectors Standard Dropdown Menu */}
                     <AnimatePresence>
-                      {sectorsDropdownOpen && (
+                      {moreDropdownOpen && (
                         <motion.div
                           initial={{ opacity: 0, y: 12, scale: 0.98 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.98 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute top-full left-0 mt-1 w-96 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-3 flex flex-col gap-1"
+                          className="absolute top-full left-0 mt-1 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-2.5 flex flex-col gap-1"
                         >
-                          {sectorItems.map((sec, idx) => (
+                          <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-900 flex items-center justify-between border-b border-slate-200 mb-1">
+                            <span>Explore More</span>
+                            <span className="text-accent text-[10px]">Updates & Roles</span>
+                          </div>
+
+                          {moreItems.map((mItem, idx) => (
                             <Link
                               key={idx}
-                              href={sec.href}
-                              className="group/sec flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 border border-transparent hover:bg-slate-50 hover:border-slate-200/60"
+                              href={mItem.href}
+                              className="group/item flex items-center justify-between p-2.5 rounded-xl cursor-pointer transition-all duration-150 border border-transparent hover:bg-slate-50 hover:border-slate-200/60"
                             >
                               <div className="flex items-center gap-3 flex-grow">
-                                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 text-base group-hover/sec:bg-slate-200/70 transition-colors">
-                                  {sec.icon}
+                                <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 text-sm group-hover/item:bg-slate-200/70 transition-colors">
+                                  {mItem.icon}
                                 </div>
                                 <div className="flex flex-col">
-                                  <span className="text-xs font-bold text-slate-900 group-hover/sec:text-brand-950 transition-colors">
-                                    {sec.title}
+                                  <span className="text-xs font-bold text-slate-900 group-hover/item:text-brand-950 transition-colors">
+                                    {mItem.title}
                                   </span>
-                                  <span className="text-[10px] text-slate-400 line-clamp-1 group-hover/sec:text-slate-500 transition-colors">
-                                    {sec.desc}
+                                  <span className="text-[10px] text-slate-400 line-clamp-1 group-hover/item:text-slate-500 transition-colors">
+                                    {mItem.desc}
                                   </span>
                                 </div>
                               </div>
                               <div className="pl-2 shrink-0">
-                                <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 group-hover/sec:bg-slate-200 group-hover/sec:text-slate-700 transition-colors">
-                                  SEC
+                                <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 text-slate-600 group-hover/item:bg-accent/20 group-hover/item:text-brand-950 transition-colors">
+                                  {mItem.badge}
                                 </span>
                               </div>
                             </Link>
@@ -837,49 +870,49 @@ export default function Navbar() {
                       );
                     }
 
-                    if (item.label === "Sectors") {
+                    if (item.label === "More") {
                       return (
-                        <div key={item.href} className="flex flex-col">
+                        <div key="mobile-more" className="flex flex-col">
                           <button
-                            onClick={() => setMobileSectorsExpanded(!mobileSectorsExpanded)}
+                            onClick={() => setMobileMoreExpanded(!mobileMoreExpanded)}
                             className={`flex items-center justify-between px-4 py-3 text-sm font-semibold rounded-lg transition-colors ${
-                              isActive || mobileSectorsExpanded
+                              isActive || mobileMoreExpanded
                                 ? "text-brand-800 bg-brand-50 border-l-4 border-accent"
                                 : "text-slate-700 hover:bg-slate-50 hover:text-brand-800"
                             }`}
                           >
                             <span className="flex items-center gap-2">
-                              <span>{item.label}</span>
+                              <span>More</span>
                               <span className="px-2 py-0.5 rounded bg-accent/20 text-brand-950 text-[10px] font-extrabold">
-                                3 Sectors
+                                Career & Newsletter
                               </span>
                             </span>
                             <FaChevronDown
                               className={`text-xs transition-transform duration-200 ${
-                                mobileSectorsExpanded ? "rotate-180 text-accent" : "text-slate-400"
+                                mobileMoreExpanded ? "rotate-180 text-accent" : "text-slate-400"
                               }`}
                             />
                           </button>
 
-                          {/* Expanding Mobile Sectors Accordion */}
+                          {/* Expanding Mobile More Accordion */}
                           <AnimatePresence>
-                            {mobileSectorsExpanded && (
+                            {mobileMoreExpanded && (
                               <motion.div
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: "auto", opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.25 }}
+                                transition={{ duration: 0.2 }}
                                 className="overflow-hidden pl-4 pr-2 py-2 flex flex-col gap-2 bg-slate-50 rounded-lg mt-1 border border-slate-100"
                               >
-                                {sectorItems.map((sec, idx) => (
+                                {moreItems.map((mItem, idx) => (
                                   <Link
                                     key={idx}
-                                    href={sec.href}
+                                    href={mItem.href}
                                     className="flex items-center justify-between p-2 rounded-md hover:bg-white text-xs font-bold text-brand-950"
                                   >
-                                    <span className="flex items-center gap-2">
-                                      <span className="text-xs">{sec.icon}</span>
-                                      <span>{sec.title}</span>
+                                    <span className="flex items-center gap-2.5">
+                                      <span className="text-sm">{mItem.icon}</span>
+                                      <span>{mItem.title}</span>
                                     </span>
                                     <FaArrowRight className="text-[10px] text-slate-400" />
                                   </Link>
