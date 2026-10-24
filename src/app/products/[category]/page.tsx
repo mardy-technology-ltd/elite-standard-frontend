@@ -108,7 +108,7 @@ const productDetailsMap: Record<string, ProductDetailData> = {
       {
         heading: "Automated Digital Multiport Backwash & Zero Downtime Operation",
         text: "Equipped with state-of-the-art Runxin and Clack automatic digital control valves, the system automatically schedules reverse-flow hydraulic backwash cycles during non-peak hours (e.g. 2:00 AM). This continuously flushes accumulated iron sediment and regenerates the filter bed without requiring manual labor or intervention.",
-        image: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?q=80&w=800&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1542013936693-884638332954?q=80&w=800&auto=format&fit=crop",
         badge: "Smart Automation",
       },
       {
@@ -251,7 +251,7 @@ const productDetailsMap: Record<string, ProductDetailData> = {
     galleryImages: [
       "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
     ],
     quickSpecs: [

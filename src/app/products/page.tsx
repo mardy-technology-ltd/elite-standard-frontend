@@ -277,7 +277,7 @@ const allProducts: CatalogProduct[] = [
     priceFormatted: "Tk 8,90,000",
     inStock: false,
     stockBadge: "Made to Order",
-    image: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
     variantsText: "5 m³/hr to 100 m³/hr Treatment",
     specs: [
       { label: "Process Technology", value: "MBBR / MBR Biological Fixed Film System" },
@@ -325,7 +325,7 @@ const allProducts: CatalogProduct[] = [
     priceFormatted: "Tk 2,80,000",
     inStock: true,
     stockBadge: "UL Listed",
-    image: "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?q=80&w=800&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800&auto=format&fit=crop",
     variantsText: "30L to 180L Seamless Cylinders",
     specs: [
       { label: "Suppression Agent", value: "Clean Agent HFC-227ea (Zero Ozone Depletion)" },
@@ -484,7 +484,7 @@ export default function ProductsPage() {
           {/* ======================================================== */}
           {/* LEFT SIDEBAR: RYANS-STYLE "FILTER BY" PANEL */}
           {/* ======================================================== */}
-          <aside className="lg:col-span-3">
+          <aside className="lg:col-span-3 lg:sticky lg:top-20 z-20 self-start">
             {/* Mobile Filter Toggle Button */}
             <div className="lg:hidden mb-4">
               <button
@@ -502,10 +502,10 @@ export default function ProductsPage() {
             <div
               className={`bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden ${
                 mobileFilterOpen ? "block" : "hidden lg:block"
-              }`}
+              } lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto`}
             >
               {/* Filter By Header Bar */}
-              <div className="bg-[#10b981] px-4 py-3 flex items-center justify-between text-white">
+              <div className="bg-[#10b981] px-4 py-3 flex items-center justify-between text-white sticky top-0 z-10 shadow-sm">
                 <span className="font-bold text-sm uppercase tracking-wide flex items-center gap-2">
                   <FaFilter className="text-xs" />
                   <span>Filter By</span>
