@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   FaPlus,
@@ -10,12 +10,20 @@ import {
   FaCheck,
   FaTimes,
   FaBoxes,
-  FaWater,
-  FaSnowflake,
-  FaFireExtinguisher,
-  FaBolt,
+  FaUpload,
+  FaImage,
+  FaStar,
+  FaListUl,
+  FaInfoCircle,
   FaTag,
+  FaShieldAlt,
+  FaLink,
 } from "react-icons/fa";
+
+interface ProductSpec {
+  label: string;
+  value: string;
+}
 
 interface Product {
   id: string;
@@ -23,14 +31,20 @@ interface Product {
   code: string;
   title: string;
   category: string;
+  brand?: string;
   sector: string[];
   price: number;
   priceFormatted: string;
+  regularPrice?: string;
   inStock: boolean;
   stockBadge?: string;
+  warranty?: string;
   image: string;
+  galleryImages?: string[];
   variantsText?: string;
-  specs?: any[];
+  description?: string;
+  specs?: ProductSpec[];
+  fullSpecs?: { attribute: string; value: string }[];
   href?: string;
 }
 
@@ -43,21 +57,54 @@ export default function AdminProductsPage() {
   // Modal States
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [activeTab, setActiveTab] = useState<"general" | "media" | "specs">("general");
   const [submitting, setSubmitting] = useState(false);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  // File input ref
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [manualImageUrl, setManualImageUrl] = useState("");
 
   // Form State
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    code: string;
+    title: string;
+    category: string;
+    brand: string;
+    sector: string[];
+    price: number;
+    priceFormatted: string;
+    regularPrice: string;
+    inStock: boolean;
+    stockBadge: string;
+    warranty: string;
+    image: string;
+    galleryImages: string[];
+    variantsText: string;
+    description: string;
+    specs: ProductSpec[];
+  }>({
     code: "",
     title: "",
     category: "Water Treatment",
+    brand: "Elite Standard Limited",
     sector: ["Industrial", "Commercial"],
     price: 50000,
     priceFormatted: "Tk 50,000",
+    regularPrice: "Tk 60,000",
     inStock: true,
     stockBadge: "In Stock",
+    warranty: "2 Years OEM Service Warranty & 24/7 Support",
     image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
+    ],
     variantsText: "Standard Package",
+    description: "",
+    specs: [
+      { label: "Standard", value: "BNBC 2020 / NFPA Compliant" },
+      { label: "Application", value: "Industrial & Commercial Facility" },
+    ],
   });
 
   const categories = [
@@ -92,36 +139,157 @@ export default function AdminProductsPage() {
 
   const openAddModal = () => {
     setEditingProduct(null);
+    setActiveTab("general");
+    const defaultImg = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop";
     setFormData({
       code: "ESL-" + Math.floor(1000 + Math.random() * 9000),
       title: "",
       category: "Water Treatment",
+      brand: "Elite Standard Limited",
       sector: ["Industrial", "Commercial"],
       price: 50000,
       priceFormatted: "Tk 50,000",
+      regularPrice: "Tk 60,000",
       inStock: true,
       stockBadge: "In Stock",
-      image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
+      warranty: "2 Years OEM Service Warranty",
+      image: defaultImg,
+      galleryImages: [defaultImg],
       variantsText: "Standard Engineering Package",
+      description: "Heavy-duty engineering solution fabricated and tested to international standards.",
+      specs: [
+        { label: "Standard", value: "BNBC 2020 / NFPA Compliant" },
+        { label: "Application", value: "Industrial & Commercial" },
+      ],
     });
+    setManualImageUrl("");
     setModalOpen(true);
   };
 
   const openEditModal = (p: Product) => {
     setEditingProduct(p);
+    setActiveTab("general");
+    const gallery =
+      Array.isArray(p.galleryImages) && p.galleryImages.length > 0
+        ? p.galleryImages
+        : [p.image || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop"];
+
     setFormData({
       code: p.code,
       title: p.title,
       category: p.category,
-      sector: p.sector || [],
+      brand: p.brand || "Elite Standard Limited",
+      sector: p.sector || ["Industrial"],
       price: p.price,
       priceFormatted: p.priceFormatted,
+      regularPrice: p.regularPrice || `Tk ${Math.round(p.price * 1.15).toLocaleString()}`,
       inStock: p.inStock,
       stockBadge: p.stockBadge || "In Stock",
-      image: p.image,
+      warranty: p.warranty || "2 Years OEM Service Warranty",
+      image: p.image || gallery[0],
+      galleryImages: gallery,
       variantsText: p.variantsText || "",
+      description: p.description || "",
+      specs: Array.isArray(p.specs) && p.specs.length > 0
+        ? p.specs
+        : [
+            { label: "Category", value: p.category },
+            { label: "Model", value: p.code },
+          ],
     });
+    setManualImageUrl("");
     setModalOpen(true);
+  };
+
+  // Upload file from computer
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const body = new FormData();
+        body.append("file", files[i]);
+
+        const res = await fetch("/api/admin/upload", {
+          method: "POST",
+          body,
+        });
+
+        const data = await res.json();
+        if (data.url) {
+          setFormData((prev) => {
+            const updatedGallery = [...prev.galleryImages, data.url];
+            return {
+              ...prev,
+              image: prev.image || data.url,
+              galleryImages: updatedGallery,
+            };
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  // Add manual image URL
+  const handleAddImageUrl = () => {
+    if (!manualImageUrl.trim()) return;
+    setFormData((prev) => {
+      const updatedGallery = [...prev.galleryImages, manualImageUrl.trim()];
+      return {
+        ...prev,
+        image: prev.image || manualImageUrl.trim(),
+        galleryImages: updatedGallery,
+      };
+    });
+    setManualImageUrl("");
+  };
+
+  // Set cover image
+  const setAsCoverImage = (imgUrl: string) => {
+    setFormData((prev) => ({ ...prev, image: imgUrl }));
+  };
+
+  // Remove image from gallery
+  const removeGalleryImage = (idxToRemove: number) => {
+    setFormData((prev) => {
+      const updated = prev.galleryImages.filter((_, idx) => idx !== idxToRemove);
+      return {
+        ...prev,
+        galleryImages: updated,
+        image: prev.image === prev.galleryImages[idxToRemove] ? updated[0] || "" : prev.image,
+      };
+    });
+  };
+
+  // Spec row helpers
+  const handleAddSpecRow = () => {
+    setFormData((prev) => ({
+      ...prev,
+      specs: [...prev.specs, { label: "", value: "" }],
+    }));
+  };
+
+  const handleSpecChange = (index: number, field: "label" | "value", val: string) => {
+    setFormData((prev) => {
+      const updated = [...prev.specs];
+      updated[index][field] = val;
+      return { ...prev, specs: updated };
+    });
+  };
+
+  const handleRemoveSpecRow = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      specs: prev.specs.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -129,21 +297,35 @@ export default function AdminProductsPage() {
     setSubmitting(true);
 
     try {
+      const payload = {
+        ...formData,
+        image: formData.image || formData.galleryImages[0] || "",
+        galleryImages: formData.galleryImages.length > 0 ? formData.galleryImages : [formData.image],
+        specs: formData.specs.filter((s) => s.label.trim() && s.value.trim()),
+      };
+
       if (editingProduct) {
         const res = await fetch(`/api/admin/products/${editingProduct.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error("Failed to update product");
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to update product");
+        }
       } else {
         const res = await fetch("/api/admin/products", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error("Failed to create product");
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to create product");
+        }
       }
+
       setModalOpen(false);
       fetchProducts();
     } catch (err: any) {
@@ -157,9 +339,7 @@ export default function AdminProductsPage() {
     if (!confirm("Are you sure you want to permanently delete this product?")) return;
     try {
       const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        fetchProducts();
-      }
+      if (res.ok) fetchProducts();
     } catch (e) {
       console.error(e);
     }
@@ -175,7 +355,7 @@ export default function AdminProductsPage() {
             Engineering Products Catalog
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Manage commercial equipment, specifications, and inventory on Supabase PostgreSQL.
+            Manage commercial equipment, multi-image galleries, and technical specifications on Supabase PostgreSQL.
           </p>
         </div>
 
@@ -190,7 +370,6 @@ export default function AdminProductsPage() {
 
       {/* Filter and Search Bar */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Category Pills */}
         <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
           {categories.map((cat) => (
             <button
@@ -207,7 +386,6 @@ export default function AdminProductsPage() {
           ))}
         </div>
 
-        {/* Search Input */}
         <div className="relative w-full md:w-72">
           <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
           <input
@@ -236,227 +414,552 @@ export default function AdminProductsPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-950/60 text-slate-400 uppercase tracking-wider text-[11px] font-semibold border-b border-slate-800">
                 <tr>
-                  <th className="px-5 py-3.5">Product / Code</th>
-                  <th className="px-5 py-3.5">Category</th>
+                  <th className="px-5 py-3.5">Product & Thumbnail</th>
+                  <th className="px-5 py-3.5">Category & Brand</th>
                   <th className="px-5 py-3.5">Pricing</th>
+                  <th className="px-5 py-3.5">Gallery Images</th>
                   <th className="px-5 py-3.5">Inventory</th>
                   <th className="px-5 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/70">
-                {products.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700">
-                          <Image
-                            src={p.image}
-                            alt={p.title}
-                            fill
-                            className="object-cover"
-                          />
+                {products.map((p) => {
+                  const galleryCount =
+                    Array.isArray(p.galleryImages) && p.galleryImages.length > 0
+                      ? p.galleryImages.length
+                      : p.image ? 1 : 0;
+
+                  return (
+                    <tr key={p.id} className="hover:bg-slate-800/40 transition-colors">
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700 group">
+                            {p.image ? (
+                              <Image
+                                src={p.image}
+                                alt={p.title}
+                                fill
+                                className="object-cover group-hover:scale-110 transition-transform duration-200"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-slate-500">
+                                <FaImage />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-bold text-white text-sm line-clamp-1">{p.title}</div>
+                            <div className="text-blue-400 font-mono text-[11px] mt-0.5">{p.code}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="font-bold text-white text-sm line-clamp-1">{p.title}</div>
-                          <div className="text-blue-400 font-mono text-[11px] mt-0.5">{p.code}</div>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                          <FaTag className="text-[9px] text-blue-400" />
+                          {p.category}
+                        </span>
+                        <div className="text-[11px] text-slate-400 mt-1">{p.brand || "Elite Standard"}</div>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <div className="font-bold text-emerald-400 text-sm">
+                          {p.priceFormatted || `Tk ${p.price.toLocaleString()}`}
                         </div>
-                      </div>
-                    </td>
+                        {p.regularPrice && (
+                          <del className="text-[11px] text-slate-500 font-mono">{p.regularPrice}</del>
+                        )}
+                      </td>
 
-                    <td className="px-5 py-4">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">
-                        <FaTag className="text-[9px] text-blue-400" />
-                        {p.category}
-                      </span>
-                    </td>
+                      <td className="px-5 py-4">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30">
+                          <FaImage className="text-[10px]" />
+                          <span>{galleryCount} Images</span>
+                        </span>
+                      </td>
 
-                    <td className="px-5 py-4 font-bold text-emerald-400 text-sm">
-                      {p.priceFormatted || `Tk ${p.price.toLocaleString()}`}
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                          p.inStock
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                            : "bg-red-500/10 text-red-400 border-red-500/30"
-                        }`}
-                      >
-                        {p.inStock ? <FaCheck className="text-[8px]" /> : <FaTimes className="text-[8px]" />}
-                        {p.stockBadge || (p.inStock ? "In Stock" : "Out of Stock")}
-                      </span>
-                    </td>
-
-                    <td className="px-5 py-4 text-right">
-                      <div className="inline-flex items-center gap-2">
-                        <button
-                          onClick={() => openEditModal(p)}
-                          className="p-2 rounded-lg bg-slate-800 hover:bg-blue-600/30 text-slate-300 hover:text-blue-400 transition-colors"
-                          title="Edit Product"
+                      <td className="px-5 py-4">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                            p.inStock
+                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                              : "bg-red-500/10 text-red-400 border-red-500/30"
+                          }`}
                         >
-                          <FaEdit />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p.id)}
-                          className="p-2 rounded-lg bg-slate-800 hover:bg-red-600/30 text-slate-300 hover:text-red-400 transition-colors"
-                          title="Delete Product"
-                        >
-                          <FaTrash />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          {p.inStock ? <FaCheck className="text-[8px]" /> : <FaTimes className="text-[8px]" />}
+                          {p.stockBadge || (p.inStock ? "In Stock" : "Out of Stock")}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4 text-right">
+                        <div className="inline-flex items-center gap-2">
+                          <button
+                            onClick={() => openEditModal(p)}
+                            className="p-2 rounded-lg bg-slate-800 hover:bg-blue-600/30 text-slate-300 hover:text-blue-400 transition-colors"
+                            title="Edit Product & Gallery"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(p.id)}
+                            className="p-2 rounded-lg bg-slate-800 hover:bg-red-600/30 text-slate-300 hover:text-red-400 transition-colors"
+                            title="Delete Product"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         )}
       </div>
 
-      {/* Add / Edit Product Modal */}
+      {/* Multi-Tab Add / Edit Product Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl relative">
-            <h2 className="text-lg font-bold text-white mb-4">
-              {editingProduct ? "Edit Product" : "Add New Equipment Product"}
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                    Product Code
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                    Category
-                  </label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
-                  >
-                    <option value="Water Treatment">Water Treatment</option>
-                    <option value="HVAC & Climate">HVAC & Climate</option>
-                    <option value="Fire Protection">Fire Protection</option>
-                    <option value="Power & Switchgear">Power & Switchgear</option>
-                  </select>
-                </div>
-              </div>
-
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative my-8">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                  Product Title
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. Reverse Osmosis (RO) Purification Plant"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
-                />
+                <h2 className="text-xl font-bold text-white">
+                  {editingProduct ? `Edit Equipment: ${editingProduct.title}` : "Add New Equipment Product"}
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Configure pricing, multi-image gallery, and technical specifications.
+                </p>
               </div>
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg"
+              >
+                <FaTimes />
+              </button>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                    Price (BDT Numeric)
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={formData.price}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        price: Number(e.target.value),
-                        priceFormatted: `Tk ${Number(e.target.value).toLocaleString()}`,
-                      })
-                    }
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
-                  />
+            {/* Modal Navigation Tabs */}
+            <div className="flex items-center gap-2 mb-6 border-b border-slate-800 pb-3">
+              <button
+                type="button"
+                onClick={() => setActiveTab("general")}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeTab === "general"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "bg-slate-800 text-slate-400 hover:text-white"
+                }`}
+              >
+                <FaInfoCircle />
+                <span>1. Basic Info & Pricing</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab("media")}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeTab === "media"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "bg-slate-800 text-slate-400 hover:text-white"
+                }`}
+              >
+                <FaImage />
+                <span>2. Multi-Image Gallery ({formData.galleryImages.length})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab("specs")}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeTab === "specs"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "bg-slate-800 text-slate-400 hover:text-white"
+                }`}
+              >
+                <FaListUl />
+                <span>3. Specifications & Details</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* TAB 1: General & Pricing */}
+              {activeTab === "general" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                        Product Code / Model ID
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.code}
+                        onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                        placeholder="e.g. ESL-WTS-IRP-01"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                        Category Division
+                      </label>
+                      <select
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
+                      >
+                        <option value="Water Treatment">Water Treatment</option>
+                        <option value="HVAC & Climate">HVAC & Climate</option>
+                        <option value="Fire Protection">Fire Protection</option>
+                        <option value="Power & Switchgear">Power & Switchgear</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                      Product Title
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="e.g. Reverse Osmosis (RO) Commercial Purification Plant"
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-semibold"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                        Brand / Manufacturer
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.brand}
+                        onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                        placeholder="e.g. Elite Standard Limited / Grundfos"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                        Warranty Support
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.warranty}
+                        onChange={(e) => setFormData({ ...formData, warranty: e.target.value })}
+                        placeholder="e.g. 2 Years Full OEM Service Warranty"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                        Special Offer Price (Numeric BDT)
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        value={formData.price}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            price: Number(e.target.value),
+                            priceFormatted: `Tk ${Number(e.target.value).toLocaleString()}`,
+                          })
+                        }
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-bold text-emerald-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                        Regular Price (Market Reference)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.regularPrice}
+                        onChange={(e) => setFormData({ ...formData, regularPrice: e.target.value })}
+                        placeholder="e.g. Tk 60,000"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                        Stock Badge
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.stockBadge}
+                        onChange={(e) => setFormData({ ...formData, stockBadge: e.target.value })}
+                        placeholder="In Stock / UL-FM Approved / Custom Built"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                        Inventory Availability
+                      </label>
+                      <select
+                        value={formData.inStock ? "true" : "false"}
+                        onChange={(e) => setFormData({ ...formData, inStock: e.target.value === "true" })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
+                      >
+                        <option value="true">In Stock (Immediate Deployment)</option>
+                        <option value="false">Out of Stock / Custom Made to Order</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: Multi-Image Gallery with File Upload & Previews */}
+              {activeTab === "media" && (
+                <div className="space-y-5">
+                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                      <FaUpload className="text-blue-400" />
+                      Upload Images from Computer or Enter URL
+                    </h3>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                      {/* Direct Computer Upload */}
+                      <div>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                          id="admin-file-upload"
+                        />
+                        <label
+                          htmlFor="admin-file-upload"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 hover:border-blue-500/50 cursor-pointer font-semibold text-xs transition-all text-center"
+                        >
+                          <FaUpload />
+                          <span>{uploading ? "Uploading Image..." : "Upload from Computer (Multi)"}</span>
+                        </label>
+                      </div>
+
+                      {/* Manual URL Input */}
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="url"
+                          value={manualImageUrl}
+                          onChange={(e) => setManualImageUrl(e.target.value)}
+                          placeholder="Paste image URL here..."
+                          className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddImageUrl}
+                          className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shrink-0"
+                        >
+                          <FaPlus />
+                          <span>Add</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Visual Gallery Previews Grid */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-bold text-slate-300 uppercase">
+                        Current Image Gallery ({formData.galleryImages.length})
+                      </label>
+                      <span className="text-[11px] text-slate-400">
+                        Click "Set as Cover" to choose the thumbnail shown on the website
+                      </span>
+                    </div>
+
+                    {formData.galleryImages.length === 0 ? (
+                      <div className="p-8 text-center bg-slate-950 rounded-xl border border-dashed border-slate-800 text-slate-500 text-xs">
+                        No images uploaded yet. Upload a photo or add an image URL above.
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-80 overflow-y-auto p-1">
+                        {formData.galleryImages.map((imgUrl, idx) => {
+                          const isCover = formData.image === imgUrl;
+                          return (
+                            <div
+                              key={idx}
+                              className={`relative rounded-xl overflow-hidden border bg-slate-950 flex flex-col justify-between group ${
+                                isCover
+                                  ? "border-emerald-500 ring-2 ring-emerald-500/30"
+                                  : "border-slate-800 hover:border-slate-700"
+                              }`}
+                            >
+                              <div className="relative h-28 w-full bg-slate-900">
+                                <Image
+                                  src={imgUrl}
+                                  alt={`Product image ${idx + 1}`}
+                                  fill
+                                  className="object-cover"
+                                />
+                                {isCover && (
+                                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-slate-950 flex items-center gap-1 shadow">
+                                    <FaStar className="text-[9px]" />
+                                    Cover
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="p-2 bg-slate-950/90 flex items-center justify-between gap-1 border-t border-slate-800">
+                                {!isCover ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => setAsCoverImage(imgUrl)}
+                                    className="text-[10px] font-bold text-blue-400 hover:text-blue-300"
+                                  >
+                                    Set as Cover
+                                  </button>
+                                ) : (
+                                  <span className="text-[10px] font-bold text-emerald-400">Main Cover</span>
+                                )}
+
+                                <button
+                                  type="button"
+                                  onClick={() => removeGalleryImage(idx)}
+                                  className="text-slate-500 hover:text-red-400 p-1"
+                                  title="Delete image"
+                                >
+                                  <FaTrash className="text-xs" />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: Specifications & Description */}
+              {activeTab === "specs" && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                      Product Description & Features
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Comprehensive engineering description, benefits, and applications..."
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs leading-relaxed"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-bold text-slate-300 uppercase">
+                        Technical Specifications (Key & Value Table)
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleAddSpecRow}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-semibold transition-all"
+                      >
+                        <FaPlus className="text-[10px]" />
+                        <span>Add Specification Row</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                      {formData.specs.map((spec, sIdx) => (
+                        <div key={sIdx} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={spec.label}
+                            onChange={(e) => handleSpecChange(sIdx, "label", e.target.value)}
+                            placeholder="Attribute (e.g. Flow Capacity)"
+                            className="w-1/2 px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
+                          />
+                          <input
+                            type="text"
+                            value={spec.value}
+                            onChange={(e) => handleSpecChange(sIdx, "value", e.target.value)}
+                            placeholder="Value (e.g. 5000 LPH)"
+                            className="w-1/2 px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-semibold text-blue-400"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSpecRow(sIdx)}
+                            className="p-2 text-slate-500 hover:text-red-400"
+                            title="Remove Row"
+                          >
+                            <FaTrash className="text-xs" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom Actions */}
+              <div className="pt-4 flex items-center justify-between border-t border-slate-800">
+                <div className="flex items-center gap-2">
+                  {activeTab !== "general" && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveTab(activeTab === "specs" ? "media" : "general")
+                      }
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-semibold text-slate-300"
+                    >
+                      ← Previous Tab
+                    </button>
+                  )}
+                  {activeTab !== "specs" && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveTab(activeTab === "general" ? "media" : "specs")
+                      }
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-semibold text-slate-300"
+                    >
+                      Next Tab →
+                    </button>
+                  )}
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                    Formatted Price
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.priceFormatted}
-                    onChange={(e) => setFormData({ ...formData, priceFormatted: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  required
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                    Stock Badge
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.stockBadge}
-                    onChange={(e) => setFormData({ ...formData, stockBadge: e.target.value })}
-                    placeholder="In Stock / UL-FM Approved"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                    Availability
-                  </label>
-                  <select
-                    value={formData.inStock ? "true" : "false"}
-                    onChange={(e) => setFormData({ ...formData, inStock: e.target.value === "true" })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setModalOpen(false)}
+                    className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300"
                   >
-                    <option value="true">In Stock (Available)</option>
-                    <option value="false">Out of Stock / Made to Order</option>
-                  </select>
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shadow-md shadow-blue-500/20 disabled:opacity-50"
+                  >
+                    {submitting
+                      ? "Saving to Database..."
+                      : editingProduct
+                      ? "Save All Changes"
+                      : "Create Product"}
+                  </button>
                 </div>
-              </div>
-
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shadow-md shadow-blue-500/20 disabled:opacity-50"
-                >
-                  {submitting ? "Saving to Database..." : editingProduct ? "Save Changes" : "Create Product"}
-                </button>
               </div>
             </form>
           </div>

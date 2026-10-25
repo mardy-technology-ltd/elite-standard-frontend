@@ -26,14 +26,20 @@ model Product {
   code           String   @unique
   title          String
   category       String   // Water Treatment, HVAC & Climate, Fire Protection, Power & Switchgear
+  brand          String?  @default("Elite Standard Limited")
   sector         String[] // Residential, Commercial, Industrial
   price          Float
   priceFormatted String
+  regularPrice   String?
   inStock        Boolean  @default(true)
   stockBadge     String?  // In Stock, UL/FM Approved, Custom Built, etc.
+  warranty       String?  @default("2 Years OEM Service Warranty")
   image          String
+  galleryImages  String[] @default([]) // Multi images array
   variantsText   String?
+  description    String?  @db.Text
   specs          Json     // Array of { label: string, value: string }
+  fullSpecs      Json?    // Array of { attribute: string, value: string }
   href           String?
   iconName       String?
   createdAt      DateTime @default(now())
