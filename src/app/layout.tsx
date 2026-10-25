@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Montserrat } from "next/font/google";
 import "./globals.css";
-import TopBar from "@/components/layout/TopBar";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import FloatingSocials from "@/components/layout/FloatingSocials";
-import { Analytics } from "@vercel/analytics/react";
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,6 +39,9 @@ export const viewport = {
   initialScale: 1,
 };
 
+import AppChrome from "@/components/layout/AppChrome";
+import { Analytics } from "@vercel/analytics/react";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -51,11 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
       <body className="min-h-screen flex flex-col font-sans bg-slate-50 text-slate-800">
-        <TopBar />
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
-        <FloatingSocials />
+        <AppChrome>{children}</AppChrome>
         <Analytics />
       </body>
     </html>

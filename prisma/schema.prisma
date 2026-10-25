@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// 1. Admin Authentication & User Management
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("ADMIN") // SUPER_ADMIN, ADMIN, EDITOR
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// 2. Products Catalog & Specifications
+model Product {
+  id             String   @id
+  slug           String
+  code           String   @unique
+  title          String
+  category       String   // Water Treatment, HVAC & Climate, Fire Protection, Power & Switchgear
+  sector         String[] // Residential, Commercial, Industrial
+  price          Float
+  priceFormatted String
+  inStock        Boolean  @default(true)
+  stockBadge     String?  // In Stock, UL/FM Approved, Custom Built, etc.
+  image          String
+  variantsText   String?
+  specs          Json     // Array of { label: string, value: string }
+  href           String?
+  iconName       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([slug])
+  @@index([category])
+}
+
+// 3. Projects & Landmark Case Studies
+model Project {
+  id             String   @id @default(uuid())
+  slug           String   @unique
+  title          String
+  category       String
+  client         String
+  location       String
+  completionDate String
+  description    String   @db.Text
+  image          String
+  gallery        Json?    // Array of { title: string, image: string, category: string }
+  scope          String[] // Array of bullet points
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// 4. Inquiries, RFQ & Customer Leads
+model Inquiry {
+  id          String   @id @default(uuid())
+  type        String   @default("quotation") // quotation, consultation, contact, product
+  productName String?
+  name        String
+  phone       String
+  email       String?
+  facility    String?
+  message     String?  @db.Text
+  status      String   @default("PENDING") // PENDING, CONTACTED, QUOTED, ARCHIVED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 5. Corporate Client References & Logos
+model ClientReference {
+  id        String   @id @default(uuid())
+  name      String
+  type      String
+  monogram  String?
+  logo      String?
+  bgColor   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 6. Technical Blogs & Case Studies
+model Blog {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  category    String
+  author      String
+  publishedAt String
+  readTime    String?
+  summary     String   @db.Text
+  content     String   @db.Text
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -49,7 +49,7 @@ export interface CatalogProduct {
   iconName: string;
 }
 
-const allProducts: CatalogProduct[] = [
+export const allProducts: CatalogProduct[] = [
   {
     id: "irp-01",
     slug: "iron-removal-plant",
