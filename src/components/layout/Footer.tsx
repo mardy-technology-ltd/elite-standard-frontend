@@ -20,18 +20,43 @@ import {
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [statusMsg, setStatusMsg] = useState("");
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes("@")) {
       setError("Please enter a valid email address");
       return;
     }
     setError("");
-    setSubscribed(true);
-    setEmail("");
-    setTimeout(() => setSubscribed(false), 5000);
+    setLoading(true);
+    setStatusMsg("");
+
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: "footer" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Failed to subscribe. Please try again.");
+      } else {
+        setSubscribed(true);
+        setStatusMsg(data.message || "Thank you for subscribing!");
+        setEmail("");
+        setTimeout(() => {
+          setSubscribed(false);
+          setStatusMsg("");
+        }, 5000);
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -234,18 +259,23 @@ export default function Footer() {
                 />
                 <button
                   type="submit"
+                  disabled={loading}
                   aria-label="Subscribe to newsletter"
-                  className="absolute right-1.5 top-1.5 bottom-1.5 bg-accent hover:bg-amber-600 text-brand-950 px-3 rounded-md font-bold text-xs flex items-center justify-center transition-colors"
+                  className="absolute right-1.5 top-1.5 bottom-1.5 bg-accent hover:bg-amber-600 disabled:opacity-60 text-brand-950 px-3 rounded-md font-bold text-xs flex items-center justify-center transition-colors"
                 >
-                  <FaPaperPlane className="text-xs" />
+                  {loading ? (
+                    <div className="w-3.5 h-3.5 border-2 border-brand-950 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <FaPaperPlane className="text-xs" />
+                  )}
                 </button>
               </div>
 
-              {error && <span className="text-[11px] text-red-400">{error}</span>}
+              {error && <span className="text-[11px] text-red-400 font-medium">{error}</span>}
               {subscribed && (
-                <div className="flex items-center gap-1.5 text-[11px] text-emerald-400">
-                  <FaCheckCircle />
-                  <span>Thank you for subscribing!</span>
+                <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
+                  <FaCheckCircle className="shrink-0" />
+                  <span>{statusMsg || "Thank you for subscribing!"}</span>
                 </div>
               )}
             </form>

@@ -97,9 +97,10 @@ export default function NewsletterPage() {
   const [interest, setInterest] = useState("all");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes("@")) {
       setError("Please enter a valid work email address");
@@ -108,12 +109,32 @@ export default function NewsletterPage() {
     setError("");
     setIsSubmitting(true);
 
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          name: name || undefined,
+          interest,
+          source: "newsletter_page",
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Failed to process subscription. Please try again.");
+      } else {
+        setSubscribed(true);
+        setSuccessMsg(data.message || "Thank you for subscribing to Elite Standard Limited engineering bulletins!");
+        setEmail("");
+        setName("");
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
       setIsSubmitting(false);
-      setSubscribed(true);
-      setEmail("");
-      setName("");
-    }, 1200);
+    }
   };
 
   return (
@@ -175,7 +196,7 @@ export default function NewsletterPage() {
                 Welcome to Elite Standard Engineering Insights!
               </h3>
               <p className="text-emerald-800 text-xs sm:text-sm max-w-md">
-                Thank you for subscribing. We have registered your email. You will receive our latest quarterly engineering bulletin in your inbox.
+                {successMsg || "Thank you for subscribing. We have registered your email. You will receive our latest quarterly engineering bulletin in your inbox."}
               </p>
               <button
                 onClick={() => setSubscribed(false)}

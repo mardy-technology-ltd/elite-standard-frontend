@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { projectsData, blogsData, servicesData } from '../src/lib/mockData';
-import { allProducts } from '../src/app/products/page';
+import { allProducts } from '../src/app/products/ProductsClient';
 
 const prisma = new PrismaClient();
 

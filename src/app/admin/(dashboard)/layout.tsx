@@ -20,6 +20,7 @@ import {
   FaSearch,
   FaCogs,
   FaBriefcase,
+  FaMailBulk,
 } from "react-icons/fa";
 
 export default function AdminDashboardLayout({
@@ -95,6 +96,12 @@ export default function AdminDashboardLayout({
       href: "/admin/careers",
       icon: FaBriefcase,
       badge: "Hiring",
+    },
+    {
+      label: "Newsletter & Subscribers",
+      href: "/admin/newsletter",
+      icon: FaMailBulk,
+      badge: "Audience",
     },
   ];
 

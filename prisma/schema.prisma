@@ -182,4 +182,20 @@ model JobApplication {
   @@index([status])
 }
 
+// 10. Newsletter & Email Subscribers
+model NewsletterSubscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  interest  String   @default("all") // all, hvac, water, fire, power
+  source    String   @default("website") // footer, newsletter_page
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([interest])
+  @@index([createdAt])
+}
+
 

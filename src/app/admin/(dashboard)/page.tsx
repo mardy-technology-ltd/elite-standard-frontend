@@ -16,6 +16,7 @@ import {
   FaFileInvoiceDollar,
   FaCogs,
   FaBriefcase,
+  FaMailBulk,
 } from "react-icons/fa";
 
 export default function AdminOverviewPage() {
@@ -126,6 +127,15 @@ export default function AdminOverviewPage() {
       color: "from-amber-600 to-yellow-600",
       href: "/admin/careers",
       btnText: "Manage Careers",
+    },
+    {
+      title: "Newsletter Subscribers",
+      value: stats?.subscribersCount ?? 0,
+      description: "Subscribed engineering audience",
+      icon: FaMailBulk,
+      color: "from-teal-600 to-cyan-600",
+      href: "/admin/newsletter",
+      btnText: "Subscribers",
     },
   ];
 

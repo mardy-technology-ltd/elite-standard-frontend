@@ -2,9 +2,6 @@ import React from "react";
 import prisma from "@/lib/prisma";
 import ProductsClient, { CatalogProduct, allProducts } from "./ProductsClient";
 
-export { allProducts };
-export type { CatalogProduct };
-
 export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
