@@ -86,10 +86,32 @@ const brandPartners = [
   { name: "Schneider", category: "Energy & Control Panels" },
 ];
 
-export default function TestimonialsAndPartners() {
+export default function TestimonialsAndPartners({
+  initialPartners = [],
+  initialClients = [],
+}: {
+  initialPartners?: any[];
+  initialClients?: any[];
+}) {
+  const [partnerList, setPartnerList] = useState<any[]>(
+    initialPartners && initialPartners.length > 0 ? initialPartners : brandPartners
+  );
+  const [clientList, setClientList] = useState<any[]>(initialClients);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [direction, setDirection] = useState(1);
+
+  useEffect(() => {
+    if (initialPartners && initialPartners.length > 0) {
+      setPartnerList(initialPartners);
+    }
+  }, [initialPartners]);
+
+  useEffect(() => {
+    if (initialClients && initialClients.length > 0) {
+      setClientList(initialClients);
+    }
+  }, [initialClients]);
 
   // Maximum starting index based on visible items (showing 3 cards on desktop)
   const totalSlides = testimonials.length;
@@ -251,8 +273,50 @@ export default function TestimonialsAndPartners() {
           ))}
         </div>
 
-        {/* Part B: Official Brand & OEM Equipment Partners */}
-        <div className="mt-20 pt-12 border-t border-slate-800/80">
+        {/* Part B: Corporate Clients & Trusted Partners Logo Showcase */}
+        {clientList.length > 0 && (
+          <div className="mt-20 pt-12 border-t border-slate-800/80">
+            <div className="text-center mb-8">
+              <span className="text-xs font-extrabold text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
+                <FaBuilding className="text-accent text-sm" />
+                <span>Trusted by Leading Corporations & Institutions</span>
+              </span>
+            </div>
+
+            {/* Corporate Client Logos Grid with Real Images */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+              {clientList.map((client: any, idx: number) => (
+                <div
+                  key={client.id || idx}
+                  className="group bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-2xl hover:border-accent/40 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-center min-h-[115px] text-center"
+                >
+                  <div className="w-full h-14 relative flex items-center justify-center mb-2 px-1">
+                    {client.logo ? (
+                      <img
+                        src={client.logo}
+                        alt={client.name}
+                        className="max-h-full max-w-full object-contain transition-all duration-300 group-hover:scale-110 drop-shadow-sm group-hover:drop-shadow-md"
+                      />
+                    ) : (
+                      <span className="font-heading font-black text-sm text-brand-950 uppercase tracking-wider">
+                        {client.monogram || client.name.slice(0, 3)}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[11px] font-bold text-brand-950 line-clamp-1 leading-tight group-hover:text-accent transition-colors">
+                    {client.name}
+                  </span>
+                  <span className="text-[9px] text-slate-500 line-clamp-1 mt-0.5 font-medium">
+                    {client.type}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Part C: Official Brand & OEM Equipment Partners */}
+        <div className="mt-16 pt-10 border-t border-slate-800/80">
           <div className="text-center mb-8">
             <span className="text-xs font-extrabold text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
               <FaHandshake className="text-accent text-sm" />
@@ -262,16 +326,26 @@ export default function TestimonialsAndPartners() {
 
           {/* Premium Equipment Brand Badges Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-            {brandPartners.map((partner, idx) => (
+            {partnerList.map((partner: any, idx: number) => (
               <div
-                key={idx}
-                className="group bg-slate-800/80 hover:bg-brand-900 border border-slate-700/80 hover:border-accent p-5 rounded-2xl text-center transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1"
+                key={partner.id || idx}
+                className="group bg-slate-800/80 hover:bg-brand-900 border border-slate-700/80 hover:border-accent p-4 sm:p-5 rounded-2xl text-center transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1 flex flex-col items-center justify-center min-h-[90px]"
               >
-                <span className="font-heading font-black text-base sm:text-lg text-slate-300 group-hover:text-accent tracking-wider uppercase transition-colors block">
-                  {partner.name}
-                </span>
-                <span className="text-[10px] text-slate-400 group-hover:text-slate-200 font-medium block mt-1">
-                  {partner.category}
+                {partner.logo ? (
+                  <div className="w-full h-10 relative mb-1.5">
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="w-full h-full object-contain filter brightness-90 group-hover:brightness-100 transition-all"
+                    />
+                  </div>
+                ) : (
+                  <span className="font-heading font-black text-base sm:text-lg text-slate-300 group-hover:text-accent tracking-wider uppercase transition-colors block">
+                    {partner.name}
+                  </span>
+                )}
+                <span className="text-[10px] text-slate-400 group-hover:text-slate-200 font-medium block mt-1 line-clamp-1">
+                  {partner.type || partner.category}
                 </span>
               </div>
             ))}

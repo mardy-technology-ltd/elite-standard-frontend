@@ -81,16 +81,22 @@ model Inquiry {
   updatedAt   DateTime @updatedAt
 }
 
-// 5. Corporate Client References & Logos
+// 5. Corporate Client References & Brand Partners
 model ClientReference {
-  id        String   @id @default(uuid())
-  name      String
-  type      String
-  monogram  String?
-  logo      String?
-  bgColor   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  name       String
+  type       String   // e.g. Banking & Infrastructure, HVAC Chillers & VRF
+  category   String   @default("client") // "client" or "partner"
+  monogram   String?
+  logo       String?
+  bgColor    String?  @default("bg-blue-50 text-blue-600 border-blue-100")
+  orderIndex Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
 }
 
 // 6. Technical Blogs & Case Studies

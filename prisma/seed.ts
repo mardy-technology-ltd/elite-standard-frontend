@@ -369,6 +369,41 @@ async function main() {
   }
   console.log(`✔ ${initialJobs.length} career positions seeded successfully.`);
 
+  // 6. Seed Corporate Clients & Brand Partners
+  const initialClients = [
+    { name: "Projukti International", type: "Technology & Power Integration", monogram: "PI", logo: "/images/clients/projukti-international.jpeg", bgColor: "bg-blue-50 text-blue-600 border-blue-100", category: "client", orderIndex: 1 },
+    { name: "Padma Bank Limited", type: "Banking & Infrastructure", monogram: "PBL", logo: "/images/clients/padma-bank.webp", bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", category: "client", orderIndex: 2 },
+    { name: "IFIC Bank Limited", type: "Banking & Corporate Offices", monogram: "IFIC", logo: "/images/clients/ific-bank.jpg", bgColor: "bg-cyan-50 text-cyan-600 border-cyan-100", category: "client", orderIndex: 3 },
+    { name: "Bank Asia Limited", type: "Banking & Corporate Offices", monogram: "BAL", logo: "/images/clients/bank-asia.jpg", bgColor: "bg-indigo-50 text-indigo-600 border-indigo-100", category: "client", orderIndex: 4 },
+    { name: "Aarong (BRAC Enterprise)", type: "Retail & Commercial MEP", monogram: "AAR", logo: "/images/clients/aarong.jpg", bgColor: "bg-amber-50 text-amber-700 border-amber-100", category: "client", orderIndex: 5 },
+    { name: "Sky Air", type: "Aviation & Logistics Setup", monogram: "SA", logo: "/images/clients/sky-air.jpg", bgColor: "bg-sky-50 text-sky-600 border-sky-100", category: "client", orderIndex: 6 },
+    { name: "Sonargaon University", type: "Educational Facility HVAC", monogram: "SU", logo: "/images/clients/sonargaon-university.png", bgColor: "bg-violet-50 text-violet-600 border-violet-100", category: "client", orderIndex: 7 },
+    { name: "Dhaka College", type: "Public Institution Lighting", monogram: "DC", logo: "/images/clients/dhaka-college.webp", bgColor: "bg-rose-50 text-rose-600 border-rose-100", category: "client", orderIndex: 8 },
+    { name: "MIST (Military Institute of Science and Technology)", type: "Institutional MEP Research", monogram: "MIST", logo: "/images/clients/mist.jpg", bgColor: "bg-lime-50 text-lime-700 border-lime-200", category: "client", orderIndex: 9 },
+    { name: "Mansons Pharma", type: "Pharmaceutical Cleanroom HVAC", monogram: "MP", logo: "/images/clients/mansons-pharma.png", bgColor: "bg-teal-50 text-teal-600 border-teal-100", category: "client", orderIndex: 10 },
+    { name: "Biotech Associates", type: "Healthcare Equipment Utilities", monogram: "BA", logo: "/images/clients/biotech-associates.jpg", bgColor: "bg-purple-50 text-purple-600 border-purple-100", category: "client", orderIndex: 11 },
+    { name: "Global Health BD", type: "Medical Facility Automation", monogram: "GH", logo: "/images/clients/global-health.png", bgColor: "bg-red-50 text-red-600 border-red-100", category: "client", orderIndex: 12 },
+    // Brand Partners
+    { name: "Daikin", type: "HVAC Chillers & VRF", monogram: "DK", logo: null, bgColor: "bg-blue-50 text-blue-600 border-blue-100", category: "partner", orderIndex: 1 },
+    { name: "Grundfos", type: "Pumps & Hydro-booster", monogram: "GF", logo: null, bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", category: "partner", orderIndex: 2 },
+    { name: "Siemens", type: "PLC & Switchgear", monogram: "SM", logo: null, bgColor: "bg-cyan-50 text-cyan-600 border-cyan-100", category: "partner", orderIndex: 3 },
+    { name: "ABB", type: "Circuit Breakers & Automation", monogram: "ABB", logo: null, bgColor: "bg-rose-50 text-rose-600 border-rose-100", category: "partner", orderIndex: 4 },
+    { name: "Cummins", type: "Power Generators", monogram: "CM", logo: null, bgColor: "bg-amber-50 text-amber-700 border-amber-100", category: "partner", orderIndex: 5 },
+    { name: "Schneider", type: "Energy & Control Panels", monogram: "SE", logo: null, bgColor: "bg-teal-50 text-teal-600 border-teal-100", category: "partner", orderIndex: 6 },
+  ];
+
+  for (const item of initialClients) {
+    const existing = await prisma.clientReference.findFirst({
+      where: { name: item.name, category: item.category },
+    });
+    if (!existing) {
+      await prisma.clientReference.create({
+        data: item,
+      });
+    }
+  }
+  console.log(`✔ ${initialClients.length} corporate clients & brand partners seeded successfully.`);
+
   console.log('--- SEEDING COMPLETED SUCCESSFULLY ---');
 }
 

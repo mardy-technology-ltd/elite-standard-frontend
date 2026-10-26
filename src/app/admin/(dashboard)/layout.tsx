@@ -21,6 +21,7 @@ import {
   FaCogs,
   FaBriefcase,
   FaMailBulk,
+  FaHandshake,
 } from "react-icons/fa";
 
 export default function AdminDashboardLayout({
@@ -102,6 +103,12 @@ export default function AdminDashboardLayout({
       href: "/admin/newsletter",
       icon: FaMailBulk,
       badge: "Audience",
+    },
+    {
+      label: "Clients & Partners",
+      href: "/admin/clients",
+      icon: FaHandshake,
+      badge: "Corporate",
     },
   ];
 

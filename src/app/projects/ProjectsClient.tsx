@@ -128,10 +128,15 @@ const clientReferences = [
 
 export default function ProjectsClient({
   initialProjects = projectsData,
+  initialClients = [],
 }: {
   initialProjects?: ProjectItem[];
+  initialClients?: any[];
 }) {
   const [projectsList, setProjectsList] = useState<ProjectItem[]>(initialProjects);
+  const [clientsList, setClientsList] = useState<any[]>(
+    initialClients && initialClients.length > 0 ? initialClients : clientReferences
+  );
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("All Sectors");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -141,6 +146,12 @@ export default function ProjectsClient({
       setProjectsList(initialProjects);
     }
   }, [initialProjects]);
+
+  useEffect(() => {
+    if (initialClients && initialClients.length > 0) {
+      setClientsList(initialClients);
+    }
+  }, [initialClients]);
 
   const categories = [
     "All Sectors",
@@ -553,13 +564,13 @@ export default function ProjectsClient({
             </p>
           </div>
 
-          {/* Grid list of 12 corporate references */}
+          {/* Grid list of corporate references */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {clientReferences.map((client, idx) => {
-              const ClientIcon = client.icon;
+            {clientsList.map((client: any, idx: number) => {
+              const ClientIcon = client.icon || FaBuilding;
               return (
                 <motion.div
-                  key={idx}
+                  key={client.id || idx}
                   whileHover={{ y: -5 }}
                   transition={{ duration: 0.2 }}
                   className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center gap-4 text-center hover:border-brand-900/30 hover:bg-white hover:shadow-md group transition-all"
@@ -575,10 +586,10 @@ export default function ProjectsClient({
                         className="max-h-full max-w-full object-contain"
                       />
                     ) : (
-                      <div className={`w-full h-full rounded-xl flex flex-col items-center justify-center relative ${client.bgColor}`}>
+                      <div className={`w-full h-full rounded-xl flex flex-col items-center justify-center relative ${client.bgColor || "bg-blue-50 text-blue-600 border-blue-100"}`}>
                         <ClientIcon className="text-xl opacity-85" />
                         <span className="text-[9px] font-extrabold uppercase tracking-tighter absolute -bottom-1 px-1.5 py-0.5 rounded bg-brand-950 text-white leading-none scale-90 border border-brand-800 shadow-sm">
-                          {client.monogram}
+                          {client.monogram || client.name?.slice(0, 3).toUpperCase()}
                         </span>
                       </div>
                     )}

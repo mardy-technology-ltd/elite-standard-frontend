@@ -17,6 +17,7 @@ import {
   FaCogs,
   FaBriefcase,
   FaMailBulk,
+  FaHandshake,
 } from "react-icons/fa";
 
 export default function AdminOverviewPage() {
@@ -136,6 +137,15 @@ export default function AdminOverviewPage() {
       color: "from-teal-600 to-cyan-600",
       href: "/admin/newsletter",
       btnText: "Subscribers",
+    },
+    {
+      title: "Clients & Partners",
+      value: stats?.clientsCount ?? 0,
+      description: "Corporate clients & brand references",
+      icon: FaHandshake,
+      color: "from-purple-600 to-pink-600",
+      href: "/admin/clients",
+      btnText: "Manage Logos",
     },
   ];
 
