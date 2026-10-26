@@ -15,10 +15,13 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaExternalLinkAlt,
-  FaListUl,
   FaUserTie,
-  FaEye,
   FaUsers,
+  FaFileAlt,
+  FaEnvelope,
+  FaPhoneAlt,
+  FaCalendarAlt,
+  FaFilter,
 } from "react-icons/fa";
 
 interface JobPosition {
@@ -42,6 +45,25 @@ interface JobPosition {
   };
 }
 
+interface JobApplication {
+  id: string;
+  jobPositionId?: string;
+  positionTitle: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  experience?: string;
+  resumeUrl?: string;
+  coverNote?: string;
+  status: "NEW" | "REVIEWED" | "SHORTLISTED" | "REJECTED";
+  createdAt: string;
+  jobPosition?: {
+    id: string;
+    title: string;
+    department: string;
+  };
+}
+
 const DEPARTMENTS = [
   "Mechanical Engineering (HVAC)",
   "Power Distribution & Panels (PDCP)",
@@ -53,11 +75,22 @@ const DEPARTMENTS = [
 ];
 
 export default function AdminCareersPage() {
+  const [viewMode, setViewMode] = useState<"positions" | "applications">("positions");
+
+  // Positions State
   const [positions, setPositions] = useState<JobPosition[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingPositions, setLoadingPositions] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedDept, setSelectedDept] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+
+  // Applications State
+  const [applications, setApplications] = useState<JobApplication[]>([]);
+  const [loadingApplications, setLoadingApplications] = useState(true);
+  const [appSearch, setAppSearch] = useState("");
+  const [appStatusFilter, setAppStatusFilter] = useState("ALL");
+  const [appJobFilter, setAppJobFilter] = useState("all");
+  const [activeNote, setActiveNote] = useState<JobApplication | null>(null);
 
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
@@ -65,6 +98,7 @@ export default function AdminCareersPage() {
   const [activeTab, setActiveTab] = useState<"basic" | "overview" | "qualifications">("basic");
   const [submitting, setSubmitting] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [updatingAppId, setUpdatingAppId] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -83,8 +117,9 @@ export default function AdminCareersPage() {
     orderIndex: 0,
   });
 
+  // Fetch Positions
   const fetchPositions = async () => {
-    setLoading(true);
+    setLoadingPositions(true);
     try {
       let url = "/api/admin/careers";
       const params = new URLSearchParams();
@@ -101,13 +136,40 @@ export default function AdminCareersPage() {
     } catch (err) {
       console.error("Failed to fetch jobs:", err);
     } finally {
-      setLoading(false);
+      setLoadingPositions(false);
+    }
+  };
+
+  // Fetch Applications
+  const fetchApplications = async () => {
+    setLoadingApplications(true);
+    try {
+      let url = "/api/admin/careers/applications";
+      const params = new URLSearchParams();
+      if (appJobFilter !== "all") params.append("jobPositionId", appJobFilter);
+      if (appStatusFilter !== "ALL") params.append("status", appStatusFilter);
+      if (appSearch) params.append("search", appSearch);
+      if (params.toString()) url += `?${params.toString()}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.applications) {
+        setApplications(data.applications);
+      }
+    } catch (err) {
+      console.error("Failed to fetch applications:", err);
+    } finally {
+      setLoadingApplications(false);
     }
   };
 
   useEffect(() => {
     fetchPositions();
   }, [selectedDept, selectedStatus, search]);
+
+  useEffect(() => {
+    fetchApplications();
+  }, [appJobFilter, appStatusFilter, appSearch]);
 
   const handleOpenCreate = () => {
     setEditingPosition(null);
@@ -192,6 +254,44 @@ export default function AdminCareersPage() {
     }
   };
 
+  const handleAppStatusChange = async (appId: string, newStatus: string) => {
+    setUpdatingAppId(appId);
+    try {
+      const res = await fetch(`/api/admin/careers/applications/${appId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        setApplications((prev) =>
+          prev.map((a) => (a.id === appId ? { ...a, status: newStatus as any } : a))
+        );
+      }
+    } catch (err) {
+      console.error("Error updating application status:", err);
+    } finally {
+      setUpdatingAppId(null);
+    }
+  };
+
+  const handleDeleteApplication = async (appId: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete application from "${name}"?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/careers/applications/${appId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setApplications((prev) => prev.filter((a) => a.id !== appId));
+        fetchPositions(); // refresh counts
+      }
+    } catch (err) {
+      console.error("Error deleting application:", err);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -254,6 +354,8 @@ export default function AdminCareersPage() {
     }
   };
 
+  const newAppsCount = applications.filter((a) => a.status === "NEW").length;
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12 font-sans">
       {/* Top Banner Header */}
@@ -264,10 +366,10 @@ export default function AdminCareersPage() {
             Careers & Recruitment Management
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">
-            Job Vacancies & Engineering Recruitment
+            Engineering Recruitment & Candidate Applications
           </h1>
           <p className="text-slate-400 text-xs sm:text-sm mt-1">
-            Manage open positions, set salary scales and criteria, toggle live status on website, and review applications.
+            Manage open engineering positions, review incoming candidate CVs, update application statuses, and publish vacancies.
           </p>
         </div>
 
@@ -280,176 +382,471 @@ export default function AdminCareersPage() {
         </button>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-4 bg-slate-900/40 p-4 rounded-xl border border-slate-800">
-        <div className="relative w-full lg:w-80">
-          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
-          <input
-            type="text"
-            placeholder="Search job title, department, skills..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
-          />
-        </div>
+      {/* Primary Section Switcher Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+        <button
+          onClick={() => setViewMode("positions")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            viewMode === "positions"
+              ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
+              : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800"
+          }`}
+        >
+          <FaBriefcase />
+          <span>Open Positions ({positions.length})</span>
+        </button>
 
-        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-          {/* Status Filter */}
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-amber-500"
-          >
-            <option value="all">All Statuses</option>
-            <option value="active">Active Only (Live)</option>
-            <option value="inactive">Draft / Inactive</option>
-          </select>
-
-          {/* Department Filter */}
-          <select
-            value={selectedDept}
-            onChange={(e) => setSelectedDept(e.target.value)}
-            className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-amber-500 max-w-xs"
-          >
-            <option value="all">All Engineering Departments</option>
-            {DEPARTMENTS.map((dept) => (
-              <option key={dept} value={dept}>
-                {dept}
-              </option>
-            ))}
-          </select>
-        </div>
+        <button
+          onClick={() => setViewMode("applications")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            viewMode === "applications"
+              ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
+              : "bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800"
+          }`}
+        >
+          <FaUsers />
+          <span>Candidate Applications ({applications.length})</span>
+          {newAppsCount > 0 && (
+            <span className="px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-extrabold animate-pulse">
+              {newAppsCount} NEW
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* Positions Table */}
-      {loading ? (
-        <div className="flex items-center justify-center p-16">
-          <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
-        </div>
-      ) : positions.length === 0 ? (
-        <div className="bg-slate-900/40 rounded-2xl border border-slate-800 p-12 text-center">
-          <FaUserTie className="mx-auto text-4xl text-slate-600 mb-3" />
-          <h3 className="text-base font-semibold text-white">No Positions Found</h3>
-          <p className="text-slate-400 text-xs mt-1 max-w-sm mx-auto">
-            Try adjusting your search criteria or click &quot;Post New Position&quot; to publish a job.
-          </p>
-        </div>
-      ) : (
-        <div className="bg-slate-900/40 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-slate-950/80 border-b border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                <tr>
-                  <th className="px-4 py-3">Job Title & Department</th>
-                  <th className="px-4 py-3">Location & Type</th>
-                  <th className="px-4 py-3">Salary & Exp</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Applications</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60">
-                {positions.map((job) => (
-                  <tr key={job.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-white text-sm">
-                          {job.title}
-                        </span>
-                        <span className="text-amber-400 text-[11px] font-semibold mt-0.5">
-                          {job.department}
-                        </span>
-                        <span className="text-slate-500 text-[10px] line-clamp-1 mt-0.5">
-                          {job.summary}
-                        </span>
-                      </div>
-                    </td>
+      {/* VIEW MODE 1: OPEN POSITIONS */}
+      {viewMode === "positions" && (
+        <div className="space-y-6">
+          {/* Filter Bar */}
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+            <div className="relative w-full lg:w-80">
+              <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+              <input
+                type="text"
+                placeholder="Search job title, department, skills..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+              />
+            </div>
 
-                    <td className="px-4 py-3">
-                      <div className="flex flex-col gap-1">
-                        <span className="flex items-center gap-1.5 text-slate-200">
-                          <FaMapMarkerAlt className="text-amber-500 text-[10px]" />
-                          <span>{job.location}</span>
-                        </span>
-                        <span className="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-semibold text-slate-300 self-start">
-                          {job.type}
-                        </span>
-                      </div>
-                    </td>
+            <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+              {/* Status Filter */}
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+              >
+                <option value="all">All Statuses</option>
+                <option value="active">Active Only (Live)</option>
+                <option value="inactive">Draft / Inactive</option>
+              </select>
 
-                    <td className="px-4 py-3">
-                      <div className="flex flex-col gap-1">
-                        <span className="font-bold text-emerald-400 text-[11px] flex items-center gap-1">
-                          <FaMoneyBillWave className="text-[10px]" />
-                          <span>{job.salaryBadge || job.salary}</span>
-                        </span>
-                        <span className="text-slate-400 text-[10px]">
-                          Exp: {job.experience}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => handleToggleActive(job.id, job.isActive)}
-                        disabled={togglingId === job.id}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all ${
-                          job.isActive
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
-                            : "bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700"
-                        }`}
-                      >
-                        {job.isActive ? (
-                          <>
-                            <FaCheckCircle className="text-emerald-400" />
-                            <span>Live on Site</span>
-                          </>
-                        ) : (
-                          <>
-                            <FaTimesCircle className="text-slate-500" />
-                            <span>Inactive / Draft</span>
-                          </>
-                        )}
-                      </button>
-                    </td>
-
-                    <td className="px-4 py-3">
-                      <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-xs font-semibold inline-flex items-center gap-1.5">
-                        <FaUsers className="text-slate-400 text-[10px]" />
-                        <span>{job._count?.applications ?? 0} CVs</span>
-                      </span>
-                    </td>
-
-                    <td className="px-4 py-3 text-right">
-                      <div className="inline-flex items-center gap-1.5">
-                        <Link
-                          href="/career"
-                          target="_blank"
-                          title="View on Careers Page"
-                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-                        >
-                          <FaExternalLinkAlt className="text-xs" />
-                        </Link>
-                        <button
-                          onClick={() => handleOpenEdit(job)}
-                          title="Edit Position"
-                          className="p-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-colors"
-                        >
-                          <FaEdit className="text-xs" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(job.id, job.title)}
-                          title="Delete Position"
-                          className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
-                        >
-                          <FaTrash className="text-xs" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+              {/* Department Filter */}
+              <select
+                value={selectedDept}
+                onChange={(e) => setSelectedDept(e.target.value)}
+                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-amber-500 max-w-xs"
+              >
+                <option value="all">All Engineering Departments</option>
+                {DEPARTMENTS.map((dept) => (
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
                 ))}
-              </tbody>
-            </table>
+              </select>
+            </div>
+          </div>
+
+          {/* Positions Table */}
+          {loadingPositions ? (
+            <div className="flex items-center justify-center p-16">
+              <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : positions.length === 0 ? (
+            <div className="bg-slate-900/40 rounded-2xl border border-slate-800 p-12 text-center">
+              <FaUserTie className="mx-auto text-4xl text-slate-600 mb-3" />
+              <h3 className="text-base font-semibold text-white">No Positions Found</h3>
+              <p className="text-slate-400 text-xs mt-1 max-w-sm mx-auto">
+                Try adjusting your search criteria or click &quot;Post New Position&quot; to publish a job.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-slate-900/40 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-300">
+                  <thead className="bg-slate-950/80 border-b border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    <tr>
+                      <th className="px-4 py-3">Job Title & Department</th>
+                      <th className="px-4 py-3">Location & Type</th>
+                      <th className="px-4 py-3">Salary & Exp</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3">Applications</th>
+                      <th className="px-4 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {positions.map((job) => (
+                      <tr key={job.id} className="hover:bg-slate-800/30 transition-colors">
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-white text-sm">
+                              {job.title}
+                            </span>
+                            <span className="text-amber-400 text-[11px] font-semibold mt-0.5">
+                              {job.department}
+                            </span>
+                            <span className="text-slate-500 text-[10px] line-clamp-1 mt-0.5">
+                              {job.summary}
+                            </span>
+                          </div>
+                        </td>
+
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col gap-1">
+                            <span className="flex items-center gap-1.5 text-slate-200">
+                              <FaMapMarkerAlt className="text-amber-500 text-[10px]" />
+                              <span>{job.location}</span>
+                            </span>
+                            <span className="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-semibold text-slate-300 self-start">
+                              {job.type}
+                            </span>
+                          </div>
+                        </td>
+
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col gap-1">
+                            <span className="font-bold text-emerald-400 text-[11px] flex items-center gap-1">
+                              <FaMoneyBillWave className="text-[10px]" />
+                              <span>{job.salaryBadge || job.salary}</span>
+                            </span>
+                            <span className="text-slate-400 text-[10px]">
+                              Exp: {job.experience}
+                            </span>
+                          </div>
+                        </td>
+
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => handleToggleActive(job.id, job.isActive)}
+                            disabled={togglingId === job.id}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all ${
+                              job.isActive
+                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
+                                : "bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700"
+                            }`}
+                          >
+                            {job.isActive ? (
+                              <>
+                                <FaCheckCircle className="text-emerald-400" />
+                                <span>Live on Site</span>
+                              </>
+                            ) : (
+                              <>
+                                <FaTimesCircle className="text-slate-500" />
+                                <span>Inactive / Draft</span>
+                              </>
+                            )}
+                          </button>
+                        </td>
+
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => {
+                              setAppJobFilter(job.id);
+                              setViewMode("applications");
+                            }}
+                            className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer border border-slate-700"
+                          >
+                            <FaUsers className="text-amber-400 text-[10px]" />
+                            <span>{job._count?.applications ?? 0} CVs</span>
+                          </button>
+                        </td>
+
+                        <td className="px-4 py-3 text-right">
+                          <div className="inline-flex items-center gap-1.5">
+                            <Link
+                              href="/career"
+                              target="_blank"
+                              title="View on Careers Page"
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                            >
+                              <FaExternalLinkAlt className="text-xs" />
+                            </Link>
+                            <button
+                              onClick={() => handleOpenEdit(job)}
+                              title="Edit Position"
+                              className="p-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 transition-colors"
+                            >
+                              <FaEdit className="text-xs" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(job.id, job.title)}
+                              title="Delete Position"
+                              className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
+                            >
+                              <FaTrash className="text-xs" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* VIEW MODE 2: CANDIDATE APPLICATIONS */}
+      {viewMode === "applications" && (
+        <div className="space-y-6">
+          {/* Applications Filter Bar */}
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+            <div className="relative w-full lg:w-80">
+              <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+              <input
+                type="text"
+                placeholder="Search candidate name, email, phone, position..."
+                value={appSearch}
+                onChange={(e) => setAppSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+              {/* Job Filter */}
+              <select
+                value={appJobFilter}
+                onChange={(e) => setAppJobFilter(e.target.value)}
+                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-amber-500 max-w-xs"
+              >
+                <option value="all">All Applied Positions</option>
+                {positions.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                  </option>
+                ))}
+              </select>
+
+              {/* Status Filter */}
+              <select
+                value={appStatusFilter}
+                onChange={(e) => setAppStatusFilter(e.target.value)}
+                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-amber-500"
+              >
+                <option value="ALL">All Application Statuses</option>
+                <option value="NEW">NEW (Unreviewed)</option>
+                <option value="REVIEWED">REVIEWED</option>
+                <option value="SHORTLISTED">SHORTLISTED</option>
+                <option value="REJECTED">REJECTED</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Applications Table */}
+          {loadingApplications ? (
+            <div className="flex items-center justify-center p-16">
+              <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : applications.length === 0 ? (
+            <div className="bg-slate-900/40 rounded-2xl border border-slate-800 p-12 text-center">
+              <FaFileAlt className="mx-auto text-4xl text-slate-600 mb-3" />
+              <h3 className="text-base font-semibold text-white">No Applications Found</h3>
+              <p className="text-slate-400 text-xs mt-1 max-w-sm mx-auto">
+                No candidate resumes have been submitted matching this filter.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-slate-900/40 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-300">
+                  <thead className="bg-slate-950/80 border-b border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    <tr>
+                      <th className="px-4 py-3">Candidate Info</th>
+                      <th className="px-4 py-3">Applied Position</th>
+                      <th className="px-4 py-3">Experience</th>
+                      <th className="px-4 py-3">Resume / CV</th>
+                      <th className="px-4 py-3">Cover Note</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3">Date</th>
+                      <th className="px-4 py-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {applications.map((app) => {
+                      const statusColor =
+                        app.status === "NEW"
+                          ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                          : app.status === "SHORTLISTED"
+                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                          : app.status === "REVIEWED"
+                          ? "bg-blue-500/10 text-blue-400 border-blue-500/30"
+                          : "bg-red-500/10 text-red-400 border-red-500/30";
+
+                      return (
+                        <tr key={app.id} className="hover:bg-slate-800/30 transition-colors">
+                          <td className="px-4 py-3">
+                            <div className="flex flex-col">
+                              <span className="font-bold text-white text-sm">
+                                {app.fullName}
+                              </span>
+                              <div className="flex items-center gap-2 mt-1">
+                                <a
+                                  href={`tel:${app.phone}`}
+                                  className="text-slate-400 hover:text-amber-400 flex items-center gap-1 text-[11px] transition-colors"
+                                >
+                                  <FaPhoneAlt className="text-[10px]" />
+                                  <span>{app.phone}</span>
+                                </a>
+                              </div>
+                              <a
+                                href={`mailto:${app.email}`}
+                                className="text-slate-400 hover:text-amber-400 flex items-center gap-1 text-[11px] transition-colors mt-0.5"
+                              >
+                                <FaEnvelope className="text-[10px]" />
+                                <span>{app.email}</span>
+                              </a>
+                            </div>
+                          </td>
+
+                          <td className="px-4 py-3">
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-white text-xs">
+                                {app.positionTitle}
+                              </span>
+                              {app.jobPosition && (
+                                <span className="text-[10px] text-amber-400">
+                                  {app.jobPosition.department}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+
+                          <td className="px-4 py-3 text-slate-300">
+                            {app.experience || "Not specified"}
+                          </td>
+
+                          <td className="px-4 py-3">
+                            {app.resumeUrl ? (
+                              <a
+                                href={app.resumeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 text-xs font-bold transition-all"
+                              >
+                                <FaExternalLinkAlt className="text-[10px]" />
+                                <span>Open CV / Link</span>
+                              </a>
+                            ) : (
+                              <span className="text-slate-500 text-[11px]">No link provided</span>
+                            )}
+                          </td>
+
+                          <td className="px-4 py-3">
+                            {app.coverNote ? (
+                              <button
+                                onClick={() => setActiveNote(app)}
+                                className="text-xs text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer"
+                              >
+                                View Note ({app.coverNote.length > 25 ? `${app.coverNote.slice(0, 25)}...` : app.coverNote})
+                              </button>
+                            ) : (
+                              <span className="text-slate-500 text-[11px]">None</span>
+                            )}
+                          </td>
+
+                          <td className="px-4 py-3">
+                            <select
+                              value={app.status}
+                              disabled={updatingAppId === app.id}
+                              onChange={(e) => handleAppStatusChange(app.id, e.target.value)}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-bold border focus:outline-none cursor-pointer transition-colors ${statusColor}`}
+                            >
+                              <option value="NEW" className="bg-slate-900 text-amber-400">NEW</option>
+                              <option value="REVIEWED" className="bg-slate-900 text-blue-400">REVIEWED</option>
+                              <option value="SHORTLISTED" className="bg-slate-900 text-emerald-400">SHORTLISTED</option>
+                              <option value="REJECTED" className="bg-slate-900 text-red-400">REJECTED</option>
+                            </select>
+                          </td>
+
+                          <td className="px-4 py-3 text-[11px] text-slate-400 whitespace-nowrap">
+                            <span className="flex items-center gap-1">
+                              <FaCalendarAlt className="text-[10px] text-slate-500" />
+                              <span>{new Date(app.createdAt).toLocaleDateString()}</span>
+                            </span>
+                          </td>
+
+                          <td className="px-4 py-3 text-right">
+                            <button
+                              onClick={() => handleDeleteApplication(app.id, app.fullName)}
+                              title="Delete Application"
+                              className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
+                            >
+                              <FaTrash className="text-xs" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Cover Note Viewer Modal */}
+      {activeNote && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-white">
+                  Cover Note: {activeNote.fullName}
+                </h3>
+                <span className="text-xs text-amber-400">
+                  {activeNote.positionTitle}
+                </span>
+              </div>
+              <button
+                onClick={() => setActiveNote(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 max-h-60 overflow-y-auto">
+              <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
+                {activeNote.coverNote}
+              </p>
+            </div>
+
+            {activeNote.resumeUrl && (
+              <div className="pt-2">
+                <a
+                  href={activeNote.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-blue-400 hover:underline"
+                >
+                  <FaExternalLinkAlt className="text-[10px]" />
+                  <span>Open Attached CV Link</span>
+                </a>
+              </div>
+            )}
+
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setActiveNote(null)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
