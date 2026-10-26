@@ -41,8 +41,8 @@ export const navItems: NavItem[] = [
   { label: "Services", href: "/services", hasDropdown: true },
   { label: "Products", href: "/products" },
   { label: "Projects", href: "/projects" },
-  { label: "More", href: "/more", hasDropdown: true },
   { label: "Contact", href: "/contact" },
+  { label: "More", href: "/more", hasDropdown: true },
 ];
 
 export interface MoreItem {
@@ -586,7 +586,7 @@ export default function Navbar() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.98 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute top-full left-0 mt-1 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-2.5 flex flex-col gap-1"
+                          className="absolute top-full right-0 mt-1 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-2.5 flex flex-col gap-1"
                         >
                           <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-900 flex items-center justify-between border-b border-slate-200 mb-1">
                             <span>Explore More</span>
