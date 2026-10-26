@@ -103,14 +103,23 @@ export default function AdminInquiriesPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
-          <FaEnvelopeOpenText className="text-amber-400" />
-          Customer Inquiries & RFQs
-        </h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Review quotation requests, equipment inquiries, and technical consultation leads.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+            <FaEnvelopeOpenText className="text-amber-400" />
+            Customer Inquiries & RFQs
+          </h1>
+          <p className="text-xs text-slate-400 mt-1">
+            Review quotation requests, equipment inquiries, and technical consultation leads.
+          </p>
+        </div>
+        <a
+          href="/admin/newsletter"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold transition-all self-start sm:self-auto"
+        >
+          <FaEnvelope className="text-amber-400 text-xs" />
+          <span>View Newsletter Subscribers &rarr;</span>
+        </a>
       </div>
 
       {/* Filter and Search Bar */}
