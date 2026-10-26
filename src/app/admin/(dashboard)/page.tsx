@@ -14,6 +14,7 @@ import {
   FaPlus,
   FaDatabase,
   FaFileInvoiceDollar,
+  FaCogs,
 } from "react-icons/fa";
 
 export default function AdminOverviewPage() {
@@ -70,6 +71,15 @@ export default function AdminOverviewPage() {
   }
 
   const kpis = [
+    {
+      title: "MEP Services",
+      value: stats?.servicesCount ?? 0,
+      description: "Mechanical, Electrical, Plumbing",
+      icon: FaCogs,
+      color: "from-blue-700 to-indigo-700",
+      href: "/admin/services",
+      btnText: "Manage Services",
+    },
     {
       title: "Catalog Products",
       value: stats?.productsCount ?? 0,

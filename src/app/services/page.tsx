@@ -39,6 +39,18 @@ function ServicesOverviewContent() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<"all" | "mechanical" | "electrical" | "plumbing">("all");
+  const [servicesList, setServicesList] = useState<ServiceItem[]>(servicesData);
+
+  useEffect(() => {
+    fetch("/api/services")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.services && Array.isArray(data.services) && data.services.length > 0) {
+          setServicesList(data.services);
+        }
+      })
+      .catch((err) => console.error("Error fetching live services:", err));
+  }, []);
 
   useEffect(() => {
     if (
@@ -50,7 +62,7 @@ function ServicesOverviewContent() {
     }
   }, [categoryParam]);
 
-  const filteredServices = servicesData.filter((s: ServiceItem) => {
+  const filteredServices = servicesList.filter((s: ServiceItem) => {
     const matchesCategory = activeCategory === "all" || s.category === activeCategory;
     const matchesSearch =
       s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

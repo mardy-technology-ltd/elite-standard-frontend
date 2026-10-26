@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { projectsData, blogsData } from '../src/lib/mockData';
+import { projectsData, blogsData, servicesData } from '../src/lib/mockData';
 import { allProducts } from '../src/app/products/page';
 
 const prisma = new PrismaClient();
@@ -174,6 +174,54 @@ async function main() {
     });
     console.log(`✔ Sample inquiries created.`);
   }
+
+  // 6. Seed MEP Services (9 Core Disciplines)
+  console.log(`Seeding ${servicesData.length} MEP services...`);
+  for (let i = 0; i < servicesData.length; i++) {
+    const s = servicesData[i];
+    await prisma.service.upsert({
+      where: { slug: s.slug },
+      update: {
+        code: s.code,
+        category: s.category,
+        title: s.title,
+        subtitle: s.subtitle,
+        shortDescription: s.shortDescription,
+        fullDescription: s.fullDescription,
+        icon: s.icon,
+        bannerImage: s.bannerImage,
+        compliance: s.compliance || [],
+        problems: s.problems || [],
+        solutions: s.solutions || [],
+        scopeOfWork: s.scopeOfWork || [],
+        subServices: (s.subServices || []) as any,
+        faqs: (s.faqs || []) as any,
+        sectors: (s.sectors || null) as any,
+        orderIndex: i,
+      },
+      create: {
+        id: s.id,
+        slug: s.slug,
+        code: s.code,
+        category: s.category,
+        title: s.title,
+        subtitle: s.subtitle,
+        shortDescription: s.shortDescription,
+        fullDescription: s.fullDescription,
+        icon: s.icon,
+        bannerImage: s.bannerImage,
+        compliance: s.compliance || [],
+        problems: s.problems || [],
+        solutions: s.solutions || [],
+        scopeOfWork: s.scopeOfWork || [],
+        subServices: (s.subServices || []) as any,
+        faqs: (s.faqs || []) as any,
+        sectors: (s.sectors || null) as any,
+        orderIndex: i,
+      },
+    });
+  }
+  console.log(`✔ ${servicesData.length} MEP services seeded successfully.`);
 
   console.log('--- SEEDING COMPLETED SUCCESSFULLY ---');
 }

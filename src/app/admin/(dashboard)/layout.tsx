@@ -18,6 +18,7 @@ import {
   FaDatabase,
   FaBell,
   FaSearch,
+  FaCogs,
 } from "react-icons/fa";
 
 export default function AdminDashboardLayout({
@@ -63,6 +64,12 @@ export default function AdminDashboardLayout({
       href: "/admin",
       icon: FaTachometerAlt,
       exact: true,
+    },
+    {
+      label: "Services & Solutions",
+      href: "/admin/services",
+      icon: FaCogs,
+      badge: "Core MEP",
     },
     {
       label: "Products Catalog",

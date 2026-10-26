@@ -108,3 +108,31 @@ model Blog {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// 7. MEP Services & Solutions (Dynamic Admin CRUD)
+model Service {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  code             String   @unique // e.g. ESL-MEP-HVAC
+  category         String   // mechanical, electrical, plumbing
+  title            String
+  subtitle         String?
+  shortDescription String   @db.Text
+  fullDescription  String   @db.Text
+  icon             String   @default("FaIndustry")
+  bannerImage      String
+  compliance       String[] // ["BNBC", "ASHRAE", "SMACNA", "NFPA"]
+  problems         String[] // Array of challenges/pain points
+  solutions        String[] // Array of engineering solutions
+  scopeOfWork      String[] // Array of scope of work steps
+  subServices      Json?    // Array of SubServiceDetail objects
+  faqs             Json?    // Array of { question, answer }
+  sectors          Json?    // { residential, commercial, industrial }
+  orderIndex       Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([category])
+  @@index([slug])
+}
+

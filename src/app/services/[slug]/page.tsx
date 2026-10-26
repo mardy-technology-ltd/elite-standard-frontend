@@ -11,22 +11,60 @@ import ServiceScope from "@/components/services/ServiceScope";
 import ServiceFaq from "@/components/services/ServiceFaq";
 import ServiceCTA from "@/components/services/ServiceCTA";
 
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
 interface ServicePageProps {
   params: {
     slug: string;
   };
 }
 
-// Generate static routes for all 9 MEP services
-export async function generateStaticParams() {
-  return servicesData.map((service: ServiceItem) => ({
-    slug: service.slug,
-  }));
+async function getService(slug: string): Promise<ServiceItem | null> {
+  try {
+    const dbService = await prisma.service.findFirst({
+      where: {
+        OR: [{ slug }, { code: slug.toUpperCase() }],
+      },
+    });
+
+    if (dbService) {
+      return {
+        id: dbService.id,
+        slug: dbService.slug,
+        code: dbService.code,
+        category: dbService.category as any,
+        compliance: dbService.compliance,
+        title: dbService.title,
+        subtitle: dbService.subtitle || "",
+        shortDescription: dbService.shortDescription,
+        fullDescription: dbService.fullDescription,
+        icon: dbService.icon,
+        bannerImage: dbService.bannerImage,
+        problems: dbService.problems,
+        solutions: dbService.solutions,
+        scopeOfWork: dbService.scopeOfWork,
+        subServices: (dbService.subServices as any) || [],
+        faqs: (dbService.faqs as any) || [],
+        sectors: (dbService.sectors as any) || undefined,
+      };
+    }
+  } catch (e) {
+    console.error("DB service lookup error:", e);
+  }
+
+  return (
+    servicesData.find(
+      (s: ServiceItem) =>
+        s.slug === slug || s.code.toLowerCase() === slug.toLowerCase()
+    ) || null
+  );
 }
 
 // Dynamic SEO Metadata for Each Service
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
-  const service = servicesData.find((s: ServiceItem) => s.slug === params.slug);
+  const service = await getService(params.slug);
 
   if (!service) {
     return {
@@ -53,8 +91,8 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   };
 }
 
-export default function ServiceDetailPage({ params }: ServicePageProps) {
-  const service = servicesData.find((s: ServiceItem) => s.slug === params.slug);
+export default async function ServiceDetailPage({ params }: ServicePageProps) {
+  const service = await getService(params.slug);
 
   if (!service) {
     notFound();

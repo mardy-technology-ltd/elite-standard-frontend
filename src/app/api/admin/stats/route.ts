@@ -10,6 +10,7 @@ export async function GET() {
 
   try {
     const [
+      servicesCount,
       productsCount,
       projectsCount,
       inquiriesCount,
@@ -17,6 +18,7 @@ export async function GET() {
       blogsCount,
       recentInquiries,
     ] = await Promise.all([
+      prisma.service.count(),
       prisma.product.count(),
       prisma.project.count(),
       prisma.inquiry.count(),
@@ -31,6 +33,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       stats: {
+        servicesCount,
         productsCount,
         projectsCount,
         inquiriesCount,
