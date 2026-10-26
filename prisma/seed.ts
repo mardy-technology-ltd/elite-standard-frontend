@@ -223,6 +223,152 @@ async function main() {
   }
   console.log(`✔ ${servicesData.length} MEP services seeded successfully.`);
 
+  // 7. Seed Careers & Recruitment Job Positions
+  const initialJobs = [
+    {
+      id: "hvac-sr",
+      slug: "senior-mechanical-engineer-hvac",
+      title: "Senior Mechanical Engineer (HVAC & Cleanrooms)",
+      department: "Mechanical Engineering (HVAC)",
+      location: "Amtola / Banani, Dhaka",
+      type: "Full Time",
+      experience: "4 - 7 Years",
+      salary: "BDT 75,000 - 1,10,000 / Month (Negotiable)",
+      salaryBadge: "BDT 75,000 - 1,10,000 / Month",
+      summary:
+        "Lead HVAC heat load calculation (Carrier HAP), VRF system layout design, chiller plant piping schematics, and ISO Class 7/8 pharmaceutical cleanroom air balancing.",
+      qualifications: [
+        "B.Sc. in Mechanical Engineering from a recognized university (BUET/CUET/RUET/KUET/AUST preferred)",
+        "Proficient in Carrier HAP, AutoCAD MEP, and duct sizing tools",
+        "Hands-on experience in VRF multi-split installation and chilled water piping commissioning",
+        "Knowledge of BNBC 2020 and ASHRAE 62.1 / 90.1 standards",
+      ],
+      responsibilities: [
+        "Design VRF, chiller, and cleanroom HVAC schematics",
+        "Supervise site execution and air balancing commissioning",
+        "Liaise with clients for technical submittals and approvals",
+      ],
+      isActive: true,
+      orderIndex: 1,
+    },
+    {
+      id: "switchgear-eng",
+      slug: "electrical-switchgear-design-engineer",
+      title: "Electrical Switchgear Design Engineer (LT/HT Panels)",
+      department: "Power Distribution & Panels (PDCP)",
+      location: "Dhaka Factory & Site",
+      type: "Full Time",
+      experience: "3 - 5 Years",
+      salary: "BDT 55,000 - 85,000 / Month (Negotiable)",
+      salaryBadge: "BDT 55,000 - 85,000 / Month",
+      summary:
+        "Design Form-4 type tested Low Voltage switchgear panels, HT 11kV VCB substations, Automatic PFI capacitor banks, and motor control centers (MCC).",
+      qualifications: [
+        "B.Sc. in Electrical & Electronic Engineering (EEE)",
+        "Strong proficiency in single-line diagrams (SLD), busbar calculation, and AutoCAD Electrical",
+        "Familiarity with ABB, Schneider, and Siemens circuit breakers & digital power meters",
+        "Sound understanding of IEC 61439-1/2 and BNBC electrical safety codes",
+      ],
+      responsibilities: [
+        "Prepare GA drawings and wiring schematics for LT/HT switchboards",
+        "Perform short-circuit and temperature rise calculations",
+        "Conduct factory acceptance tests (FAT) before dispatch",
+      ],
+      isActive: true,
+      orderIndex: 2,
+    },
+    {
+      id: "fire-safety-eng",
+      slug: "fire-protection-life-safety-engineer",
+      title: "Fire Protection & Life Safety Engineer (NFPA / FSCD)",
+      department: "Fire Detection & Protection (FDPS)",
+      location: "Project Sites (Dhaka & Environs)",
+      type: "Full Time",
+      experience: "3 - 6 Years",
+      salary: "BDT 60,000 - 90,000 / Month (Negotiable)",
+      salaryBadge: "BDT 60,000 - 90,000 / Month",
+      summary:
+        "Execute wet-pipe sprinkler hydraulic calculations, high-pressure hydrant network layout, clean-agent (FM200) gas suppression, and FSCD statutory clearance documentation.",
+      qualifications: [
+        "B.Sc. in Mechanical or Chemical Engineering",
+        "In-depth working knowledge of NFPA 13, 14, 20, and BNBC Part 4 requirements",
+        "Experience with UL/FM certified electric & diesel fire pump skid commissioning",
+        "Track record of successful Fire Service & Civil Defence (FSCD) safety audits",
+      ],
+      responsibilities: [
+        "Hydraulic calculations for sprinkler and hydrant networks",
+        "Installation supervision of fire suppression systems and pump skids",
+        "Prepare documentation and liaise with FSCD inspectors for licensing",
+      ],
+      isActive: true,
+      orderIndex: 3,
+    },
+    {
+      id: "automation-eng",
+      slug: "bms-industrial-automation-engineer",
+      title: "BMS & Industrial Automation Engineer (PLC / SCADA)",
+      department: "Industrial Building Automation (IBA)",
+      location: "Amtola Headquarters, Dhaka",
+      type: "Full Time",
+      experience: "2 - 4 Years",
+      salary: "BDT 50,000 - 75,000 / Month (Negotiable)",
+      salaryBadge: "BDT 50,000 - 75,000 / Month",
+      summary:
+        "Program Siemens S7-1200/1500 and Schneider Modicon PLCs, develop SCADA graphics, and integrate IoT field transmitters with central building management systems.",
+      qualifications: [
+        "B.Sc. in EEE, Mechatronics, or CSE/ETE",
+        "Proven experience in TIA Portal, WinCC SCADA, or Wonderware InTouch",
+        "Hands-on configuration of Modbus RTU/TCP, BACnet, and Profibus communication protocols",
+        "Knowledge of VFD speed modulation, energy telemetry, and automated damper interlocks",
+      ],
+      responsibilities: [
+        "PLC logic development and HMI/SCADA screen design",
+        "Field instrument calibration and loop testing",
+        "BMS protocol integration with HVAC chillers, VFDs, and power meters",
+      ],
+      isActive: true,
+      orderIndex: 4,
+    },
+  ];
+
+  console.log(`Seeding ${initialJobs.length} career positions...`);
+  for (const job of initialJobs) {
+    await prisma.jobPosition.upsert({
+      where: { slug: job.slug },
+      update: {
+        title: job.title,
+        department: job.department,
+        location: job.location,
+        type: job.type,
+        experience: job.experience,
+        salary: job.salary,
+        salaryBadge: job.salaryBadge,
+        summary: job.summary,
+        qualifications: job.qualifications,
+        responsibilities: job.responsibilities,
+        isActive: job.isActive,
+        orderIndex: job.orderIndex,
+      },
+      create: {
+        id: job.id,
+        slug: job.slug,
+        title: job.title,
+        department: job.department,
+        location: job.location,
+        type: job.type,
+        experience: job.experience,
+        salary: job.salary,
+        salaryBadge: job.salaryBadge,
+        summary: job.summary,
+        qualifications: job.qualifications,
+        responsibilities: job.responsibilities,
+        isActive: job.isActive,
+        orderIndex: job.orderIndex,
+      },
+    });
+  }
+  console.log(`✔ ${initialJobs.length} career positions seeded successfully.`);
+
   console.log('--- SEEDING COMPLETED SUCCESSFULLY ---');
 }
 

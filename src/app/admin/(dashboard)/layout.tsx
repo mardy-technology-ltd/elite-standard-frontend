@@ -19,6 +19,7 @@ import {
   FaBell,
   FaSearch,
   FaCogs,
+  FaBriefcase,
 } from "react-icons/fa";
 
 export default function AdminDashboardLayout({
@@ -88,6 +89,12 @@ export default function AdminDashboardLayout({
       href: "/admin/inquiries",
       icon: FaEnvelopeOpenText,
       badge: "Active",
+    },
+    {
+      label: "Careers & Jobs",
+      href: "/admin/careers",
+      icon: FaBriefcase,
+      badge: "Hiring",
     },
   ];
 

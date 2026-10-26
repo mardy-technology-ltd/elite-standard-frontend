@@ -136,3 +136,50 @@ model Service {
   @@index([slug])
 }
 
+// 8. Careers & Recruitment (Job Vacancies & Open Positions)
+model JobPosition {
+  id               String           @id @default(uuid())
+  slug             String           @unique
+  title            String
+  department       String           // Mechanical, Electrical, Fire Protection, Automation, etc.
+  location         String           @default("Amtola / Banani, Dhaka")
+  type             String           @default("Full Time") // Full Time, Part Time, Contractual, Internship
+  experience       String           // e.g. "3 - 5 Years"
+  salary           String           // e.g. "BDT 60,000 - 90,000 / Month (Negotiable)"
+  salaryBadge      String?          // e.g. "BDT 60k - 90k"
+  summary          String           @db.Text
+  qualifications   String[]         // List of qualification bullet points
+  responsibilities String[]         // List of job responsibility bullet points
+  isActive         Boolean          @default(true)
+  deadline         String?
+  orderIndex       Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  applications     JobApplication[]
+
+  @@index([department])
+  @@index([isActive])
+}
+
+// 9. Job Candidate Applications
+model JobApplication {
+  id            String       @id @default(uuid())
+  jobPositionId String?
+  jobPosition   JobPosition? @relation(fields: [jobPositionId], references: [id], onDelete: SetNull)
+  positionTitle String
+  fullName      String
+  email         String
+  phone         String
+  experience    String?
+  resumeUrl     String?      // Uploaded CV link or file
+  coverNote     String?      @db.Text
+  status        String       @default("NEW") // NEW, REVIEWED, SHORTLISTED, REJECTED
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([jobPositionId])
+  @@index([status])
+}
+
+

@@ -15,6 +15,7 @@ import {
   FaDatabase,
   FaFileInvoiceDollar,
   FaCogs,
+  FaBriefcase,
 } from "react-icons/fa";
 
 export default function AdminOverviewPage() {
@@ -116,6 +117,15 @@ export default function AdminOverviewPage() {
       color: "from-emerald-600 to-teal-600",
       href: "/admin/inquiries",
       btnText: "All Inquiries",
+    },
+    {
+      title: "Open Careers",
+      value: stats?.careersCount ?? 0,
+      description: "Active engineering vacancies",
+      icon: FaBriefcase,
+      color: "from-amber-600 to-yellow-600",
+      href: "/admin/careers",
+      btnText: "Manage Careers",
     },
   ];
 

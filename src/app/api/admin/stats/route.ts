@@ -15,6 +15,8 @@ export async function GET() {
       projectsCount,
       inquiriesCount,
       pendingInquiriesCount,
+      careersCount,
+      applicationsCount,
       blogsCount,
       recentInquiries,
     ] = await Promise.all([
@@ -23,6 +25,8 @@ export async function GET() {
       prisma.project.count(),
       prisma.inquiry.count(),
       prisma.inquiry.count({ where: { status: 'PENDING' } }),
+      prisma.jobPosition.count({ where: { isActive: true } }),
+      prisma.jobApplication.count({ where: { status: 'NEW' } }),
       prisma.blog.count(),
       prisma.inquiry.findMany({
         orderBy: { createdAt: 'desc' },
@@ -38,6 +42,8 @@ export async function GET() {
         projectsCount,
         inquiriesCount,
         pendingInquiriesCount,
+        careersCount,
+        applicationsCount,
         blogsCount,
       },
       recentInquiries,
