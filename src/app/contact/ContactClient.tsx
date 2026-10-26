@@ -54,11 +54,34 @@ export default function ContactClient() {
 
   const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
-    // Simulate API request delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setSubmitSuccess(true);
-    reset();
+    try {
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          facility: data.company,
+          productName: data.service ? `Service Category: ${data.service.toUpperCase()}` : "General Engineering",
+          type: "quotation",
+          message: data.message,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to submit inquiry");
+      }
+
+      setSubmitSuccess(true);
+      reset();
+    } catch (err: any) {
+      console.error("Submission error:", err);
+      alert(err.message || "Failed to submit inquiry. Please try again or call our direct helpline.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

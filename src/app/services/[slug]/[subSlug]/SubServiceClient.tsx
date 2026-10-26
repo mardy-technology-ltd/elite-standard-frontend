@@ -61,11 +61,34 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
 
   const onSubmit = async (data: QuoteFormValues) => {
     setIsSubmitting(true);
-    // Simulate API request delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setFormSubmitted(true);
-    reset();
+    try {
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.fullName,
+          email: data.email,
+          phone: data.phone,
+          facility: data.company,
+          productName: `Sub-Service: ${sub.title} (${data.projectScale || "Scale not specified"})`,
+          type: "quotation",
+          message: data.message,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to submit request");
+      }
+
+      setFormSubmitted(true);
+      reset();
+    } catch (err: any) {
+      console.error("Submission error:", err);
+      alert(err.message || "Failed to submit quotation request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
