@@ -49,7 +49,7 @@ export interface MoreItem {
   title: string;
   desc: string;
   href: string;
-  badge: string;
+  badge?: string;
   icon: React.ReactNode;
 }
 
@@ -58,14 +58,12 @@ export const moreItems: MoreItem[] = [
     title: "Careers & Recruitment",
     desc: "Explore MEP engineering vacancies & open positions",
     href: "/career",
-    badge: "HIRING",
     icon: <FaBriefcase className="text-amber-500" />,
   },
   {
     title: "Engineering Newsletter",
     desc: "Technical bulletins, HVAC insights & code compliance",
     href: "/newsletter",
-    badge: "WEEKLY",
     icon: <FaNewspaper className="text-blue-500" />,
   },
 ];
@@ -612,10 +610,8 @@ export default function Navbar() {
                                   </span>
                                 </div>
                               </div>
-                              <div className="pl-2 shrink-0">
-                                <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 text-slate-600 group-hover/item:bg-accent/20 group-hover/item:text-brand-950 transition-colors">
-                                  {mItem.badge}
-                                </span>
+                              <div className="pl-2 shrink-0 text-slate-300 group-hover/item:text-accent group-hover/item:translate-x-0.5 transition-all">
+                                <FaChevronRight className="text-[10px]" />
                               </div>
                             </Link>
                           ))}
