@@ -106,8 +106,8 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       {/* 2. Introduction */}
       <ServiceIntro service={service} />
 
-      {/* Sector-Wise Solutions Tab Component */}
-      <ServiceSectorBreakdown service={service} />
+      {/* Sector-Wise Solutions Tab Component (Commented out as requested) */}
+      {/* <ServiceSectorBreakdown service={service} /> */}
 
       {/* 3. Sub-Specialties Deep Dive (with HTML element id anchors matching /services/fdps#alarm, /services/hvac#vrf, etc.) */}
       <ServiceSubSpecialties service={service} />
