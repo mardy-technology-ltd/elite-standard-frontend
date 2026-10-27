@@ -104,11 +104,11 @@ export default function AdminCareersPage() {
   const [formData, setFormData] = useState({
     title: "",
     department: DEPARTMENTS[0],
-    location: "Amtola / Banani, Dhaka",
+    location: "",
     type: "Full Time",
-    experience: "3 - 5 Years",
-    salary: "BDT 60,000 - 90,000 / Month (Negotiable)",
-    salaryBadge: "BDT 60,000 - 90,000 / Month",
+    experience: "",
+    salary: "",
+    salaryBadge: "",
     summary: "",
     qualificationsText: "",
     responsibilitiesText: "",
@@ -176,16 +176,14 @@ export default function AdminCareersPage() {
     setFormData({
       title: "",
       department: DEPARTMENTS[0],
-      location: "Amtola / Banani, Dhaka",
+      location: "",
       type: "Full Time",
-      experience: "3 - 5 Years",
-      salary: "BDT 60,000 - 90,000 / Month (Negotiable)",
-      salaryBadge: "BDT 60,000 - 90,000 / Month",
-      summary: "Lead engineering design, site validation, and standards compliance...",
-      qualificationsText:
-        "B.Sc. in Engineering from a recognized university\nProficiency in AutoCAD and engineering calculation tools\nSound knowledge of BNBC codes and international standards",
-      responsibilitiesText:
-        "Execute engineering calculations and prepare technical drawings\nSupervise on-site installation and testing protocols\nLiaise with clients and project stakeholders",
+      experience: "",
+      salary: "",
+      salaryBadge: "",
+      summary: "",
+      qualificationsText: "",
+      responsibilitiesText: "",
       isActive: true,
       deadline: "",
       orderIndex: positions.length + 1,
@@ -922,23 +920,6 @@ export default function AdminCareersPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-300 mb-1">
-                        Department <span className="text-red-400">*</span>
-                      </label>
-                      <select
-                        value={formData.department}
-                        onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                      >
-                        {DEPARTMENTS.map((dept) => (
-                          <option key={dept} value={dept}>
-                            {dept}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
                         Job Location <span className="text-red-400">*</span>
                       </label>
                       <input
@@ -950,9 +931,7 @@ export default function AdminCareersPage() {
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
                       />
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-300 mb-1">
                         Employment Type
@@ -968,20 +947,20 @@ export default function AdminCareersPage() {
                         <option value="Internship">Internship</option>
                       </select>
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
-                        Experience Required <span className="text-red-400">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.experience}
-                        onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                        placeholder="e.g. 3 - 5 Years"
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                      />
-                    </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                      Experience Required <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.experience}
+                      onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                      placeholder="e.g. 3 - 5 Years"
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1084,16 +1063,31 @@ export default function AdminCareersPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
-                      Application Deadline (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.deadline}
-                      onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                      placeholder="e.g. 30 November 2026 or Rolling Basis"
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                    />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-bold text-slate-300">
+                        Application Deadline (Optional Date Picker)
+                      </label>
+                      {formData.deadline && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, deadline: "" })}
+                          className="text-[11px] text-amber-400 hover:text-amber-300 underline"
+                        >
+                          Clear Date
+                        </button>
+                      )}
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        value={formData.deadline}
+                        onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer [color-scheme:dark]"
+                      />
+                    </div>
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      Leave empty for open/rolling applications.
+                    </p>
                   </div>
                 </div>
               )}

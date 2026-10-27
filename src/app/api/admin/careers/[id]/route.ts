@@ -15,9 +15,9 @@ export async function PUT(
     const { id } = params;
     const data = await req.json();
 
-    if (!data.title || !data.department || !data.experience || !data.salary) {
+    if (!data.title || !data.experience || !data.salary) {
       return NextResponse.json(
-        { error: 'Job Title, Department, Experience, and Salary are required' },
+        { error: 'Job Title, Experience, and Salary are required' },
         { status: 400 }
       );
     }
@@ -26,7 +26,7 @@ export async function PUT(
       where: { id },
       data: {
         title: data.title.trim(),
-        department: data.department.trim(),
+        department: (data.department && data.department.trim()) ? data.department.trim() : 'General',
         location: data.location || 'Amtola / Banani, Dhaka',
         type: data.type || 'Full Time',
         experience: data.experience.trim(),

@@ -286,6 +286,12 @@ export default function CareerClient({
                       <FaMoneyBillWave className="text-xs text-amber-600" />
                       <span>{job.salaryBadge || job.salary}</span>
                     </span>
+                    {job.deadline && (
+                      <span className="px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-bold flex items-center gap-1">
+                        <FaClock className="text-[9px]" />
+                        <span>Deadline: {job.deadline}</span>
+                      </span>
+                    )}
                   </div>
 
                   <h3 className="font-heading text-xl sm:text-2xl font-extrabold text-brand-950 group-hover:text-brand-800 transition-colors">
@@ -312,17 +318,35 @@ export default function CareerClient({
                     </span>
                   </div>
 
-                  <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
-                      Key Qualifications:
-                    </span>
-                    {job.qualifications.map((q, qIdx) => (
-                      <div key={qIdx} className="flex items-start gap-2 text-xs text-slate-700">
-                        <FaCheckCircle className="text-emerald-500 text-xs mt-0.5 shrink-0" />
-                        <span>{q}</span>
-                      </div>
-                    ))}
-                  </div>
+                  {/* Key Responsibilities */}
+                  {job.responsibilities && job.responsibilities.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block mb-1">
+                        Key Responsibilities:
+                      </span>
+                      {job.responsibilities.map((r, rIdx) => (
+                        <div key={rIdx} className="flex items-start gap-2 text-xs text-slate-700 leading-relaxed">
+                          <span className="w-1.5 h-1.5 rounded-full bg-brand-800 mt-1.5 shrink-0" />
+                          <span>{r}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Key Qualifications */}
+                  {job.qualifications && job.qualifications.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block mb-1">
+                        Key Qualifications:
+                      </span>
+                      {job.qualifications.map((q, qIdx) => (
+                        <div key={qIdx} className="flex items-start gap-2 text-xs text-slate-700 leading-relaxed">
+                          <FaCheckCircle className="text-emerald-500 text-xs mt-0.5 shrink-0" />
+                          <span>{q}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="shrink-0 flex flex-col items-start lg:items-end gap-3 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100">
