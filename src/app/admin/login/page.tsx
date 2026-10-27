@@ -57,28 +57,33 @@ export default function AdminLoginPage() {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
-        {/* Brand Logo & Portal Header */}
-        <Link href="/" className="inline-block group">
-          <div className="relative w-44 h-16 mx-auto mb-3 transition-transform group-hover:scale-105 duration-300">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 flex flex-col items-center text-center">
+        {/* Brand Logo - Top Center */}
+        <Link href="/" className="group mb-5 transition-transform hover:scale-105 duration-300">
+          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white p-3.5 shadow-2xl shadow-blue-500/20 border-2 border-white/90 flex items-center justify-center">
             <Image
-              src="/logo.png"
-              alt="Elite Standard Limited"
-              fill
-              className="object-contain"
+              src="/assets/logo.svg"
+              alt="Elite Standard Limited Logo"
+              width={90}
+              height={90}
+              className="w-full h-full object-contain"
               priority
             />
           </div>
         </Link>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold tracking-wider uppercase mb-2">
-          <FaShieldAlt className="text-amber-400" />
-          Elite Engineering Portal
+
+        {/* Security Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 text-xs font-bold tracking-wider uppercase mb-3">
+          <FaShieldAlt className="text-amber-400 text-sm" />
+          <span>Elite Engineering Security</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          Admin Control Center
+
+        {/* Main Heading */}
+        <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+          Elite Standard Limited Admin Panel
         </h2>
-        <p className="mt-1 text-sm text-slate-400">
-          Secure access for MEP & Automation Management
+        <p className="mt-1.5 text-sm text-slate-400 max-w-sm">
+          Authorized management portal for MEP & Industrial Engineering
         </p>
       </div>
 
@@ -119,7 +124,6 @@ export default function AdminLoginPage() {
                 <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                   Password
                 </label>
-                <span className="text-xs text-slate-400">Default: EliteAdmin2025!</span>
               </div>
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -130,7 +134,7 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
+                  placeholder="Enter your admin password"
                   className="block w-full pl-10 pr-12 py-3 bg-slate-950/70 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all"
                 />
                 <button
@@ -164,12 +168,8 @@ export default function AdminLoginPage() {
             </div>
           </form>
 
-          {/* Connected Infrastructure Indicator */}
-          <div className="mt-6 pt-5 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-            <div className="flex items-center gap-1.5 text-emerald-400">
-              <FaCheckCircle className="text-emerald-400" />
-              <span>Supabase PostgreSQL Active</span>
-            </div>
+          {/* Footer Back Link */}
+          <div className="mt-6 pt-5 border-t border-slate-800 flex items-center justify-center text-xs text-slate-400">
             <Link
               href="/"
               className="text-slate-400 hover:text-white transition-colors"

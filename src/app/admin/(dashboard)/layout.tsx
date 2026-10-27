@@ -166,16 +166,25 @@ export default function AdminDashboardLayout({
         }`}
       >
         {/* Brand Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div className="p-4 border-b border-slate-800 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-3">
-            <div className="relative w-36 h-12">
+            <div className="bg-white/95 p-1.5 rounded-xl shadow-md border border-slate-700/50 flex items-center justify-center shrink-0">
               <Image
-                src="/logo.png"
+                src="/assets/logo.svg"
                 alt="Elite Standard Limited"
-                fill
+                width={36}
+                height={36}
                 className="object-contain"
                 priority
               />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-heading font-black text-sm text-white tracking-wide leading-tight">
+                ELITE STANDARD
+              </span>
+              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">
+                Admin Portal
+              </span>
             </div>
           </Link>
           <button

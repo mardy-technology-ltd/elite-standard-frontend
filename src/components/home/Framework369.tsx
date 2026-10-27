@@ -231,10 +231,7 @@ export default function Framework369({ initialServices = [] }: { initialServices
                       className="block h-full group"
                     >
                       <ThreeDCard maxTilt={6} className="h-full">
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.4, delay: idx * 0.1 }}
+                        <div
                           className={`group relative h-full bg-slate-800/95 border border-slate-700/80 rounded-3xl p-6 sm:p-8 ${theme.cardBorder} shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer`}
                         >
                           <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full pointer-events-none ${theme.bgGlow} transition-colors duration-300`} />
@@ -280,7 +277,7 @@ export default function Framework369({ initialServices = [] }: { initialServices
                               <FaChevronRight className="w-2.5 h-2.5" />
                             </div>
                           </div>
-                        </motion.div>
+                        </div>
                       </ThreeDCard>
                     </Link>
                   );
@@ -307,12 +304,9 @@ export default function Framework369({ initialServices = [] }: { initialServices
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {framework369Data.actions.map((act, idx) => (
+                {framework369Data.actions.map((act) => (
                   <ThreeDCard key={act.step} maxTilt={6} className="h-full">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: idx * 0.08 }}
+                    <div
                       className="h-full bg-slate-800/95 border border-slate-700/80 rounded-3xl p-6 hover:border-slate-600 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
                     >
                       <div>
@@ -333,7 +327,7 @@ export default function Framework369({ initialServices = [] }: { initialServices
                           {act.description}
                         </p>
                       </div>
-                    </motion.div>
+                    </div>
                   </ThreeDCard>
                 ))}
               </div>

@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const databaseUrl =
   process.env.DATABASE_URL ||
-  'postgresql://postgres.pubpscfqiwmtctfsuywy:EliteStandard2025%21@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require';
+  'postgresql://postgres.pubpscfqiwmtctfsuywy:EliteStandard2025%21@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=10';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;

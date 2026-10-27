@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   FaPlus,
-  FaSearch,
   FaEdit,
   FaTrash,
   FaBuilding,
@@ -57,7 +56,6 @@ export default function AdminSectorsPage() {
   const [items, setItems] = useState<IndustrySectorItem[]>([]);
   const [stats, setStats] = useState({ total: 0, active: 0 });
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<IndustrySectorItem | null>(null);
@@ -77,10 +75,7 @@ export default function AdminSectorsPage() {
   const fetchItems = async () => {
     try {
       setLoading(true);
-      const url = new URL("/api/admin/sectors", window.location.origin);
-      if (search.trim()) url.searchParams.set("search", search.trim());
-
-      const res = await fetch(url.toString());
+      const res = await fetch("/api/admin/sectors");
       if (res.ok) {
         const data = await res.json();
         setItems(data.items || []);
@@ -96,11 +91,6 @@ export default function AdminSectorsPage() {
   useEffect(() => {
     fetchItems();
   }, []);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchItems();
-  };
 
   const openAddModal = () => {
     setEditingItem(null);
@@ -288,19 +278,7 @@ export default function AdminSectorsPage() {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3">
-        <form onSubmit={handleSearchSubmit} className="flex-1 relative">
-          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by industry title or description..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition"
-          />
-        </form>
-      </div>
+
 
       {/* Grid of Sector Cards */}
       {loading ? (
