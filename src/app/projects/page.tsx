@@ -33,6 +33,7 @@ export default async function ProjectsPage() {
         image: p.image,
         gallery: (Array.isArray(p.gallery) ? p.gallery : []) as any,
         scope: p.scope || [],
+        isFeatured: p.isFeatured || false,
       }));
     }
 

@@ -89,6 +89,7 @@ export interface ProjectItem {
   image: string;
   gallery?: { title: string; image: string; category: string }[];
   scope: string[];
+  isFeatured?: boolean;
 }
 
 export interface BlogItem {

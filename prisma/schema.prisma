@@ -62,8 +62,11 @@ model Project {
   image          String
   gallery        Json?    // Array of { title: string, image: string, category: string }
   scope          String[] // Array of bullet points
+  isFeatured     Boolean  @default(false) // Highlighted featured landmark project
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  @@index([isFeatured])
 }
 
 // 4. Inquiries, RFQ & Customer Leads

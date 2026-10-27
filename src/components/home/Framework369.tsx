@@ -430,7 +430,7 @@ export default function Framework369({ initialServices = [] }: { initialServices
                             </p>
 
                             <div className="flex flex-wrap gap-1.5 mb-6">
-                              {service.compliance.map((c) => (
+                              {service.compliance.map((c: string) => (
                                 <span key={c} className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900/80 text-slate-400">
                                   {c}
                                 </span>

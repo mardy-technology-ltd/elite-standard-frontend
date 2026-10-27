@@ -63,6 +63,7 @@ export async function POST(req: Request) {
         image: data.image || 'https://images.unsplash.com/photo-1541888946425-d0fbb18615f3?q=80&w=800&auto=format&fit=crop',
         gallery: Array.isArray(data.gallery) ? data.gallery : [],
         scope: Array.isArray(data.scope) ? data.scope : [],
+        isFeatured: Boolean(data.isFeatured),
       },
     });
 

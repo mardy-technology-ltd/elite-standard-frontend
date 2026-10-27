@@ -11,6 +11,8 @@ import {
   FaMapMarkerAlt,
   FaBuilding,
   FaCalendarAlt,
+  FaStar,
+  FaRegStar,
 } from "react-icons/fa";
 
 interface Project {
@@ -24,12 +26,14 @@ interface Project {
   description: string;
   image: string;
   scope?: string[];
+  isFeatured?: boolean;
 }
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -44,6 +48,7 @@ export default function AdminProjectsPage() {
     description: "",
     image: "https://images.unsplash.com/photo-1541888946425-d0fbb18615f3?q=80&w=800&auto=format&fit=crop",
     scopeText: "Turnkey MEP Design & Engineering\nInstallation of Automated Systems\nTesting & Commissioning",
+    isFeatured: false,
   });
 
   const fetchProjects = async () => {
@@ -67,6 +72,37 @@ export default function AdminProjectsPage() {
     fetchProjects();
   }, [search]);
 
+  const toggleFeatured = async (p: Project) => {
+    const nextVal = !p.isFeatured;
+    setTogglingId(p.id);
+
+    // Optimistic UI update: if making featured, unset others
+    setProjects((prev) =>
+      prev.map((item) => {
+        if (item.id === p.id) {
+          return { ...item, isFeatured: nextVal };
+        }
+        return nextVal ? { ...item, isFeatured: false } : item;
+      })
+    );
+
+    try {
+      const res = await fetch(`/api/admin/projects/${p.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isFeatured: nextVal }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to update highlight status");
+      }
+    } catch (err: any) {
+      alert(err.message);
+      fetchProjects(); // rollback on error
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   const openAddModal = () => {
     setEditingProject(null);
     setFormData({
@@ -78,6 +114,7 @@ export default function AdminProjectsPage() {
       description: "",
       image: "https://images.unsplash.com/photo-1541888946425-d0fbb18615f3?q=80&w=800&auto=format&fit=crop",
       scopeText: "Turnkey MEP Design & Engineering\nInstallation of Automated Systems\nTesting & Commissioning",
+      isFeatured: false,
     });
     setModalOpen(true);
   };
@@ -93,6 +130,7 @@ export default function AdminProjectsPage() {
       description: p.description,
       image: p.image,
       scopeText: Array.isArray(p.scope) ? p.scope.join("\n") : "",
+      isFeatured: p.isFeatured || false,
     });
     setModalOpen(true);
   };
@@ -116,6 +154,7 @@ export default function AdminProjectsPage() {
         description: formData.description,
         image: formData.image,
         scope,
+        isFeatured: Boolean(formData.isFeatured),
       };
 
       if (editingProject) {
@@ -214,15 +253,25 @@ export default function AdminProjectsPage() {
                     fill
                     className="object-cover"
                   />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-950/80 text-white backdrop-blur-md border border-slate-700">
-                    {proj.category}
+                  <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                    {proj.isFeatured && (
+                      <span className="px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-amber-500 text-slate-950 shadow-lg flex items-center gap-1">
+                        <FaStar className="text-[10px]" />
+                        Featured Landmark
+                      </span>
+                    )}
+                    <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-950/80 text-white backdrop-blur-md border border-slate-700">
+                      {proj.category}
+                    </span>
                   </div>
                 </div>
 
                 <div className="p-5 space-y-3">
-                  <h3 className="font-bold text-white text-base line-clamp-1">
-                    {proj.title}
-                  </h3>
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="font-bold text-white text-base line-clamp-1 flex-1">
+                      {proj.title}
+                    </h3>
+                  </div>
 
                   <div className="space-y-1.5 text-xs text-slate-300">
                     <div className="flex items-center gap-2 text-slate-400">
@@ -246,18 +295,41 @@ export default function AdminProjectsPage() {
               </div>
 
               <div className="p-4 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between">
-                <span className="text-[11px] text-slate-400 font-mono">
-                  ID: {proj.id.slice(0, 8)}...
-                </span>
+                <button
+                  type="button"
+                  onClick={() => toggleFeatured(proj)}
+                  disabled={togglingId === proj.id}
+                  title={proj.isFeatured ? "Currently Highlighted Showcase. Click to unfeature." : "Click to highlight as Landmark Project on Public Page"}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    proj.isFeatured
+                      ? "bg-amber-500/20 text-amber-400 border border-amber-500/40 hover:bg-amber-500/30"
+                      : "bg-slate-800 text-slate-400 hover:text-amber-400 hover:bg-slate-700 border border-slate-700"
+                  } ${togglingId === proj.id ? "opacity-50 cursor-wait" : ""}`}
+                >
+                  {proj.isFeatured ? (
+                    <>
+                      <FaStar className="text-amber-400" />
+                      <span>Highlighted</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaRegStar className="text-slate-400" />
+                      <span>Highlight</span>
+                    </>
+                  )}
+                </button>
+
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => openEditModal(proj)}
+                    title="Edit Project"
                     className="p-2 rounded-lg bg-slate-800 hover:bg-indigo-600/30 text-slate-300 hover:text-indigo-400 transition-colors"
                   >
                     <FaEdit />
                   </button>
                   <button
                     onClick={() => handleDelete(proj.id)}
+                    title="Delete Project"
                     className="p-2 rounded-lg bg-slate-800 hover:bg-red-600/30 text-slate-300 hover:text-red-400 transition-colors"
                   >
                     <FaTrash />
@@ -386,6 +458,20 @@ export default function AdminProjectsPage() {
                   onChange={(e) => setFormData({ ...formData, scopeText: e.target.value })}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-mono"
                 />
+              </div>
+
+              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="isFeatured"
+                  checked={formData.isFeatured}
+                  onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                  className="w-4 h-4 rounded border-slate-700 text-amber-500 focus:ring-amber-500 bg-slate-900 cursor-pointer"
+                />
+                <label htmlFor="isFeatured" className="text-xs font-medium text-slate-200 cursor-pointer flex-1">
+                  <span className="font-bold text-amber-400 block">⭐ Highlight as Main Landmark Showcase</span>
+                  Display this project as the top hero case study on the public Projects page.
+                </label>
               </div>
 
               <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">

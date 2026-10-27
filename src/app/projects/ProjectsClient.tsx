@@ -161,21 +161,27 @@ export default function ProjectsClient({
     "Infrastructure MEP & Automation",
   ];
 
-  // Extract Dhaka Metro Rail as main showcase project
-  const metroRailProject = projectsList.find((p) => p.slug === "dhaka-metro-rail-mep") || projectsData[0];
+  // Extract Highlighted / Featured Showcase Project
+  const highlightedProject =
+    projectsList.find((p) => p.isFeatured) ||
+    projectsList.find((p) => p.slug === "dhaka-metro-rail-mep") ||
+    projectsData[0];
 
-  // Automatic slideshow timer (3.5 seconds)
+  // Automatic slideshow timer (3.5 seconds) if project has gallery
   useEffect(() => {
-    if (!metroRailProject?.gallery || metroRailProject.gallery.length === 0) return;
+    setActiveIdx(0);
+    if (!highlightedProject?.gallery || highlightedProject.gallery.length === 0) return;
     const interval = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % (metroRailProject.gallery?.length || 1));
+      setActiveIdx((prev) => (prev + 1) % (highlightedProject.gallery?.length || 1));
     }, 3500);
 
     return () => clearInterval(interval);
-  }, [metroRailProject]);
+  }, [highlightedProject]);
 
-  const activeMetroImage =
-    metroRailProject?.gallery?.[activeIdx]?.image || "/images/projects/metro-rail/IBAESL.png";
+  const activeShowcaseImage =
+    highlightedProject?.gallery?.[activeIdx]?.image ||
+    highlightedProject?.image ||
+    "/images/projects/metro-rail/IBAESL.png";
 
   const filteredProjects = projectsList.filter((project) => {
     const matchesCategory =
@@ -217,8 +223,8 @@ export default function ProjectsClient({
         </div>
       </section>
 
-      {/* 2. Main Featured Case Study: Dhaka Metro Rail */}
-      {metroRailProject && (
+      {/* 2. Main Featured Showcase Case Study */}
+      {highlightedProject && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -231,14 +237,14 @@ export default function ProjectsClient({
               {/* Animated Background preview image */}
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={activeMetroImage}
+                  key={activeShowcaseImage}
                   initial={{ opacity: 0, scale: 1.05 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.6 }}
                   className="absolute inset-0 bg-cover bg-center"
                   style={{
-                    backgroundImage: `url('${activeMetroImage}')`,
+                    backgroundImage: `url('${activeShowcaseImage}')`,
                   }}
                 />
               </AnimatePresence>
@@ -246,28 +252,34 @@ export default function ProjectsClient({
 
               {/* Top Category Badge */}
               <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-brand-950 bg-accent px-3 py-1.5 rounded-md shadow-md">
-                  Landmark National Infrastructure
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-brand-950 bg-accent px-3 py-1.5 rounded-md shadow-md flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-950 animate-ping" />
+                  Landmark Showcase Project
                 </span>
+                {highlightedProject.isFeatured && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-950/80 border border-amber-500/40 px-2.5 py-1 rounded-md backdrop-blur-md">
+                    ⭐ Featured By Admin
+                  </span>
+                )}
               </div>
 
               {/* Bottom Info & Thumbnail Gallery Selector */}
               <div className="relative z-10 flex flex-col gap-3">
                 <div>
                   <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-white tracking-tight drop-shadow-md">
-                    Dhaka Metro Rail DMRTDP Line 6
+                    {highlightedProject.title}
                   </h2>
-                  <p className="text-xs text-slate-300 font-medium">CP-3 & CP-4 Station Infrastructure & Depots</p>
+                  <p className="text-xs text-slate-300 font-medium">{highlightedProject.client}</p>
                 </div>
 
-                {/* Interactive Thumbnails (IBA & RHS) */}
-                {metroRailProject.gallery && (
+                {/* Interactive Thumbnails if gallery exists */}
+                {highlightedProject.gallery && highlightedProject.gallery.length > 0 && (
                   <div className="pt-2 border-t border-white/15">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-accent block mb-2">
-                      Auto-Sliding Field Site Photos (IBA & RHS):
+                      Auto-Sliding Field Site Photos:
                     </span>
                     <div className="grid grid-cols-6 gap-2">
-                      {metroRailProject.gallery.map((item, idx) => (
+                      {highlightedProject.gallery.map((item, idx) => (
                         <button
                           key={idx}
                           onClick={() => setActiveIdx(idx)}
@@ -283,7 +295,7 @@ export default function ProjectsClient({
                             className="w-full h-full object-cover"
                           />
                           <span className="absolute bottom-0 inset-x-0 bg-brand-950/80 text-[8px] text-white font-bold text-center py-0.5 uppercase truncate">
-                            {item.category} {idx % 3 + 1}
+                            {item.category || `Photo ${idx + 1}`}
                           </span>
                         </button>
                       ))}
@@ -299,30 +311,32 @@ export default function ProjectsClient({
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">
-                    {metroRailProject.category}
+                    {highlightedProject.category}
                   </span>
                 </div>
                 <h3 className="font-heading text-xl sm:text-2xl font-extrabold text-brand-950 leading-snug">
-                  Substation Automation & RHS System Installation
+                  {highlightedProject.title}
                 </h3>
                 <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                  Elite Standard Limited was selected for the design, instrumentation, utility management, and Rainwater Harvesting Systems (RHS) installation for station infrastructure and depots across CP-3 and CP-4.
+                  {highlightedProject.description}
                 </p>
 
                 {/* Scope checklist */}
-                <div className="mt-2">
-                  <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-brand-950 mb-3">
-                    Project Scope & Execution:
-                  </h4>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-slate-700">
-                    {metroRailProject.scope.map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <FaCheckCircle className="text-accent text-sm mt-0.5 shrink-0" />
-                        <span className="font-medium">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {highlightedProject.scope && highlightedProject.scope.length > 0 && (
+                  <div className="mt-2">
+                    <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-brand-950 mb-3">
+                      Project Scope & Execution:
+                    </h4>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-slate-700">
+                      {highlightedProject.scope.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <FaCheckCircle className="text-accent text-sm mt-0.5 shrink-0" />
+                          <span className="font-medium">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               {/* Meta tags details */}
@@ -332,7 +346,7 @@ export default function ProjectsClient({
                   <div className="flex flex-col">
                     <span className="text-[10px] text-slate-400 uppercase">Client</span>
                     <span className="text-slate-800 font-bold truncate max-w-[140px]">
-                      {metroRailProject.client}
+                      {highlightedProject.client}
                     </span>
                   </div>
                 </div>
@@ -340,14 +354,14 @@ export default function ProjectsClient({
                   <FaMapMarkerAlt className="text-slate-400 text-sm" />
                   <div className="flex flex-col">
                     <span className="text-[10px] text-slate-400 uppercase">Location</span>
-                    <span className="text-slate-800 font-bold">{metroRailProject.location}</span>
+                    <span className="text-slate-800 font-bold">{highlightedProject.location}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 col-span-2 sm:col-span-1">
                   <FaCalendarAlt className="text-slate-400 text-sm" />
                   <div className="flex flex-col">
                     <span className="text-[10px] text-slate-400 uppercase">Year</span>
-                    <span className="text-slate-800 font-bold">{metroRailProject.completionDate}</span>
+                    <span className="text-slate-800 font-bold">{highlightedProject.completionDate}</span>
                   </div>
                 </div>
               </div>
@@ -455,9 +469,16 @@ export default function ProjectsClient({
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-950/90 via-brand-950/20 to-transparent" />
 
-                  {/* Category Badge */}
-                  <div className="absolute top-3.5 left-3.5 bg-brand-950/90 backdrop-blur-md px-3 py-1 rounded-lg border border-accent/30 text-[11px] font-bold text-accent shadow-sm">
-                    {project.category}
+                  {/* Category Badge & Featured Tag */}
+                  <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5 flex-wrap">
+                    <div className="bg-brand-950/90 backdrop-blur-md px-3 py-1 rounded-lg border border-accent/30 text-[11px] font-bold text-accent shadow-sm">
+                      {project.category}
+                    </div>
+                    {project.isFeatured && (
+                      <div className="bg-amber-500 text-slate-950 font-extrabold px-2.5 py-1 rounded-lg text-[10px] tracking-wide uppercase shadow-md flex items-center gap-1">
+                        <span>⭐</span> Featured Landmark
+                      </div>
+                    )}
                   </div>
 
                   {/* Completion Date Tag */}
