@@ -256,11 +256,6 @@ export default function ProjectsClient({
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-950 animate-ping" />
                   Landmark Showcase Project
                 </span>
-                {highlightedProject.isFeatured && (
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-950/80 border border-amber-500/40 px-2.5 py-1 rounded-md backdrop-blur-md">
-                    ⭐ Featured By Admin
-                  </span>
-                )}
               </div>
 
               {/* Bottom Info & Thumbnail Gallery Selector */}
