@@ -34,6 +34,19 @@ export default function AdminDashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminUser, setAdminUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [pendingInquiriesCount, setPendingInquiriesCount] = useState<number>(0);
+
+  const fetchInquiriesCount = async () => {
+    try {
+      const res = await fetch("/api/admin/inquiries?status=PENDING");
+      if (res.ok) {
+        const data = await res.json();
+        setPendingInquiriesCount(data.pendingCount ?? (data.inquiries?.length || 0));
+      }
+    } catch (e) {
+      // non-blocking
+    }
+  };
 
   useEffect(() => {
     fetch("/api/admin/me")
@@ -45,11 +58,18 @@ export default function AdminDashboardLayout({
         return res.json();
       })
       .then((data) => {
-        if (data?.user) setAdminUser(data.user);
+        if (data?.user) {
+          setAdminUser(data.user);
+          fetchInquiriesCount();
+        }
       })
       .catch(() => router.push("/admin/login"))
       .finally(() => setLoading(false));
-  }, [router]);
+
+    // Poll periodically every 25 seconds for new live incoming inquiries/leads
+    const interval = setInterval(fetchInquiriesCount, 25000);
+    return () => clearInterval(interval);
+  }, [router, pathname]);
 
   const handleLogout = async () => {
     try {
@@ -90,7 +110,8 @@ export default function AdminDashboardLayout({
       label: "Inquiries & Leads",
       href: "/admin/inquiries",
       icon: FaEnvelopeOpenText,
-      badge: "Active",
+      count: pendingInquiriesCount,
+      badge: pendingInquiriesCount > 0 ? `${pendingInquiriesCount} New` : "Active",
     },
     {
       label: "Careers & Jobs",
@@ -199,10 +220,23 @@ export default function AdminDashboardLayout({
                   <Icon className={`text-base ${isActive ? "text-white" : "text-slate-400"}`} />
                   <span>{item.label}</span>
                 </div>
-                {item.badge && !isActive && (
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
-                    {item.badge}
+                {item.href === "/admin/inquiries" && pendingInquiriesCount > 0 ? (
+                  <span
+                    className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md transition-all ${
+                      isActive
+                        ? "bg-amber-400 text-slate-950 font-black animate-pulse"
+                        : "bg-red-500 text-white animate-pulse shadow-red-500/30"
+                    }`}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-white inline-block animate-ping" />
+                    <span>{pendingInquiriesCount} New</span>
                   </span>
+                ) : (
+                  item.badge && !isActive && (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                      {item.badge}
+                    </span>
+                  )
                 )}
               </Link>
             );
@@ -278,6 +312,19 @@ export default function AdminDashboardLayout({
           </div>
 
           <div className="flex items-center gap-3">
+            <Link
+              href="/admin/inquiries"
+              className="relative p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors"
+              title={pendingInquiriesCount > 0 ? `${pendingInquiriesCount} new pending inquiries` : "Inquiries & Leads"}
+            >
+              <FaBell className="text-sm" />
+              {pendingInquiriesCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-black flex items-center justify-center animate-pulse shadow-md shadow-red-500/50">
+                  {pendingInquiriesCount}
+                </span>
+              )}
+            </Link>
+
             <Link
               href="/"
               target="_blank"

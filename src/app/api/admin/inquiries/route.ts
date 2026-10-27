@@ -17,12 +17,23 @@ export async function GET(req: Request) {
       where.status = status;
     }
 
-    const inquiries = await prisma.inquiry.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-    });
+    const [inquiries, pendingCount, totalCount] = await Promise.all([
+      prisma.inquiry.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.inquiry.count({
+        where: { status: 'PENDING' },
+      }),
+      prisma.inquiry.count(),
+    ]);
 
-    return NextResponse.json({ success: true, inquiries });
+    return NextResponse.json({
+      success: true,
+      inquiries,
+      pendingCount,
+      totalCount,
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
