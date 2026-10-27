@@ -18,80 +18,59 @@ import {
   FaBolt,
   FaWater,
   FaSnowflake,
+  FaTimes,
+  FaChevronDown,
 } from "react-icons/fa";
 
-const bulletins = [
-  {
-    id: "b1",
-    issue: "Bulletin #24 — Q3 Edition",
-    title: "Tropical VRF Air Conditioning: Optimizing COP & Energy in High Ambient Temperatures",
-    category: "HVAC & Thermal Dynamics",
-    date: "October 2026",
-    readTime: "6 min read",
-    icon: FaSnowflake,
-    iconColor: "text-sky-400",
-    summary:
-      "A deep dive into maintaining seasonal energy efficiency ratios (EER) and high COP in VRF multi-split systems operating under ambient temperatures exceeding 48°C in tropical Bangladesh conditions.",
-    highlights: [
-      "Inverter compressor frequency modulation curves",
-      "Oil recovery cycle timing without thermal shock",
-      "Modbus/BACnet BMS telemetry integration",
-    ],
-  },
-  {
-    id: "b2",
-    issue: "Bulletin #23 — Q3 Edition",
-    title: "BNBC 2020 & NFPA 20 Compliance: Fire Hydrant & Automatic Sprinkler Standards",
-    category: "Life Safety & Protection",
-    date: "September 2026",
-    readTime: "8 min read",
-    icon: FaShieldAlt,
-    iconColor: "text-red-400",
-    summary:
-      "A comprehensive checklist for engineering consultants and facility managers to ensure commercial high-rises meet FSCD statutory clearances and NFPA wet-pipe sprinkler hydraulic calculations.",
-    highlights: [
-      "Standpipe hydraulic pressure balancing at upper levels",
-      "UL/FM listed diesel vs electric main pump redundancy",
-      "FSCD inspection clearance procedures in Dhaka",
-    ],
-  },
-  {
-    id: "b3",
-    issue: "Bulletin #22 — Q2 Edition",
-    title: "Industrial Groundwater Treatment: Iron Removal & Desalination for Textile Plants",
-    category: "Water Treatment (WTS)",
-    date: "August 2026",
-    readTime: "7 min read",
-    icon: FaWater,
-    iconColor: "text-teal-400",
-    summary:
-      "Comparing catalytic oxidation filtration with ion-exchange aeration for removing dissolved Fe > 8 mg/L and high manganese across industrial zones in Gazipur, Savar, and Narayanganj.",
-    highlights: [
-      "Birm vs Manganese Greensand media longevity",
-      "Backwash frequency calculation for 30,000 LPH plants",
-      "Pure RO integration for boiler feedwater standards",
-    ],
-  },
-  {
-    id: "b4",
-    issue: "Bulletin #21 — Q2 Edition",
-    title: "Form-4 Type Tested Switchgear Panels: Protecting High-Capacity Production Lines",
-    category: "Electrical & Switchgear",
-    date: "July 2026",
-    readTime: "5 min read",
-    icon: FaBolt,
-    iconColor: "text-amber-400",
-    summary:
-      "Why Form-4B compartmentation is vital in 2500A-4000A LT main distribution boards to prevent internal arc fault propagation and protect operating personnel in continuous factories.",
-    highlights: [
-      "Separation of busbars from functional units & terminals",
-      "Automatic PFI capacitor bank thermal dissipation",
-      "Type test verification according to IEC 61439-1/2",
-    ],
-  },
-];
+interface BulletinItem {
+  id: string;
+  issue: string;
+  title: string;
+  category: string;
+  date: string;
+  readTime?: string | null;
+  summary: string;
+  highlights: string[];
+  pdfUrl?: string | null;
+}
+
+const getCategoryIcon = (category: string) => {
+  const cat = category.toLowerCase();
+  if (cat.includes("hvac") || cat.includes("air") || cat.includes("thermal")) {
+    return { icon: FaSnowflake, color: "text-sky-400" };
+  }
+  if (cat.includes("fire") || cat.includes("safety") || cat.includes("protection")) {
+    return { icon: FaShieldAlt, color: "text-red-400" };
+  }
+  if (cat.includes("water") || cat.includes("plumbing") || cat.includes("treatment")) {
+    return { icon: FaWater, color: "text-teal-400" };
+  }
+  return { icon: FaBolt, color: "text-amber-400" };
+};
 
 export default function NewsletterPage() {
+  const [bulletinList, setBulletinList] = useState<BulletinItem[]>([]);
+  const [loadingBulletins, setLoadingBulletins] = useState(true);
+  const [readingModalBulletin, setReadingModalBulletin] = useState<BulletinItem | null>(null);
+
+  React.useEffect(() => {
+    async function loadBulletins() {
+      try {
+        const res = await fetch("/api/bulletins");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.bulletins) {
+            setBulletinList(data.bulletins);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load bulletins:", err);
+      } finally {
+        setLoadingBulletins(false);
+      }
+    }
+    loadBulletins();
+  }, []);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [interest, setInterest] = useState("all");
@@ -245,11 +224,10 @@ export default function NewsletterPage() {
                   onChange={(e) => setInterest(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-brand-800 transition-colors"
                 >
-                  <option value="all">All Disciplines (Complete MEP & Automation)</option>
-                  <option value="hvac">Mechanical & HVAC (VRF, Chillers, Cleanrooms)</option>
-                  <option value="fire">Fire Protection (NFPA Sprinklers, Hydrants, FSCD)</option>
-                  <option value="electrical">Electrical & Substations (Form-4 Switchgear, PFI, BBT)</option>
-                  <option value="water">Water Treatment (IRP, RO Plants, Plumbing Networks)</option>
+                  <option value="all">All Disciplines (Complete MEP Engineering & Automation)</option>
+                  <option value="mechanical">Mechanical Services (HVAC, Fire Protection & Gas Systems)</option>
+                  <option value="electrical">Electrical Services (Switchgear, Automation & Lighting)</option>
+                  <option value="plumbing">Plumbing Services (Water Distribution, Treatment & Harvesting)</option>
                 </select>
               </div>
 
@@ -298,75 +276,243 @@ export default function NewsletterPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {bulletins.map((bulletin) => {
-            const Icon = bulletin.icon;
-            return (
-              <div
-                key={bulletin.id}
-                className="bg-white rounded-3xl p-8 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-brand-800/40"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-4 mb-4">
-                    <span className="text-[10px] font-mono font-extrabold uppercase px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
-                      {bulletin.issue}
-                    </span>
-                    <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
-                      <FaRegCalendarAlt />
-                      <span>{bulletin.date}</span>
-                    </span>
-                  </div>
+        {loadingBulletins ? (
+          <div className="p-16 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
+            <div className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs font-semibold">Loading technical bulletins...</span>
+          </div>
+        ) : bulletinList.length === 0 ? (
+          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200">
+            <FaBookOpen className="text-3xl text-slate-300 mx-auto mb-2" />
+            <h4 className="text-sm font-bold text-slate-800">No bulletins currently available</h4>
+            <p className="text-xs text-slate-500 mt-1">Please check back soon for our latest technical releases.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {bulletinList.map((bulletin) => {
+              const { icon: Icon, color: iconColor } = getCategoryIcon(bulletin.category);
+              return (
+                <div
+                  key={bulletin.id}
+                  className="bg-white rounded-3xl p-8 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-brand-800/40"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                      <span className="text-[10px] font-mono font-extrabold uppercase px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
+                        {bulletin.issue}
+                      </span>
+                      <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+                        <FaRegCalendarAlt />
+                        <span>{bulletin.date}</span>
+                      </span>
+                    </div>
 
-                  <div className="flex items-center gap-2 mb-3">
-                    <Icon className={`text-base ${bulletin.iconColor}`} />
-                    <span className="text-xs font-bold text-accent uppercase tracking-wider">
-                      {bulletin.category}
-                    </span>
-                  </div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Icon className={`text-base ${iconColor}`} />
+                      <span className="text-xs font-bold text-accent uppercase tracking-wider">
+                        {bulletin.category}
+                      </span>
+                    </div>
 
-                  <h4 className="font-heading text-xl font-bold text-brand-950 group-hover:text-brand-800 transition-colors mb-3 leading-snug">
-                    {bulletin.title}
-                  </h4>
+                    <h4 className="font-heading text-xl font-bold text-brand-950 group-hover:text-brand-800 transition-colors mb-3 leading-snug">
+                      {bulletin.title}
+                    </h4>
 
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
-                    {bulletin.summary}
-                  </p>
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-3">
+                      {bulletin.summary}
+                    </p>
 
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6 space-y-2">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
-                      Key Engineering Insights:
-                    </span>
-                    {bulletin.highlights.map((h, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-slate-700">
-                        <FaCheckCircle className="text-emerald-500 text-[10px] shrink-0" />
-                        <span>{h}</span>
+                    {bulletin.highlights && bulletin.highlights.length > 0 && (
+                      <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                            Key Engineering Insights:
+                          </span>
+                          {bulletin.highlights.length > 3 && (
+                            <span className="text-[10px] font-semibold text-brand-800 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">
+                              {bulletin.highlights.length} Points
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Show first 3 highlights */}
+                        {bulletin.highlights.slice(0, 3).map((h, i) => (
+                          <div key={i} className="flex items-start gap-2 text-xs text-slate-700 leading-snug">
+                            <FaCheckCircle className="text-emerald-500 text-[10px] mt-1 shrink-0" />
+                            <span className="line-clamp-2">{h}</span>
+                          </div>
+                        ))}
+
+                        {/* Read More / View All Modal Trigger */}
+                        {(bulletin.highlights.length > 3 || bulletin.summary.length > 180) && (
+                          <button
+                            type="button"
+                            onClick={() => setReadingModalBulletin(bulletin)}
+                            className="mt-2 text-[11px] font-bold text-brand-800 hover:text-accent transition-colors inline-flex items-center gap-1.5 pt-1 border-t border-slate-200/60 w-full cursor-pointer"
+                          >
+                            <span>Read Full Article & All {bulletin.highlights.length} Points</span>
+                            <FaArrowRight className="text-[9px]" />
+                          </button>
+                        )}
                       </div>
-                    ))}
+                    )}
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+                      <FaRegClock />
+                      <span>{bulletin.readTime || "5 min read"}</span>
+                    </span>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setReadingModalBulletin(bulletin)}
+                        className="text-xs font-bold text-slate-600 hover:text-brand-950 transition-colors cursor-pointer"
+                      >
+                        Read Details
+                      </button>
+
+                      {bulletin.pdfUrl ? (
+                        <a
+                          href={bulletin.pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-800 hover:text-accent transition-colors group/link bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl border border-slate-200"
+                        >
+                          <FaDownload className="text-[10px]" />
+                          <span>PDF</span>
+                        </a>
+                      ) : (
+                        <a
+                          href="#subscribe"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            window.scrollTo({ top: 200, behavior: "smooth" });
+                          }}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-800 hover:text-accent transition-colors group/link"
+                        >
+                          <span>Full PDF</span>
+                          <FaArrowRight className="text-[10px] group-hover/link:translate-x-1 transition-transform" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* FULL ARTICLE & INSIGHTS READER MODAL */}
+        {readingModalBulletin && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+            <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 max-h-[85vh] flex flex-col">
+              {/* Header */}
+              <div className="bg-brand-950 text-white p-6 sm:p-8 flex items-start justify-between gap-4 border-b border-brand-900 shrink-0">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[10px] font-mono font-extrabold uppercase px-2.5 py-1 rounded-md bg-white/10 text-slate-300 border border-white/10">
+                      {readingModalBulletin.issue}
+                    </span>
+                    <span className="text-[11px] font-semibold text-accent uppercase tracking-wider">
+                      {readingModalBulletin.category}
+                    </span>
+                  </div>
+                  <h3 className="font-heading font-extrabold text-lg sm:text-2xl text-white leading-snug">
+                    {readingModalBulletin.title}
+                  </h3>
+                  <div className="flex items-center gap-4 text-xs text-slate-400 mt-2">
+                    <span className="flex items-center gap-1">
+                      <FaRegCalendarAlt />
+                      <span>{readingModalBulletin.date}</span>
+                    </span>
+                    <span>&bull;</span>
+                    <span className="flex items-center gap-1">
+                      <FaRegClock />
+                      <span>{readingModalBulletin.readTime || "5 min read"}</span>
+                    </span>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-                    <FaRegClock />
-                    <span>{bulletin.readTime}</span>
-                  </span>
+                <button
+                  onClick={() => setReadingModalBulletin(null)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-brand-900 transition-colors shrink-0 cursor-pointer"
+                  title="Close Reader"
+                >
+                  <FaTimes className="text-lg" />
+                </button>
+              </div>
 
+              {/* Scrollable Body */}
+              <div className="p-6 sm:p-8 overflow-y-auto space-y-6">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                    Executive Synopsis / Summary
+                  </h4>
+                  <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    {readingModalBulletin.summary}
+                  </p>
+                </div>
+
+                {readingModalBulletin.highlights && readingModalBulletin.highlights.length > 0 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                        Key Engineering Insights ({readingModalBulletin.highlights.length} Technical Points)
+                      </h4>
+                    </div>
+
+                    <div className="space-y-3 bg-white p-5 rounded-2xl border border-slate-200">
+                      {readingModalBulletin.highlights.map((point, pIdx) => (
+                        <div key={pIdx} className="flex items-start gap-3 text-xs sm:text-sm text-slate-800 leading-relaxed">
+                          <FaCheckCircle className="text-emerald-500 text-sm mt-0.5 shrink-0" />
+                          <span>{point}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-4 sm:p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-4 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setReadingModalBulletin(null)}
+                  className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                >
+                  Close Reader
+                </button>
+
+                {readingModalBulletin.pdfUrl ? (
+                  <a
+                    href={readingModalBulletin.pdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-brand-950 hover:bg-brand-900 text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md transition-all cursor-pointer"
+                  >
+                    <FaDownload className="text-xs" />
+                    <span>Download Full Engineering Document (PDF)</span>
+                  </a>
+                ) : (
                   <a
                     href="#subscribe"
                     onClick={(e) => {
                       e.preventDefault();
+                      setReadingModalBulletin(null);
                       window.scrollTo({ top: 200, behavior: "smooth" });
                     }}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-800 hover:text-accent transition-colors group/link"
+                    className="inline-flex items-center gap-2 bg-accent hover:bg-amber-600 text-brand-950 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md transition-all cursor-pointer"
                   >
-                    <span>Receive in Full PDF</span>
-                    <FaArrowRight className="text-[10px] group-link/hover:translate-x-1 transition-transform" />
+                    <span>Subscribe to Receive Complete Whitepaper</span>
+                    <FaArrowRight className="text-xs" />
                   </a>
-                </div>
+                )}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* 4. Contact / Custom BOQ Banner */}

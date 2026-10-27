@@ -204,4 +204,24 @@ model NewsletterSubscriber {
   @@index([createdAt])
 }
 
+// 11. Engineering Bulletins & Technical Whitepapers
+model EngineeringBulletin {
+  id          String   @id @default(uuid())
+  issue       String   // e.g. "Bulletin #24 — Q3 Edition"
+  title       String   // e.g. "Tropical VRF Air Conditioning: Optimizing COP..."
+  category    String   // HVAC & Thermal Dynamics, Life Safety & Protection, Water Treatment (WTS), Electrical & Switchgear
+  date        String   // e.g. "October 2026"
+  readTime    String?  // e.g. "6 min read"
+  summary     String   @db.Text
+  highlights  String[] // Key Engineering Insights bullet points
+  pdfUrl      String?  // Direct PDF download or brochure URL
+  isActive    Boolean  @default(true)
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+}
+
 
