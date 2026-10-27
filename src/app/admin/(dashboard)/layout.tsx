@@ -22,6 +22,7 @@ import {
   FaBriefcase,
   FaMailBulk,
   FaHandshake,
+  FaIndustry,
 } from "react-icons/fa";
 
 export default function AdminDashboardLayout({
@@ -105,6 +106,12 @@ export default function AdminDashboardLayout({
       href: "/admin/projects",
       icon: FaProjectDiagram,
       badge: "Portfolio",
+    },
+    {
+      label: "Sectors & Industries",
+      href: "/admin/sectors",
+      icon: FaIndustry,
+      badge: "Solutions",
     },
     {
       label: "Inquiries & Leads",

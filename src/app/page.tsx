@@ -19,8 +19,9 @@ export default async function HomePage() {
   let services: any[] = [];
   let products: any[] = [];
   let projects: any[] = [];
+  let sectors: any[] = [];
   try {
-    const [dbPartners, dbClients, dbServices, dbProducts, dbProjects] = await Promise.all([
+    const [dbPartners, dbClients, dbServices, dbProducts, dbProjects, dbSectors] = await Promise.all([
       prisma.clientReference.findMany({
         where: { isActive: true, category: "partner" },
         orderBy: { orderIndex: "asc" },
@@ -39,6 +40,10 @@ export default async function HomePage() {
       prisma.project.findMany({
         orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
         take: 6,
+      }),
+      prisma.industrySector.findMany({
+        where: { isActive: true },
+        orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
       }),
     ]);
     if (dbPartners && dbPartners.length > 0) {
@@ -85,6 +90,17 @@ export default async function HomePage() {
         isFeatured: p.isFeatured || false,
       }));
     }
+    if (dbSectors && dbSectors.length > 0) {
+      sectors = dbSectors.map((s) => ({
+        id: s.id,
+        slug: s.slug,
+        title: s.title,
+        description: s.description,
+        icon: s.icon,
+        image: s.image,
+        href: s.href || "/sectors",
+      }));
+    }
   } catch (err) {
     console.error("Failed to load data for homepage:", err);
   }
@@ -104,7 +120,7 @@ export default async function HomePage() {
       <WhyChooseUs />
 
       {/* 5. Our Sectors (Industries Served) */}
-      <OurSectors />
+      <OurSectors initialSectors={sectors} />
 
       {/* 6. Featured Projects */}
       <FeaturedProjects initialProjects={projects} />

@@ -6,60 +6,103 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   FaBuilding,
-  FaFlaskVial,
+  FaFlask,
   FaIndustry,
   FaHospital,
   FaServer,
   FaSun,
   FaArrowRight,
-} from "react-icons/fa6";
+  FaWarehouse,
+  FaMicrochip,
+  FaBolt,
+  FaWater,
+  FaShieldAlt,
+} from "react-icons/fa";
 
-const sectors = [
+const iconMap: { [key: string]: any } = {
+  FaBuilding,
+  FaFlaskVial: FaFlask,
+  FaFlask,
+  FaIndustry,
+  FaHospital,
+  FaServer,
+  FaSun,
+  FaWarehouse,
+  FaMicrochip,
+  FaBolt,
+  FaWater,
+  FaShieldAlt,
+};
+
+export interface SectorItemData {
+  id: string;
+  slug?: string;
+  title: string;
+  description: string;
+  icon: string | any;
+  image: string;
+  href?: string | null;
+}
+
+export const defaultSectors: SectorItemData[] = [
   {
     id: "sec1",
     title: "Commercial & Corporate Towers",
     description: "Centralized HVAC, high-speed BBT power distribution, and NFPA life safety for multi-story office complexes.",
-    icon: FaBuilding,
+    icon: "FaBuilding",
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop",
+    href: "/sectors#commercial",
   },
   {
     id: "sec2",
     title: "Pharmaceuticals & Cleanrooms",
     description: "ISO 7 cleanroom HVAC, HEPA filtration, positive pressure control, and purified water piping.",
-    icon: FaFlaskVial,
+    icon: "FaFlaskVial",
     image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
+    href: "/sectors#industrial",
   },
   {
     id: "sec3",
     title: "Industrial Plants & Textiles",
     description: "Heavy-duty power distribution panels, high-pressure fire hydrants, biological ETPs, and SCADA automation.",
-    icon: FaIndustry,
+    icon: "FaIndustry",
     image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800&auto=format&fit=crop",
+    href: "/sectors#industrial",
   },
   {
     id: "sec4",
     title: "Healthcare & Hospitals",
     description: "Medical gas pipelines, isolated power systems (IPS), emergency generator sync, and laminar airflow operating rooms.",
-    icon: FaHospital,
+    icon: "FaHospital",
     image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop",
+    href: "/sectors#commercial",
   },
   {
     id: "sec5",
     title: "Data Centers & Telecom",
     description: "Precision AC cooling, N+1 redundant generator banks, FM200 gas suppression, and power monitoring.",
-    icon: FaServer,
+    icon: "FaServer",
     image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
+    href: "/sectors#commercial",
   },
   {
     id: "sec6",
     title: "Renewable Energy & Solar",
     description: "Industrial rooftop solar PV arrays, net metering integration, and high-efficiency inverter synchronization.",
-    icon: FaSun,
+    icon: "FaSun",
     image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=800&auto=format&fit=crop",
+    href: "/sectors#industrial",
   },
 ];
 
-export default function OurSectors() {
+interface OurSectorsProps {
+  initialSectors?: SectorItemData[];
+}
+
+export default function OurSectors({ initialSectors }: OurSectorsProps) {
+  const displaySectors =
+    initialSectors && initialSectors.length > 0 ? initialSectors : defaultSectors;
+
   return (
     <section className="py-24 bg-brand-950 text-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -84,11 +127,17 @@ export default function OurSectors() {
 
         {/* Sectors Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sectors.map((sector, idx) => {
-            const Icon = sector.icon;
+          {displaySectors.map((sector, idx) => {
+            const Icon =
+              typeof sector.icon === "string"
+                ? iconMap[sector.icon] || FaBuilding
+                : sector.icon || FaBuilding;
+
+            const targetHref = sector.href || "/sectors";
+
             return (
               <motion.div
-                key={sector.id}
+                key={sector.id || idx}
                 initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -117,13 +166,13 @@ export default function OurSectors() {
                     {sector.title}
                   </h3>
 
-                  <p className="text-slate-300 text-xs leading-relaxed opacity-90 group-hover:opacity-100 transition-opacity">
+                  <p className="text-slate-300 text-xs leading-relaxed opacity-90 group-hover:opacity-100 transition-opacity line-clamp-2">
                     {sector.description}
                   </p>
 
                   <div className="pt-2">
                     <Link
-                      href={`/sectors`}
+                      href={targetHref}
                       className="inline-flex items-center gap-2 text-xs font-bold text-accent hover:text-white uppercase tracking-wider group/link"
                     >
                       <span>Explore Industry Scope</span>
