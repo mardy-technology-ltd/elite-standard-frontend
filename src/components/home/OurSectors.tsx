@@ -51,7 +51,7 @@ export const defaultSectors: SectorItemData[] = [
     description: "Centralized HVAC, high-speed BBT power distribution, and NFPA life safety for multi-story office complexes.",
     icon: "FaBuilding",
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop",
-    href: "/sectors#commercial",
+    href: "/sectors",
   },
   {
     id: "sec2",
@@ -59,7 +59,7 @@ export const defaultSectors: SectorItemData[] = [
     description: "ISO 7 cleanroom HVAC, HEPA filtration, positive pressure control, and purified water piping.",
     icon: "FaFlaskVial",
     image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
-    href: "/sectors#industrial",
+    href: "/sectors",
   },
   {
     id: "sec3",
@@ -67,7 +67,7 @@ export const defaultSectors: SectorItemData[] = [
     description: "Heavy-duty power distribution panels, high-pressure fire hydrants, biological ETPs, and SCADA automation.",
     icon: "FaIndustry",
     image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800&auto=format&fit=crop",
-    href: "/sectors#industrial",
+    href: "/sectors",
   },
   {
     id: "sec4",
@@ -75,7 +75,7 @@ export const defaultSectors: SectorItemData[] = [
     description: "Medical gas pipelines, isolated power systems (IPS), emergency generator sync, and laminar airflow operating rooms.",
     icon: "FaHospital",
     image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop",
-    href: "/sectors#commercial",
+    href: "/sectors",
   },
   {
     id: "sec5",
@@ -83,7 +83,7 @@ export const defaultSectors: SectorItemData[] = [
     description: "Precision AC cooling, N+1 redundant generator banks, FM200 gas suppression, and power monitoring.",
     icon: "FaServer",
     image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
-    href: "/sectors#commercial",
+    href: "/sectors",
   },
   {
     id: "sec6",
@@ -91,7 +91,7 @@ export const defaultSectors: SectorItemData[] = [
     description: "Industrial rooftop solar PV arrays, net metering integration, and high-efficiency inverter synchronization.",
     icon: "FaSun",
     image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=800&auto=format&fit=crop",
-    href: "/sectors#industrial",
+    href: "/sectors",
   },
 ];
 

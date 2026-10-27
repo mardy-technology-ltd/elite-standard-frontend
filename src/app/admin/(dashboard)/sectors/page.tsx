@@ -372,10 +372,6 @@ export default function AdminSectorsPage() {
                     <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed mb-4">
                       {item.description}
                     </p>
-
-                    <div className="text-[11px] text-slate-400 font-mono truncate">
-                      Link: {item.href || "/sectors"}
-                    </div>
                   </div>
                 </div>
 
@@ -452,41 +448,26 @@ export default function AdminSectorsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                    Select Icon
-                  </label>
-                  <select
-                    value={formData.icon}
-                    onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
-                  >
-                    <option value="FaBuilding">🏢 Building / Towers (FaBuilding)</option>
-                    <option value="FaFlaskVial">🧪 Cleanroom / Pharma (FaFlaskVial)</option>
-                    <option value="FaIndustry">🏭 Industrial Plant (FaIndustry)</option>
-                    <option value="FaHospital">🏥 Hospital / Healthcare (FaHospital)</option>
-                    <option value="FaServer">🖥️ Data Center / Telecom (FaServer)</option>
-                    <option value="FaSun">☀️ Solar / Renewable (FaSun)</option>
-                    <option value="FaWarehouse">🏬 Warehouse / Depot (FaWarehouse)</option>
-                    <option value="FaMicrochip">⚡ Automation / Electronics (FaMicrochip)</option>
-                    <option value="FaWater">💧 Water / Utilities (FaWater)</option>
-                    <option value="FaShieldAlt">🛡️ Fire Safety / Protection (FaShieldAlt)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">
-                    Link / Target URL
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.href}
-                    onChange={(e) => setFormData({ ...formData, href: e.target.value })}
-                    placeholder="/sectors or /services/hvac"
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
-                  />
-                </div>
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1">
+                  Select Icon
+                </label>
+                <select
+                  value={formData.icon}
+                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                >
+                  <option value="FaBuilding">🏢 Commercial & Towers (Building)</option>
+                  <option value="FaFlaskVial">🧪 Pharmaceuticals & Cleanroom (Flask)</option>
+                  <option value="FaIndustry">🏭 Industrial Plants & Factories (Industry)</option>
+                  <option value="FaHospital">🏥 Hospital & Healthcare (Hospital)</option>
+                  <option value="FaServer">🖥️ Data Centers & Telecom (Server)</option>
+                  <option value="FaSun">☀️ Renewable Energy & Solar (Sun)</option>
+                  <option value="FaWarehouse">🏬 Warehouses & Logistics (Warehouse)</option>
+                  <option value="FaMicrochip">⚡ Automation & Controls (Microchip)</option>
+                  <option value="FaWater">💧 Water Treatment & Utilities (Water)</option>
+                  <option value="FaShieldAlt">🛡️ Fire Protection & Safety (Shield)</option>
+                </select>
               </div>
 
               {/* Image Input & Upload */}
