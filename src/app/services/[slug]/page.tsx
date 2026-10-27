@@ -10,6 +10,8 @@ import ServiceChallenges from "@/components/services/ServiceChallenges";
 import ServiceScope from "@/components/services/ServiceScope";
 import ServiceFaq from "@/components/services/ServiceFaq";
 import ServiceCTA from "@/components/services/ServiceCTA";
+import ServiceRelatedProjects from "@/components/services/ServiceRelatedProjects";
+import { projectsData, ProjectItem } from "@/lib/mockData";
 
 import prisma from "@/lib/prisma";
 
@@ -19,6 +21,46 @@ interface ServicePageProps {
   params: {
     slug: string;
   };
+}
+
+async function getRelatedProjects(serviceCategory: string): Promise<ProjectItem[]> {
+  try {
+    const dbProjects = await prisma.project.findMany({
+      where: {
+        category: {
+          equals: serviceCategory,
+          mode: "insensitive",
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+    });
+
+    if (dbProjects && dbProjects.length > 0) {
+      return dbProjects.map((p) => ({
+        id: p.id,
+        slug: p.slug,
+        title: p.title,
+        category: p.category,
+        client: p.client,
+        location: p.location,
+        completionDate: p.completionDate,
+        description: p.description,
+        image: p.image,
+        gallery: (Array.isArray(p.gallery) ? p.gallery : []) as any,
+        scope: p.scope || [],
+        isFeatured: p.isFeatured || false,
+      }));
+    }
+  } catch (err) {
+    console.error("Error fetching related projects from DB:", err);
+  }
+
+  // Fallback to mock projects matching category or first 3 projects
+  const matched = projectsData.filter(
+    (p) => p.category?.toLowerCase() === serviceCategory.toLowerCase()
+  );
+  return matched.length > 0 ? matched : projectsData.slice(0, 3);
 }
 
 async function getService(slug: string): Promise<ServiceItem | null> {
@@ -98,6 +140,8 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
     notFound();
   }
 
+  const relatedProjects = await getRelatedProjects(service.category);
+
   return (
     <main className="min-h-screen bg-white">
       {/* 1. Service Banner (Hero) */}
@@ -118,10 +162,19 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       {/* 5. Scope of Work */}
       <ServiceScope service={service} />
 
-      {/* 6. Frequently Asked Questions */}
+      {/* 6. Related Engineering Projects (Excluded for WSDS as requested) */}
+      {service.slug !== "wsds" && service.code?.toUpperCase() !== "WSDS" && (
+        <ServiceRelatedProjects
+          projects={relatedProjects}
+          serviceCategory={service.category}
+          serviceTitle={service.title}
+        />
+      )}
+
+      {/* 7. Frequently Asked Questions */}
       <ServiceFaq service={service} />
 
-      {/* 7. Action Buttons / CTA */}
+      {/* 8. Action Buttons / CTA */}
       <ServiceCTA service={service} />
     </main>
   );

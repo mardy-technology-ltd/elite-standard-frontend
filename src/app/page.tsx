@@ -17,8 +17,10 @@ export default async function HomePage() {
   let partners: any[] = [];
   let clients: any[] = [];
   let services: any[] = [];
+  let products: any[] = [];
+  let projects: any[] = [];
   try {
-    const [dbPartners, dbClients, dbServices] = await Promise.all([
+    const [dbPartners, dbClients, dbServices, dbProducts, dbProjects] = await Promise.all([
       prisma.clientReference.findMany({
         where: { isActive: true, category: "partner" },
         orderBy: { orderIndex: "asc" },
@@ -30,6 +32,14 @@ export default async function HomePage() {
       prisma.service.findMany({
         orderBy: [{ orderIndex: "asc" }, { createdAt: "desc" }],
       }),
+      prisma.product.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 8,
+      }),
+      prisma.project.findMany({
+        orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+        take: 6,
+      }),
     ]);
     if (dbPartners && dbPartners.length > 0) {
       partners = dbPartners;
@@ -39,6 +49,41 @@ export default async function HomePage() {
     }
     if (dbServices && dbServices.length > 0) {
       services = dbServices;
+    }
+    if (dbProducts && dbProducts.length > 0) {
+      products = dbProducts.map((p) => ({
+        id: p.id,
+        slug: p.slug,
+        code: p.code,
+        title: p.title,
+        category: p.category as any,
+        sector: (Array.isArray(p.sector) ? p.sector : [p.sector]) as any,
+        price: p.price,
+        priceFormatted: p.priceFormatted || `Tk ${p.price.toLocaleString()}`,
+        inStock: p.inStock,
+        stockBadge: p.stockBadge || undefined,
+        image: p.image,
+        variantsText: p.variantsText || "",
+        specs: (Array.isArray(p.specs) ? p.specs : []) as any,
+        href: p.href || `/products/${p.slug}`,
+        iconName: p.iconName || "FaBoxes",
+      }));
+    }
+    if (dbProjects && dbProjects.length > 0) {
+      projects = dbProjects.map((p) => ({
+        id: p.id,
+        slug: p.slug,
+        title: p.title,
+        category: p.category,
+        client: p.client,
+        location: p.location,
+        completionDate: p.completionDate,
+        description: p.description,
+        image: p.image,
+        gallery: (Array.isArray(p.gallery) ? p.gallery : []) as any,
+        scope: p.scope || [],
+        isFeatured: p.isFeatured || false,
+      }));
     }
   } catch (err) {
     console.error("Failed to load data for homepage:", err);
@@ -62,10 +107,10 @@ export default async function HomePage() {
       <OurSectors />
 
       {/* 6. Featured Projects */}
-      <FeaturedProjects />
+      <FeaturedProjects initialProjects={projects} />
 
       {/* 7. Products & Equipment Summary */}
-      <ProductsSummary />
+      <ProductsSummary initialProducts={products} />
 
       {/* 8. Client Testimonials, Corporate Clients & Brand Partners */}
       <TestimonialsAndPartners initialPartners={partners} initialClients={clients} />

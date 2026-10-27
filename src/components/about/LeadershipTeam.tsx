@@ -11,6 +11,7 @@ export interface TeamMember {
   credentials: string;
   bio: string;
   image: string;
+  linkedin?: string;
 }
 
 export const teamData: TeamMember[] = [
@@ -19,14 +20,16 @@ export const teamData: TeamMember[] = [
     role: "Chairman",
     credentials: "B.Sc. Engineering, Senior MEP Consultant",
     bio: "Over 20 years of experience directing mega Mechanical, Electrical, and Plumbing engineering projects and guiding corporate vision in compliance with BNBC & NFPA standards.",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop",
+    image: "/images/team/chairman.jpg",
+    linkedin: "https://www.linkedin.com/in/mamun-prodhan-613396227/",
   },
   {
     name: "Engr. Shipan Bala",
     role: "Managing Director",
     credentials: "B.Sc. Engineering, Industrial Facilities Specialist",
     bio: "Directs technical and soft facilities operations, overseeing execution of large-scale infrastructure, automated systems, and high-performance engineering client relations.",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop",
+    image: "/images/team/md.jpg",
+    linkedin: "https://www.linkedin.com/in/engr-shipan-bala-982824310/",
   },
 ];
 
@@ -74,17 +77,19 @@ export default function LeadershipTeam() {
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-950/85 via-brand-950/20 to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
 
                 {/* Social Bar */}
-                <div className="absolute top-4 right-4 flex flex-col gap-2">
-                  <a
-                    href="https://linkedin.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-xl bg-brand-900/90 text-white hover:bg-accent hover:text-brand-950 flex items-center justify-center backdrop-blur-md transition-all shadow-md"
-                    aria-label="LinkedIn Profile"
-                  >
-                    <FaLinkedinIn className="text-xs" />
-                  </a>
-                </div>
+                {member.linkedin && (
+                  <div className="absolute top-4 right-4 flex flex-col gap-2">
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-xl bg-brand-900/90 text-white hover:bg-accent hover:text-brand-950 flex items-center justify-center backdrop-blur-md transition-all shadow-md"
+                      aria-label={`${member.name} LinkedIn Profile`}
+                    >
+                      <FaLinkedinIn className="text-xs" />
+                    </a>
+                  </div>
+                )}
 
                 <div className="absolute bottom-4 left-5 right-5">
                   <span className="text-[11px] font-black uppercase tracking-wider text-accent bg-brand-950/90 backdrop-blur-md px-3 py-1 rounded-md inline-block border border-accent/20">

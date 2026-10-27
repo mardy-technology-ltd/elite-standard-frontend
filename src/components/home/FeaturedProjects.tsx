@@ -7,7 +7,16 @@ import { motion } from "framer-motion";
 import { projectsData, ProjectItem } from "@/lib/mockData";
 import { FaMapMarkerAlt, FaCalendarAlt, FaBuilding, FaArrowRight } from "react-icons/fa";
 
-export default function FeaturedProjects() {
+interface FeaturedProjectsProps {
+  initialProjects?: ProjectItem[];
+}
+
+export default function FeaturedProjects({ initialProjects }: FeaturedProjectsProps) {
+  // Use projects passed from DB or fallback to mock projectsData, taking exactly 6 items
+  const displayProjects = (
+    initialProjects && initialProjects.length > 0 ? initialProjects : projectsData
+  ).slice(0, 6);
+
   return (
     <section className="py-24 bg-white text-slate-800 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,9 +46,9 @@ export default function FeaturedProjects() {
           </Link>
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {projectsData.map((project: ProjectItem, idx: number) => (
+        {/* Projects Grid (6 Cards: 2 rows of 3 on large screens) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {displayProjects.map((project: ProjectItem, idx: number) => (
             <motion.div
               key={project.id}
               initial={{ opacity: 0, y: 25 }}
