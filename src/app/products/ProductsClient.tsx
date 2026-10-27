@@ -936,11 +936,6 @@ export default function ProductsClient({
                         ))}
                       </ul>
 
-                      {/* Variants / Package Information */}
-                      <div className="text-[11px] text-slate-500 text-center mb-1 font-medium">
-                        {product.variantsText}
-                      </div>
-
                       {/* Price Display */}
                       <div className="text-center mb-3">
                         <span className="text-sm sm:text-base font-extrabold text-slate-900 font-heading">
@@ -1014,10 +1009,6 @@ export default function ProductsClient({
                             <span className="text-slate-800 font-semibold truncate">{spec.value}</span>
                           </div>
                         ))}
-                      </div>
-
-                      <div className="text-[11px] text-slate-400 mt-1 font-medium">
-                        {product.variantsText}
                       </div>
                     </div>
 
