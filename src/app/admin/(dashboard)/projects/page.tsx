@@ -41,7 +41,7 @@ export default function AdminProjectsPage() {
 
   const [formData, setFormData] = useState({
     title: "",
-    category: "Industrial Water Treatment",
+    category: "Mechanical",
     client: "",
     location: "Dhaka, Bangladesh",
     completionDate: "2024 - 2025",
@@ -107,7 +107,7 @@ export default function AdminProjectsPage() {
     setEditingProject(null);
     setFormData({
       title: "",
-      category: "Industrial Water Treatment",
+      category: "Mechanical",
       client: "",
       location: "Dhaka, Bangladesh",
       completionDate: "2024 - 2025",
@@ -381,16 +381,18 @@ export default function AdminProjectsPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                    Category
+                    Discipline / Category
                   </label>
-                  <input
-                    type="text"
+                  <select
                     required
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    placeholder="Industrial Water Treatment"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
-                  />
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs cursor-pointer focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Plumbing">Plumbing</option>
+                  </select>
                 </div>
               </div>
 

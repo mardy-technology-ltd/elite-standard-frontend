@@ -155,10 +155,9 @@ export default function ProjectsClient({
 
   const categories = [
     "All Sectors",
-    "HVAC & Cleanroom",
-    "Fire Protection",
-    "Power Distribution",
-    "Infrastructure MEP & Automation",
+    "Mechanical",
+    "Electrical",
+    "Plumbing",
   ];
 
   // Extract Highlighted / Featured Showcase Project
@@ -185,7 +184,8 @@ export default function ProjectsClient({
 
   const filteredProjects = projectsList.filter((project) => {
     const matchesCategory =
-      selectedCategory === "All Sectors" || project.category === selectedCategory;
+      selectedCategory === "All Sectors" ||
+      project.category?.toLowerCase() === selectedCategory.toLowerCase();
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch =
       !q ||
@@ -416,8 +416,10 @@ export default function ProjectsClient({
           {categories.map((cat) => {
             const count =
               cat === "All Sectors"
-                ? projectsData.length
-                : projectsData.filter((p) => p.category === cat).length;
+                ? projectsList.length
+                : projectsList.filter(
+                    (p) => p.category?.toLowerCase() === cat.toLowerCase()
+                  ).length;
             const isSelected = selectedCategory === cat;
             return (
               <button
