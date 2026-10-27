@@ -42,7 +42,7 @@ function ServicesOverviewContent() {
   const [servicesList, setServicesList] = useState<ServiceItem[]>(servicesData);
 
   useEffect(() => {
-    fetch("/api/services")
+    fetch("/api/services", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (data.services && Array.isArray(data.services) && data.services.length > 0) {
@@ -71,6 +71,11 @@ function ServicesOverviewContent() {
     return matchesCategory && matchesSearch;
   });
 
+  const totalCount = servicesList.length;
+  const mechanicalCount = servicesList.filter((s) => s.category === "mechanical").length;
+  const electricalCount = servicesList.filter((s) => s.category === "electrical").length;
+  const plumbingCount = servicesList.filter((s) => s.category === "plumbing").length;
+
   return (
     <main className="min-h-screen bg-slate-50">
       {/* Banner */}
@@ -90,7 +95,7 @@ function ServicesOverviewContent() {
           </div>
 
           <h1 className="font-heading text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
-            Our 9 Flagship <span className="text-gradient">MEP Services</span>
+            Our {totalCount} Flagship <span className="text-gradient">MEP Services</span>
           </h1>
 
           <p className="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed">
@@ -117,10 +122,10 @@ function ServicesOverviewContent() {
         <div className="flex justify-center mb-12">
           <div className="inline-flex flex-wrap p-1.5 bg-white rounded-2xl border border-slate-200 shadow-sm gap-2">
             {[
-              { id: "all", label: "All Services (9)" },
-              { id: "mechanical", label: "⚙️ Mechanical (3)" },
-              { id: "electrical", label: "⚡ Electrical (3)" },
-              { id: "plumbing", label: "🚰 Plumbing (3)" },
+              { id: "all", label: `All Services (${totalCount})` },
+              { id: "mechanical", label: `⚙️ Mechanical (${mechanicalCount})` },
+              { id: "electrical", label: `⚡ Electrical (${electricalCount})` },
+              { id: "plumbing", label: `🚰 Plumbing (${plumbingCount})` },
             ].map((tab) => (
               <button
                 key={tab.id}

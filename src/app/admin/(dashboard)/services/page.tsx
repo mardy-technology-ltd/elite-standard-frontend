@@ -96,6 +96,7 @@ export default function AdminServicesPage() {
     code: "",
     slug: "",
     category: "mechanical",
+    parentFlagshipId: "",
     subtitle: "",
     shortDescription: "",
     fullDescription: "",
@@ -122,7 +123,7 @@ export default function AdminServicesPage() {
       if (search) params.append("search", search);
       if (params.toString()) url += `?${params.toString()}`;
 
-      const res = await fetch(url);
+      const res = await fetch(url, { cache: "no-store" });
       const data = await res.json();
       if (data.services) {
         setServices(data.services);
@@ -141,25 +142,31 @@ export default function AdminServicesPage() {
   // Open Create Modal
   const handleOpenCreate = () => {
     setEditingService(null);
+    const defaultMech = services.find((s) => s.category === "mechanical");
     setFormData({
       title: "",
       code: "ESL-MEP-",
       slug: "",
       category: "mechanical",
+      parentFlagshipId: defaultMech ? defaultMech.id : "",
       subtitle: "",
       shortDescription: "",
       fullDescription: "",
       icon: "FaIndustry",
-      bannerImage: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=1200&auto=format&fit=crop",
-      complianceText: "BNBC, ASHRAE, NFPA",
-      problemsText: "High energy consumption\nFrequent operational downtime\nCompliance and safety risks",
-      solutionsText: "Turnkey engineering execution\nAutomated monitoring integration\nInternational standard compliance validation",
-      scopeText: "Engineering calculation & design blueprints\nEquipment sourcing & quality inspection\nCertified installation & site assembly\nTesting, commissioning & compliance signoff",
+      bannerImage: "",
+      complianceText: "",
+      problemsText: "",
+      solutionsText: "",
+      scopeText: "",
       subServices: [],
       faqs: [
         {
-          question: "How long does the turnkey project implementation take?",
-          answer: "Timeline varies based on facility capacity, typically between 4 to 12 weeks from design approval.",
+          question: "How long does turnkey project implementation take?",
+          answer: "Project timelines depend on facility scale and design specifications, typically ranging from 4 to 12 weeks from technical blueprint approval.",
+        },
+        {
+          question: "Do you provide safety compliance and warranty certifications?",
+          answer: "Yes, all installations comply fully with BNBC, NFPA, and international standards, backed by full testing, commissioning, and warranty support.",
         },
       ],
       orderIndex: services.length,
@@ -176,6 +183,7 @@ export default function AdminServicesPage() {
       code: s.code,
       slug: s.slug,
       category: s.category,
+      parentFlagshipId: s.id,
       subtitle: s.subtitle || "",
       shortDescription: s.shortDescription || "",
       fullDescription: s.fullDescription || "",
@@ -680,22 +688,51 @@ export default function AdminServicesPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-300 mb-1">
-                        Discipline / Category <span className="text-red-400">*</span>
+                        1. Discipline / Main Category <span className="text-red-400">*</span>
                       </label>
                       <select
                         value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        onChange={(e) => {
+                          const newCat = e.target.value;
+                          const matchingParent = services.find((s) => s.category === newCat);
+                          setFormData({
+                            ...formData,
+                            category: newCat,
+                            parentFlagshipId: matchingParent ? matchingParent.id : "",
+                          });
+                        }}
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
                       >
-                        <option value="mechanical">Mechanical</option>
-                        <option value="electrical">Electrical</option>
-                        <option value="plumbing">Plumbing</option>
+                        <option value="mechanical">Mechanical Services</option>
+                        <option value="electrical">Electrical Services</option>
+                        <option value="plumbing">Plumbing Services</option>
                       </select>
                     </div>
 
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                        2. Parent Flagship Service (Sub-category of) <span className="text-red-400">*</span>
+                      </label>
+                      <select
+                        value={formData.parentFlagshipId}
+                        onChange={(e) => setFormData({ ...formData, parentFlagshipId: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-blue-500/50 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500 font-semibold"
+                      >
+                        {services
+                          .filter((s) => s.category === formData.category)
+                          .map((s) => (
+                            <option key={s.id} value={s.id}>
+                              {s.code} - {s.title}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-300 mb-1">
                         URL Slug <span className="text-red-400">*</span>
@@ -813,9 +850,18 @@ export default function AdminServicesPage() {
                   </div>
 
                   {/* Banner Preview */}
-                  {formData.bannerImage && (
+                  {formData.bannerImage ? (
                     <div className="space-y-2">
-                      <span className="text-xs font-bold text-slate-300">Live Banner Preview:</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-300">Live Banner Preview:</span>
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, bannerImage: "" }))}
+                          className="text-[11px] text-red-400 hover:text-red-300 font-semibold"
+                        >
+                          Clear Image
+                        </button>
+                      </div>
                       <div className="relative w-full h-56 rounded-xl overflow-hidden border border-slate-800 shadow-md">
                         <Image
                           src={formData.bannerImage}
@@ -832,6 +878,16 @@ export default function AdminServicesPage() {
                           </h3>
                         </div>
                       </div>
+                    </div>
+                  ) : (
+                    <div className="p-8 border-2 border-dashed border-slate-800 rounded-xl text-center flex flex-col items-center justify-center gap-2">
+                      <FaImage className="text-2xl text-slate-600" />
+                      <span className="text-xs font-semibold text-slate-400">
+                        No banner image uploaded yet
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        Choose a file from your computer or paste an image URL above.
+                      </span>
                     </div>
                   )}
                 </div>

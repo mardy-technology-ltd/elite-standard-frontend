@@ -16,8 +16,9 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   let partners: any[] = [];
   let clients: any[] = [];
+  let services: any[] = [];
   try {
-    const [dbPartners, dbClients] = await Promise.all([
+    const [dbPartners, dbClients, dbServices] = await Promise.all([
       prisma.clientReference.findMany({
         where: { isActive: true, category: "partner" },
         orderBy: { orderIndex: "asc" },
@@ -26,6 +27,9 @@ export default async function HomePage() {
         where: { isActive: true, category: "client" },
         orderBy: { orderIndex: "asc" },
       }),
+      prisma.service.findMany({
+        orderBy: [{ orderIndex: "asc" }, { createdAt: "desc" }],
+      }),
     ]);
     if (dbPartners && dbPartners.length > 0) {
       partners = dbPartners;
@@ -33,8 +37,11 @@ export default async function HomePage() {
     if (dbClients && dbClients.length > 0) {
       clients = dbClients;
     }
+    if (dbServices && dbServices.length > 0) {
+      services = dbServices;
+    }
   } catch (err) {
-    console.error("Failed to load clients and partners for homepage:", err);
+    console.error("Failed to load data for homepage:", err);
   }
 
   return (
@@ -46,7 +53,7 @@ export default async function HomePage() {
       <CompanyIntro />
 
       {/* 3. Signature 3-6-9 Law Framework */}
-      <Framework369 />
+      <Framework369 initialServices={services} />
 
       {/* 4. Why Choose Elite Standard Limited */}
       <WhyChooseUs />

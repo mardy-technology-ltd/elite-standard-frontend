@@ -23,13 +23,35 @@ import {
 } from "react-icons/fa";
 import { framework369Data, servicesData } from "@/lib/mockData";
 
-export default function Framework369() {
+export default function Framework369({ initialServices = [] }: { initialServices?: any[] }) {
   const [activeFrameworkTab, setActiveFrameworkTab] = useState<"solutions" | "actions" | "services">("solutions");
   const [activeCategory, setActiveCategory] = useState<"mechanical" | "electrical" | "plumbing">("mechanical");
+  const [liveServices, setLiveServices] = useState<any[]>(
+    initialServices && initialServices.length > 0 ? initialServices : servicesData
+  );
 
-  const filteredServices = servicesData.filter(
+  React.useEffect(() => {
+    if (initialServices && initialServices.length > 0) {
+      setLiveServices(initialServices);
+    } else {
+      fetch("/api/services", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.services && Array.isArray(d.services) && d.services.length > 0) {
+            setLiveServices(d.services);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [initialServices]);
+
+  const filteredServices = liveServices.filter(
     (service) => service.category === activeCategory
   );
+
+  const mechanicalCount = liveServices.filter((s) => s.category === "mechanical").length;
+  const electricalCount = liveServices.filter((s) => s.category === "electrical").length;
+  const plumbingCount = liveServices.filter((s) => s.category === "plumbing").length;
 
   const getSolutionIcon = (iconName: string) => {
     switch (iconName) {
@@ -339,9 +361,9 @@ export default function Framework369() {
                 <div className="flex flex-wrap gap-1.5 bg-slate-800/90 p-1.5 rounded-xl border border-slate-700 relative">
                   {(
                     [
-                      { id: "mechanical", label: "Mechanical (3)" },
-                      { id: "electrical", label: "Electrical (3)" },
-                      { id: "plumbing", label: "Plumbing (3)" },
+                      { id: "mechanical", label: `Mechanical (${mechanicalCount})` },
+                      { id: "electrical", label: `Electrical (${electricalCount})` },
+                      { id: "plumbing", label: `Plumbing (${plumbingCount})` },
                     ] as const
                   ).map((tab) => (
                     <button
