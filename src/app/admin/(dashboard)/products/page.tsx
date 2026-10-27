@@ -70,6 +70,7 @@ export default function AdminProductsPage() {
     code: string;
     title: string;
     category: string;
+    subCategory: string;
     brand: string;
     sector: string[];
     price: number;
@@ -86,33 +87,47 @@ export default function AdminProductsPage() {
   }>({
     code: "",
     title: "",
-    category: "Water Treatment",
-    brand: "Elite Standard Limited",
+    category: "mechanical",
+    subCategory: "HVAC & Climate Systems",
+    brand: "",
     sector: ["Industrial", "Commercial"],
-    price: 50000,
-    priceFormatted: "Tk 50,000",
-    regularPrice: "Tk 60,000",
+    price: 0,
+    priceFormatted: "",
+    regularPrice: "",
     inStock: true,
-    stockBadge: "In Stock",
-    warranty: "2 Years OEM Service Warranty & 24/7 Support",
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
-    galleryImages: [
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
-    ],
-    variantsText: "Standard Package",
+    stockBadge: "",
+    warranty: "",
+    image: "",
+    galleryImages: [],
+    variantsText: "",
     description: "",
-    specs: [
-      { label: "Standard", value: "BNBC 2020 / NFPA Compliant" },
-      { label: "Application", value: "Industrial & Commercial Facility" },
-    ],
+    specs: [],
   });
+
+  // 3-6-9 Framework: 3 Core Disciplines & 3 Flagship Sub-Categories per discipline
+  const PRODUCT_CATEGORY_MAP: Record<string, string[]> = {
+    "mechanical": [
+      "HVAC & Climate Systems",
+      "Fire Detection & Protection (FDPS)",
+      "Gas & Utility Distribution (GUDS)",
+    ],
+    "electrical": [
+      "Power Distribution & Panels (PDCP)",
+      "Energy-Efficient Lighting (EELS)",
+      "Intelligent Building Automation (IBA)",
+    ],
+    "plumbing": [
+      "Water Supply & Drainage (WSDS)",
+      "Water Treatment Solutions (WTS)",
+      "Rainwater Harvesting Systems (RHS)",
+    ],
+  };
 
   const categories = [
     "all",
-    "Water Treatment",
-    "HVAC & Climate",
-    "Fire Protection",
-    "Power & Switchgear",
+    "mechanical",
+    "electrical",
+    "plumbing",
   ];
 
   const fetchProducts = async () => {
@@ -140,27 +155,26 @@ export default function AdminProductsPage() {
   const openAddModal = () => {
     setEditingProduct(null);
     setActiveTab("general");
-    const defaultImg = "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop";
+    const defaultCategory = "mechanical";
+    const defaultSub = PRODUCT_CATEGORY_MAP[defaultCategory]?.[0] || "";
     setFormData({
       code: "ESL-" + Math.floor(1000 + Math.random() * 9000),
       title: "",
-      category: "Water Treatment",
-      brand: "Elite Standard Limited",
+      category: defaultCategory,
+      subCategory: defaultSub,
+      brand: "",
       sector: ["Industrial", "Commercial"],
-      price: 50000,
-      priceFormatted: "Tk 50,000",
-      regularPrice: "Tk 60,000",
+      price: 0,
+      priceFormatted: "",
+      regularPrice: "",
       inStock: true,
-      stockBadge: "In Stock",
-      warranty: "2 Years OEM Service Warranty",
-      image: defaultImg,
-      galleryImages: [defaultImg],
-      variantsText: "Standard Engineering Package",
-      description: "Heavy-duty engineering solution fabricated and tested to international standards.",
-      specs: [
-        { label: "Standard", value: "BNBC 2020 / NFPA Compliant" },
-        { label: "Application", value: "Industrial & Commercial" },
-      ],
+      stockBadge: "",
+      warranty: "",
+      image: "",
+      galleryImages: [],
+      variantsText: "",
+      description: "",
+      specs: [],
     });
     setManualImageUrl("");
     setModalOpen(true);
@@ -172,12 +186,21 @@ export default function AdminProductsPage() {
     const gallery =
       Array.isArray(p.galleryImages) && p.galleryImages.length > 0
         ? p.galleryImages
-        : [p.image || "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop"];
+        : p.image
+        ? [p.image]
+        : [];
+
+    // Find existing sub-category from specs or default from map
+    const existingSubSpec = Array.isArray(p.specs)
+      ? p.specs.find((s) => s.label === "Sub-Category" || s.label === "Sub Category" || s.label === "Equipment Type")
+      : null;
+    const currentSub = existingSubSpec ? existingSubSpec.value : (PRODUCT_CATEGORY_MAP[p.category]?.[0] || "");
 
     setFormData({
       code: p.code,
       title: p.title,
       category: p.category,
+      subCategory: currentSub,
       brand: p.brand || "Elite Standard Limited",
       sector: p.sector || ["Industrial"],
       price: p.price,
@@ -186,7 +209,7 @@ export default function AdminProductsPage() {
       inStock: p.inStock,
       stockBadge: p.stockBadge || "In Stock",
       warranty: p.warranty || "2 Years OEM Service Warranty",
-      image: p.image || gallery[0],
+      image: p.image || gallery[0] || "",
       galleryImages: gallery,
       variantsText: p.variantsText || "",
       description: p.description || "",
@@ -194,6 +217,7 @@ export default function AdminProductsPage() {
         ? p.specs
         : [
             { label: "Category", value: p.category },
+            { label: "Sub-Category", value: currentSub },
             { label: "Model", value: p.code },
           ],
     });
@@ -297,11 +321,19 @@ export default function AdminProductsPage() {
     setSubmitting(true);
 
     try {
+      // Ensure Sub-Category is represented in specs
+      const cleanedSpecs = formData.specs.filter(
+        (s) => s.label.trim() && s.value.trim() && s.label !== "Sub-Category"
+      );
+      if (formData.subCategory) {
+        cleanedSpecs.unshift({ label: "Sub-Category", value: formData.subCategory });
+      }
+
       const payload = {
         ...formData,
         image: formData.image || formData.galleryImages[0] || "",
-        galleryImages: formData.galleryImages.length > 0 ? formData.galleryImages : [formData.image],
-        specs: formData.specs.filter((s) => s.label.trim() && s.value.trim()),
+        galleryImages: formData.galleryImages.length > 0 ? formData.galleryImages : (formData.image ? [formData.image] : []),
+        specs: cleanedSpecs,
       };
 
       if (editingProduct) {
@@ -455,11 +487,32 @@ export default function AdminProductsPage() {
                       </td>
 
                       <td className="px-5 py-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">
-                          <FaTag className="text-[9px] text-blue-400" />
-                          {p.category}
-                        </span>
-                        <div className="text-[11px] text-slate-400 mt-1">{p.brand || "Elite Standard"}</div>
+                        <div className="flex flex-col gap-1">
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700 w-fit capitalize">
+                            <FaTag className="text-[9px] text-blue-400" />
+                            {p.category === "mechanical"
+                              ? "Mechanical"
+                              : p.category === "electrical"
+                              ? "Electrical"
+                              : p.category === "plumbing"
+                              ? "Plumbing"
+                              : p.category}
+                          </span>
+                          {(() => {
+                            const subSpec = Array.isArray(p.specs)
+                              ? p.specs.find((s) => s.label === "Sub-Category" || s.label === "Sub Category" || s.label === "Equipment Type")
+                              : null;
+                            if (subSpec && subSpec.value) {
+                              return (
+                                <span className="text-[10px] text-blue-400 font-medium">
+                                  ↳ {subSpec.value}
+                                </span>
+                              );
+                            }
+                            return null;
+                          })()}
+                          <div className="text-[11px] text-slate-400">{p.brand || "Elite Standard"}</div>
+                        </div>
                       </td>
 
                       <td className="px-5 py-4">
@@ -586,34 +639,58 @@ export default function AdminProductsPage() {
               {/* TAB 1: General & Pricing */}
               {activeTab === "general" && (
                 <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                      Product Code / Model ID <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.code}
+                      onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                      placeholder="e.g. ESL-WTS-IRP-01"
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-mono uppercase"
+                    />
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                        Product Code / Model ID
+                        1. Category Division <span className="text-red-400">*</span>
                       </label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.code}
-                        onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                        placeholder="e.g. ESL-WTS-IRP-01"
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-mono"
-                      />
+                      <select
+                        value={formData.category}
+                        onChange={(e) => {
+                          const newCat = e.target.value;
+                          const newSubOptions = PRODUCT_CATEGORY_MAP[newCat] || [];
+                          setFormData({
+                            ...formData,
+                            category: newCat,
+                            subCategory: newSubOptions[0] || "",
+                          });
+                        }}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-medium"
+                      >
+                        <option value="mechanical">Mechanical Services</option>
+                        <option value="electrical">Electrical Services</option>
+                        <option value="plumbing">Plumbing Services</option>
+                      </select>
                     </div>
 
                     <div>
                       <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                        Category Division
+                        2. Sub-Category (Equipment Type) <span className="text-red-400">*</span>
                       </label>
                       <select
-                        value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs"
+                        value={formData.subCategory}
+                        onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-blue-500/60 rounded-lg text-white text-xs font-semibold focus:border-blue-400 focus:outline-none"
                       >
-                        <option value="Water Treatment">Water Treatment</option>
-                        <option value="HVAC & Climate">HVAC & Climate</option>
-                        <option value="Fire Protection">Fire Protection</option>
-                        <option value="Power & Switchgear">Power & Switchgear</option>
+                        {(PRODUCT_CATEGORY_MAP[formData.category] || []).map((sub) => (
+                          <option key={sub} value={sub}>
+                            {sub}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -668,12 +745,13 @@ export default function AdminProductsPage() {
                       <input
                         type="number"
                         required
-                        value={formData.price}
+                        value={formData.price === 0 ? "" : formData.price}
+                        placeholder="e.g. 50000"
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            price: Number(e.target.value),
-                            priceFormatted: `Tk ${Number(e.target.value).toLocaleString()}`,
+                            price: e.target.value === "" ? 0 : Number(e.target.value),
+                            priceFormatted: e.target.value === "" ? "" : `Tk ${Number(e.target.value).toLocaleString()}`,
                           })
                         }
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-bold text-emerald-400"
