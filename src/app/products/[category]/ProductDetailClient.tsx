@@ -709,19 +709,6 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
 
             <button
               type="button"
-              onClick={() => setActiveTab("packages")}
-              className={`px-5 py-3.5 text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-                activeTab === "packages"
-                  ? "border-emerald-600 text-emerald-700 bg-emerald-50/30"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <FaBoxes className="text-xs" />
-              <span>Capacity Packages ({product.packages.length})</span>
-            </button>
-
-            <button
-              type="button"
               onClick={() => setActiveTab("inquiry")}
               className={`px-5 py-3.5 text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
                 activeTab === "inquiry"
@@ -810,54 +797,6 @@ export default function ProductDetailClient({ product }: { product: ProductDetai
                     </div>
                   </div>
                 ))}
-              </div>
-            )}
-
-            {/* TAB 3: PACKAGES & SIZING MATRIX */}
-            {activeTab === "packages" && (
-              <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
-                <div className="bg-slate-900 text-white px-5 py-3 font-bold text-xs uppercase tracking-wider flex items-center justify-between">
-                  <span>Available Package Sizing & Tiers</span>
-                  <span className="text-accent text-[11px] font-mono">3-6-9 Framework</span>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="bg-slate-100 border-b border-slate-200 text-slate-800 font-bold uppercase tracking-wider">
-                        <th className="p-3.5">Tier Level</th>
-                        <th className="p-3.5">Capacity / Flow Rate</th>
-                        <th className="p-3.5">Recommended Facility</th>
-                        <th className="p-3.5 text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 text-xs">
-                      {product.packages.map((pkg, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                          <td className="p-3.5 font-bold text-brand-950">
-                            <span className="px-2 py-0.5 rounded bg-brand-50 border border-brand-200 text-brand-900 text-[11px]">
-                              {pkg.tier}
-                            </span>
-                          </td>
-                          <td className="p-3.5 font-extrabold text-slate-900 font-mono">
-                            {pkg.capacity}
-                          </td>
-                          <td className="p-3.5 text-slate-600">
-                            {pkg.application}
-                          </td>
-                          <td className="p-3.5 text-right">
-                            <a
-                              href={`/contact?type=quotation&tier=${encodeURIComponent(pkg.tier)}`}
-                              className="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition-colors inline-block"
-                            >
-                              Get Quote
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
               </div>
             )}
 
