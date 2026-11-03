@@ -64,15 +64,6 @@ interface JobApplication {
   };
 }
 
-const DEPARTMENTS = [
-  "Mechanical Engineering (HVAC)",
-  "Power Distribution & Panels (PDCP)",
-  "Fire Detection & Protection (FDPS)",
-  "Industrial Building Automation (IBA)",
-  "Plumbing & Water Treatment",
-  "Solar & Renewable Energy",
-  "Corporate & Project Management",
-];
 
 export default function AdminCareersPage() {
   const [viewMode, setViewMode] = useState<"positions" | "applications">("positions");
@@ -81,8 +72,7 @@ export default function AdminCareersPage() {
   const [positions, setPositions] = useState<JobPosition[]>([]);
   const [loadingPositions, setLoadingPositions] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedDept, setSelectedDept] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
+    const [selectedStatus, setSelectedStatus] = useState("all");
 
   // Applications State
   const [applications, setApplications] = useState<JobApplication[]>([]);
@@ -103,8 +93,7 @@ export default function AdminCareersPage() {
   // Form State
   const [formData, setFormData] = useState({
     title: "",
-    department: DEPARTMENTS[0],
-    location: "",
+        location: "",
     type: "Full Time",
     experience: "",
     salary: "",
@@ -123,8 +112,7 @@ export default function AdminCareersPage() {
     try {
       let url = "/api/admin/careers";
       const params = new URLSearchParams();
-      if (selectedDept !== "all") params.append("department", selectedDept);
-      if (selectedStatus !== "all") params.append("status", selectedStatus);
+            if (selectedStatus !== "all") params.append("status", selectedStatus);
       if (search) params.append("search", search);
       if (params.toString()) url += `?${params.toString()}`;
 
@@ -165,7 +153,7 @@ export default function AdminCareersPage() {
 
   useEffect(() => {
     fetchPositions();
-  }, [selectedDept, selectedStatus, search]);
+  }, [selectedStatus, search]);
 
   useEffect(() => {
     fetchApplications();
@@ -175,8 +163,7 @@ export default function AdminCareersPage() {
     setEditingPosition(null);
     setFormData({
       title: "",
-      department: DEPARTMENTS[0],
-      location: "",
+            location: "",
       type: "Full Time",
       experience: "",
       salary: "",
@@ -196,8 +183,7 @@ export default function AdminCareersPage() {
     setEditingPosition(job);
     setFormData({
       title: job.title,
-      department: job.department,
-      location: job.location,
+            location: job.location,
       type: job.type,
       experience: job.experience,
       salary: job.salary,
@@ -307,7 +293,7 @@ export default function AdminCareersPage() {
 
       const payload = {
         title: formData.title,
-        department: formData.department,
+        department: 'General',
         location: formData.location,
         type: formData.type,
         experience: formData.experience,
@@ -421,7 +407,7 @@ export default function AdminCareersPage() {
               <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
               <input
                 type="text"
-                placeholder="Search job title, department, skills..."
+                placeholder="Search job title, skills, location..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
@@ -440,19 +426,7 @@ export default function AdminCareersPage() {
                 <option value="inactive">Draft / Inactive</option>
               </select>
 
-              {/* Department Filter */}
-              <select
-                value={selectedDept}
-                onChange={(e) => setSelectedDept(e.target.value)}
-                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-amber-500 max-w-xs"
-              >
-                <option value="all">All Engineering Departments</option>
-                {DEPARTMENTS.map((dept) => (
-                  <option key={dept} value={dept}>
-                    {dept}
-                  </option>
-                ))}
-              </select>
+              
             </div>
           </div>
 
@@ -475,7 +449,7 @@ export default function AdminCareersPage() {
                 <table className="w-full text-left text-xs text-slate-300">
                   <thead className="bg-slate-950/80 border-b border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-400">
                     <tr>
-                      <th className="px-4 py-3">Job Title & Department</th>
+                      <th className="px-4 py-3">Job Title & Overview</th>
                       <th className="px-4 py-3">Location & Type</th>
                       <th className="px-4 py-3">Salary & Exp</th>
                       <th className="px-4 py-3">Status</th>
@@ -491,10 +465,7 @@ export default function AdminCareersPage() {
                             <span className="font-bold text-white text-sm">
                               {job.title}
                             </span>
-                            <span className="text-amber-400 text-[11px] font-semibold mt-0.5">
-                              {job.department}
-                            </span>
-                            <span className="text-slate-500 text-[10px] line-clamp-1 mt-0.5">
+                                                        <span className="text-slate-500 text-[10px] line-clamp-1 mt-0.5">
                               {job.summary}
                             </span>
                           </div>
@@ -714,12 +685,7 @@ export default function AdminCareersPage() {
                               <span className="font-semibold text-white text-xs">
                                 {app.positionTitle}
                               </span>
-                              {app.jobPosition && (
-                                <span className="text-[10px] text-amber-400">
-                                  {app.jobPosition.department}
-                                </span>
-                              )}
-                            </div>
+                                                          </div>
                           </td>
 
                           <td className="px-4 py-3 text-slate-300">
@@ -912,7 +878,7 @@ export default function AdminCareersPage() {
                       required
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      placeholder="e.g. Senior Mechanical Engineer (HVAC & Cleanrooms)"
+                      placeholder="e.g. Senior Mechanical Engineer / Software Engineer"
                       className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
                     />
                   </div>
