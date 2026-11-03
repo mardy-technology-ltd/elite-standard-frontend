@@ -71,8 +71,7 @@ export default function CareerClient({
 }) {
   const [positions, setPositions] = useState<JobPositionItem[]>(initialPositions);
   const [search, setSearch] = useState("");
-  const [selectedDept, setSelectedDept] = useState("all");
-
+  
   // Application Modal State
   const [applyModalOpen, setApplyModalOpen] = useState(false);
   const [applyingJob, setApplyingJob] = useState<JobPositionItem | null>(null);
@@ -89,20 +88,13 @@ export default function CareerClient({
     coverNote: "",
   });
 
-  const departments = [
-    "all",
-    ...Array.from(new Set(positions.map((p) => p.department))),
-  ];
-
+  
   const filteredPositions = positions.filter((job) => {
-    const matchesDept =
-      selectedDept === "all" || job.department === selectedDept;
-    const matchesSearch =
+    return (
       job.title.toLowerCase().includes(search.toLowerCase()) ||
-      job.department.toLowerCase().includes(search.toLowerCase()) ||
       job.summary.toLowerCase().includes(search.toLowerCase()) ||
-      job.location.toLowerCase().includes(search.toLowerCase());
-    return matchesDept && matchesSearch;
+      job.location.toLowerCase().includes(search.toLowerCase())
+    );
   });
 
   const handleOpenApply = (job: JobPositionItem) => {
@@ -227,8 +219,8 @@ export default function CareerClient({
         </div>
 
         {/* Filter and Search */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-          <div className="relative w-full md:w-80">
+        <div className="mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="relative w-full max-w-md">
             <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
             <input
               type="text"
@@ -237,22 +229,6 @@ export default function CareerClient({
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-brand-800 transition-colors"
             />
-          </div>
-
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
-            {departments.map((dept) => (
-              <button
-                key={dept}
-                onClick={() => setSelectedDept(dept)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                  selectedDept === dept
-                    ? "bg-brand-950 text-white shadow-sm"
-                    : "bg-slate-100 hover:bg-slate-200 text-slate-600"
-                }`}
-              >
-                {dept === "all" ? "All Disciplines" : dept.split("(")[0].trim()}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -276,10 +252,7 @@ export default function CareerClient({
               >
                 <div className="flex flex-col gap-3 max-w-3xl">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="px-3 py-1 rounded-full bg-brand-50 border border-brand-100 text-[11px] font-bold text-brand-900">
-                      {job.department}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
+                                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
                       {job.type}
                     </span>
                     <span className="px-3 py-0.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-800 text-[11px] font-bold flex items-center gap-1.5 shadow-sm">
@@ -418,7 +391,7 @@ export default function CareerClient({
                   {applyingJob.title}
                 </h3>
                 <span className="text-xs text-slate-300">
-                  {applyingJob.department} &bull; {applyingJob.location}
+                  {applyingJob.location}
                 </span>
               </div>
               <button
