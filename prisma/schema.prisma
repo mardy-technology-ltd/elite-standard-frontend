@@ -246,4 +246,13 @@ model IndustrySector {
   @@index([orderIndex])
 }
 
+// 13. Site Settings & Dynamic Banners
+model SiteSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  @@index([key])
+}

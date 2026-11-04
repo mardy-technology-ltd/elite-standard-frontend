@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   FaPlus,
   FaSearch,
@@ -22,6 +23,9 @@ import {
   FaPhoneAlt,
   FaCalendarAlt,
   FaFilter,
+  FaImage,
+  FaUpload,
+  FaSpinner,
 } from "react-icons/fa";
 
 interface JobPosition {
@@ -89,6 +93,115 @@ export default function AdminCareersPage() {
   const [submitting, setSubmitting] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [updatingAppId, setUpdatingAppId] = useState<string | null>(null);
+
+
+  // Career Circular Banner State
+  const [careerBanner, setCareerBanner] = useState<string | null>(null);
+  const [loadingBanner, setLoadingBanner] = useState(true);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
+  const [savingBanner, setSavingBanner] = useState(false);
+  const [bannerModalOpen, setBannerModalOpen] = useState(false);
+  const [bannerPreview, setBannerPreview] = useState<string>("");
+
+
+  const fetchCareerBanner = async () => {
+    setLoadingBanner(true);
+    try {
+      const res = await fetch("/api/admin/careers/banner");
+      const data = await res.json();
+      if (data.banner) {
+        setCareerBanner(data.banner);
+        setBannerPreview(data.banner);
+      } else {
+        setCareerBanner(null);
+        setBannerPreview("");
+      }
+    } catch (err) {
+      console.error("Failed to fetch career banner:", err);
+    } finally {
+      setLoadingBanner(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCareerBanner();
+  }, []);
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingBanner(true);
+      const data = new FormData();
+      data.append("file", file);
+
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: data,
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.url) {
+          setBannerPreview(json.url);
+        }
+      } else {
+        alert("Banner image upload failed. Please try again.");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Failed to upload banner image.");
+    } finally {
+      setUploadingBanner(false);
+    }
+  };
+
+  const handleSaveBanner = async () => {
+    try {
+      setSavingBanner(true);
+      const res = await fetch("/api/admin/careers/banner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ banner: bannerPreview.trim() || null }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCareerBanner(data.banner);
+        setBannerModalOpen(false);
+      } else {
+        alert("Failed to save banner.");
+      }
+    } catch (err) {
+      console.error("Save banner error:", err);
+      alert("Error saving banner.");
+    } finally {
+      setSavingBanner(false);
+    }
+  };
+
+  const handleRemoveBanner = async () => {
+    if (!confirm("Are you sure you want to remove the current recruitment circular banner?")) return;
+
+    try {
+      setSavingBanner(true);
+      const res = await fetch("/api/admin/careers/banner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ banner: null }),
+      });
+
+      if (res.ok) {
+        setCareerBanner(null);
+        setBannerPreview("");
+      }
+    } catch (err) {
+      console.error("Remove banner error:", err);
+    } finally {
+      setSavingBanner(false);
+    }
+  };
 
   // Form State
   const [formData, setFormData] = useState({
@@ -357,14 +470,82 @@ export default function AdminCareersPage() {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-lg shadow-amber-500/20 active:scale-95 whitespace-nowrap"
-        >
-          <FaPlus />
-          <span>Post New Position</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => {
+              setBannerPreview(careerBanner || "");
+              setBannerModalOpen(true);
+            }}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm border border-slate-700 transition-all shadow-sm active:scale-95 whitespace-nowrap cursor-pointer"
+          >
+            <FaImage className="text-amber-400" />
+            <span>{careerBanner ? "Manage Circular Banner" : "Upload Circular Banner"}</span>
+            {careerBanner && (
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+            )}
+          </button>
+
+          <button
+            onClick={handleOpenCreate}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-lg shadow-amber-500/20 active:scale-95 whitespace-nowrap cursor-pointer"
+          >
+            <FaPlus />
+            <span>Post New Position</span>
+          </button>
+        </div>
       </div>
+
+      
+      {/* Active Circular Banner Banner Notification Card */}
+      {careerBanner && (
+        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <div className="relative w-28 h-20 rounded-xl overflow-hidden bg-slate-950 border border-slate-700/80 shrink-0">
+              <Image
+                src={careerBanner}
+                alt="Active Career Circular"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                  LIVE ON WEBSITE
+                </span>
+                <span className="text-xs text-slate-400 font-medium">Official Recruitment Banner</span>
+              </div>
+              <h4 className="text-white text-sm font-bold mt-1">
+                Recruitment Circular Banner is currently visible on Live Career Page
+              </h4>
+              <p className="text-slate-400 text-xs mt-0.5">
+                Displayed prominently in the engineering career overview section.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+            <button
+              onClick={() => {
+                setBannerPreview(careerBanner);
+                setBannerModalOpen(true);
+              }}
+              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 transition-colors"
+            >
+              <FaEdit className="text-amber-400 text-xs" />
+              <span>Change Banner</span>
+            </button>
+            <button
+              onClick={handleRemoveBanner}
+              disabled={savingBanner}
+              className="px-3.5 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+            >
+              <FaTrash className="text-xs" />
+              <span>Remove</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Primary Section Switcher Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
@@ -1083,6 +1264,138 @@ export default function AdminCareersPage() {
           </div>
         </div>
       )}
+
+      {/* Banner Upload & Management Modal */}
+      {bannerModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+          <div className="relative w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 sm:p-7 space-y-5 my-8">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-bold">
+                  <FaImage />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">
+                    Recruitment Circular Banner
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Upload a hiring flyer / poster to display on the live Career page.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setBannerModalOpen(false)}
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* File Upload Box */}
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-2">
+                  Upload Circular Image / Banner
+                </label>
+                <div className="border-2 border-dashed border-slate-700 hover:border-amber-500/60 rounded-2xl p-6 text-center bg-slate-950/60 transition-colors cursor-pointer relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBannerUpload}
+                    disabled={uploadingBanner}
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                  />
+                  {uploadingBanner ? (
+                    <div className="flex flex-col items-center justify-center gap-2 py-4">
+                      <div className="w-8 h-8 border-3 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-xs font-semibold text-slate-300">Uploading banner image...</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-2 py-2">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-800 text-amber-400 flex items-center justify-center text-xl shadow-inner">
+                        <FaUpload />
+                      </div>
+                      <p className="text-xs font-bold text-white mt-1">
+                        Click or drag image to upload
+                      </p>
+                      <p className="text-[11px] text-slate-400">
+                        Supports PNG, JPG, WEBP & SVG (e.g. 1200x700 or flyer size)
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Or Direct Image URL */}
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1">
+                  Or Direct Image URL / Public Path
+                </label>
+                <input
+                  type="text"
+                  value={bannerPreview}
+                  onChange={(e) => setBannerPreview(e.target.value)}
+                  placeholder="https://... or /uploads/products/..."
+                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              {/* Banner Live Preview */}
+              {bannerPreview && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-300">Banner Preview:</span>
+                    <button
+                      type="button"
+                      onClick={() => setBannerPreview("")}
+                      className="text-[11px] text-red-400 hover:underline"
+                    >
+                      Clear Image
+                    </button>
+                  </div>
+                  <div className="relative w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 max-h-72 flex items-center justify-center p-2">
+                    <img
+                      src={bannerPreview}
+                      alt="Banner Preview"
+                      className="w-full h-auto max-h-64 object-contain rounded-xl"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setBannerModalOpen(false)}
+                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveBanner}
+                disabled={savingBanner || uploadingBanner}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-slate-950 font-bold text-xs transition-all shadow-md shadow-amber-500/20 disabled:opacity-50"
+              >
+                {savingBanner ? (
+                  <>
+                    <FaSpinner className="animate-spin text-xs" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <FaCheckCircle className="text-xs" />
+                    <span>Save & Publish Banner</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

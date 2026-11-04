@@ -17,6 +17,17 @@ export const metadata: Metadata = {
   ],
 };
 
+async function getCareerBanner(): Promise<string | null> {
+  try {
+    const rows = await prisma.$queryRaw<Array<{ value: string }>>`
+      SELECT value FROM "SiteSetting" WHERE key = 'career_banner' LIMIT 1
+    `;
+    return rows.length > 0 ? rows[0].value : null;
+  } catch (err) {
+    console.error("Career banner fetch error:", err);
+    return null;
+  }
+}
 
 async function getOpenPositions(): Promise<JobPositionItem[]> {
   try {
@@ -51,6 +62,10 @@ async function getOpenPositions(): Promise<JobPositionItem[]> {
 }
 
 export default async function CareerPage() {
-  const positions = await getOpenPositions();
-  return <CareerClient initialPositions={positions} />;
+  const [positions, banner] = await Promise.all([
+    getOpenPositions(),
+    getCareerBanner(),
+  ]);
+
+  return <CareerClient initialPositions={positions} initialBanner={banner} />;
 }

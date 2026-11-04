@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   FaBriefcase,
   FaMapMarkerAlt,
@@ -66,11 +67,14 @@ const culturePerks = [
 
 export default function CareerClient({
   initialPositions,
+  initialBanner = null,
 }: {
   initialPositions: JobPositionItem[];
+  initialBanner?: string | null;
 }) {
   const [positions, setPositions] = useState<JobPositionItem[]>(initialPositions);
   const [search, setSearch] = useState("");
+  const [bannerUrl, setBannerUrl] = useState<string | null>(initialBanner);
   
   // Application Modal State
   const [applyModalOpen, setApplyModalOpen] = useState(false);
@@ -198,6 +202,42 @@ export default function CareerClient({
           })}
         </div>
       </section>
+
+      
+      {/* Dynamic Recruitment / Career Circular Banner */}
+      {bannerUrl && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+          <div className="bg-white rounded-3xl p-3 sm:p-5 border border-slate-200/90 shadow-xl overflow-hidden group hover:border-brand-800/40 transition-all">
+            <div className="flex items-center justify-between pb-3 px-2 border-b border-slate-100 mb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
+                <span className="text-xs font-bold text-brand-950 uppercase tracking-wider">
+                  Official Recruitment Circular
+                </span>
+              </div>
+              <a
+                href={bannerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-semibold text-brand-800 hover:text-brand-950 hover:underline flex items-center gap-1.5"
+              >
+                <span>View Full Size</span>
+                <FaArrowRight className="text-[10px]" />
+              </a>
+            </div>
+            <div className="relative w-full rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center border border-slate-100">
+              <Image
+                src={bannerUrl}
+                alt="Elite Standard Limited Recruitment Circular Banner"
+                width={1200}
+                height={700}
+                className="w-full h-auto object-contain max-h-[750px] rounded-2xl shadow-sm transition-transform duration-300 group-hover:scale-[1.01]"
+                priority
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 3. Open Positions */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
