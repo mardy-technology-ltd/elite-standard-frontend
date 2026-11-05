@@ -41,6 +41,7 @@ interface JobPosition {
   summary: string;
   qualifications: string[];
   responsibilities?: string[];
+  bannerUrl?: string | null;
   isActive: boolean;
   deadline?: string;
   orderIndex: number;
@@ -91,12 +92,15 @@ export default function AdminCareersPage() {
   const [editingPosition, setEditingPosition] = useState<JobPosition | null>(null);
   const [activeTab, setActiveTab] = useState<"basic" | "overview" | "qualifications">("basic");
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingPosBanner, setUploadingPosBanner] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [updatingAppId, setUpdatingAppId] = useState<string | null>(null);
 
 
   // Career Circular Multiple Banners State
   const [careerBanners, setCareerBanners] = useState<string[]>([]);
+  const [bannerActive, setBannerActive] = useState(true);
+  const [togglingBannerActive, setTogglingBannerActive] = useState(false);
   const [loadingBanner, setLoadingBanner] = useState(true);
   const [uploadingBanner, setUploadingBanner] = useState(false);
   const [savingBanner, setSavingBanner] = useState(false);
@@ -117,6 +121,9 @@ export default function AdminCareersPage() {
       } else {
         setCareerBanners([]);
       }
+      if (typeof data.isActive === 'boolean') {
+        setBannerActive(data.isActive);
+      }
     } catch (err) {
       console.error("Failed to fetch career banners:", err);
     } finally {
@@ -132,6 +139,37 @@ export default function AdminCareersPage() {
     setModalBanners([...careerBanners]);
     setNewBannerUrl("");
     setBannerModalOpen(true);
+  };
+
+  const handlePositionBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingPosBanner(true);
+      const data = new FormData();
+      data.append("file", file);
+
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: data,
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.url) {
+          setFormData((prev) => ({ ...prev, bannerUrl: json.url }));
+        }
+      } else {
+        alert("Failed to upload banner image.");
+      }
+    } catch (err) {
+      console.error("Banner upload error:", err);
+      alert("Error uploading banner image.");
+    } finally {
+      setUploadingPosBanner(false);
+      e.target.value = "";
+    }
   };
 
   const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -209,6 +247,28 @@ export default function AdminCareersPage() {
     }
   };
 
+  const handleToggleBannerActive = async () => {
+    const nextState = !bannerActive;
+    setTogglingBannerActive(true);
+    try {
+      const res = await fetch("/api/admin/careers/banner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: nextState }),
+      });
+      if (res.ok) {
+        setBannerActive(nextState);
+      } else {
+        alert("Failed to update banner display status.");
+      }
+    } catch (err) {
+      console.error("Toggle banner active error:", err);
+      alert("Error updating banner display status.");
+    } finally {
+      setTogglingBannerActive(false);
+    }
+  };
+
   const handleDirectDeleteSingleBanner = async (indexToRemove: number) => {
     if (!confirm("Are you sure you want to delete this circular banner?")) return;
     const remaining = careerBanners.filter((_, idx) => idx !== indexToRemove);
@@ -240,6 +300,7 @@ export default function AdminCareersPage() {
     salary: "",
     salaryBadge: "",
     summary: "",
+    bannerUrl: "",
     qualificationsText: "",
     responsibilitiesText: "",
     isActive: true,
@@ -310,6 +371,7 @@ export default function AdminCareersPage() {
       salary: "",
       salaryBadge: "",
       summary: "",
+      bannerUrl: "",
       qualificationsText: "",
       responsibilitiesText: "",
       isActive: true,
@@ -330,6 +392,7 @@ export default function AdminCareersPage() {
       salary: job.salary,
       salaryBadge: job.salaryBadge || job.salary,
       summary: job.summary || "",
+      bannerUrl: job.bannerUrl || "",
       qualificationsText: Array.isArray(job.qualifications) ? job.qualifications.join("\n") : "",
       responsibilitiesText: Array.isArray(job.responsibilities) ? job.responsibilities.join("\n") : "",
       isActive: job.isActive,
@@ -441,6 +504,7 @@ export default function AdminCareersPage() {
         salary: formData.salary,
         salaryBadge: formData.salaryBadge || formData.salary,
         summary: formData.summary,
+        bannerUrl: formData.bannerUrl || null,
         qualifications,
         responsibilities,
         isActive: formData.isActive,
@@ -508,7 +572,7 @@ export default function AdminCareersPage() {
             <FaImage className="text-amber-400" />
             <span>{careerBanners.length > 0 ? `Manage Banners (${careerBanners.length})` : "Upload Banners"}</span>
             {careerBanners.length > 0 && (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+              <span className={`w-2 h-2 rounded-full ml-0.5 ${bannerActive ? "bg-emerald-400 animate-pulse" : "bg-red-400"}`} />
             )}
           </button>
 
@@ -527,23 +591,57 @@ export default function AdminCareersPage() {
       {careerBanners.length > 0 && (
         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
-            <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className={`w-2.5 h-2.5 rounded-full ${bannerActive ? "bg-emerald-400 animate-pulse" : "bg-red-400"}`} />
               <h4 className="text-white text-sm font-bold">
-                Active Live Circular Banners ({careerBanners.length})
+                Live Career Banners ({careerBanners.length})
               </h4>
-              <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-bold">
-                Auto-slides on Live Career page
+              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                bannerActive
+                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                  : "bg-red-500/10 text-red-400 border-red-500/20"
+              }`}>
+                {bannerActive ? "● Displaying on Live Career" : "○ Hidden from Live Career"}
               </span>
             </div>
 
-            <button
-              onClick={handleOpenBannerModal}
-              className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-colors self-start sm:self-auto"
-            >
-              <FaPlus className="text-[10px]" />
-              <span>Add / Reorder Banners</span>
-            </button>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              {/* Modern iOS / Switch Style Toggle Switch */}
+              <div className="flex items-center gap-2 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-800">
+                <span className="text-[11px] font-medium text-slate-300 select-none">
+                  Live Banner:
+                </span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={bannerActive}
+                  disabled={togglingBannerActive}
+                  onClick={handleToggleBannerActive}
+                  title={bannerActive ? "Click to hide banners from Live Career page" : "Click to show banners on Live Career page"}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
+                    bannerActive ? "bg-emerald-500 shadow-sm shadow-emerald-500/30" : "bg-slate-700"
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      bannerActive ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+                <span className={`text-[11px] font-bold select-none ${bannerActive ? "text-emerald-400" : "text-slate-400"}`}>
+                  {bannerActive ? "ON" : "OFF"}
+                </span>
+              </div>
+
+              <button
+                onClick={handleOpenBannerModal}
+                className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <FaPlus className="text-[10px]" />
+                <span>Add / Reorder Banners</span>
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -675,6 +773,7 @@ export default function AdminCareersPage() {
                       <th className="px-4 py-3">Job Title & Overview</th>
                       <th className="px-4 py-3">Location & Type</th>
                       <th className="px-4 py-3">Salary & Exp</th>
+                      <th className="px-4 py-3">Banner</th>
                       <th className="px-4 py-3">Status</th>
                       <th className="px-4 py-3">Applications</th>
                       <th className="px-4 py-3 text-right">Actions</th>
@@ -1183,6 +1282,78 @@ export default function AdminCareersPage() {
                         onChange={(e) => setFormData({ ...formData, salaryBadge: e.target.value })}
                         placeholder="e.g. BDT 75k - 110k"
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Position Specific Circular Banner Upload */}
+                  <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="block text-xs font-bold text-white flex items-center gap-1.5">
+                          <FaImage className="text-amber-400" />
+                          <span>Position Hiring Circular Banner</span>
+                        </label>
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          Upload a dedicated circular banner displayed on the right side of this job post.
+                        </p>
+                      </div>
+
+                      {formData.bannerUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, bannerUrl: "" }))}
+                          className="text-[11px] text-red-400 hover:text-red-300 underline font-medium"
+                        >
+                          Remove Banner
+                        </button>
+                      )}
+                    </div>
+
+                    {formData.bannerUrl ? (
+                      <div className="relative w-full h-40 sm:h-48 rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+                        <Image
+                          src={formData.bannerUrl}
+                          alt="Position Banner Preview"
+                          fill
+                          className="object-contain p-2"
+                        />
+                        <div className="absolute top-2 right-2 px-2.5 py-1 rounded bg-black/80 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                          Attached to this job
+                        </div>
+                      </div>
+                    ) : (
+                      <label className="border-2 border-dashed border-slate-700 hover:border-amber-500/60 rounded-xl p-5 text-center flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors bg-slate-900/40 hover:bg-slate-900/80">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploadingPosBanner}
+                          onChange={handlePositionBannerUpload}
+                        />
+                        <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-amber-400">
+                          {uploadingPosBanner ? (
+                            <FaSpinner className="animate-spin text-sm" />
+                          ) : (
+                            <FaUpload className="text-sm" />
+                          )}
+                        </div>
+                        <span className="text-xs text-slate-300 font-semibold">
+                          {uploadingPosBanner ? "Uploading banner..." : "Click to select or drop banner image"}
+                        </span>
+                        <span className="text-[10px] text-slate-500">
+                          PNG, JPG, WEBP recommended (1200 x 700px or similar)
+                        </span>
+                      </label>
+                    )}
+
+                    <div className="flex items-center gap-2 pt-1">
+                      <input
+                        type="url"
+                        placeholder="Or enter direct image URL (e.g. /uploads/... or https://...)"
+                        value={formData.bannerUrl || ""}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, bannerUrl: e.target.value }))}
+                        className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-500 font-mono"
                       />
                     </div>
                   </div>

@@ -159,6 +159,7 @@ model JobPosition {
   summary          String           @db.Text
   qualifications   String[]         // List of qualification bullet points
   responsibilities String[]         // List of job responsibility bullet points
+  bannerUrl        String?          // Specific circular recruitment banner for this position
   isActive         Boolean          @default(true)
   deadline         String?
   orderIndex       Int              @default(0)

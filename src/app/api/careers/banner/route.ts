@@ -20,15 +20,24 @@ function parseBanners(rawValue: string | null): string[] {
 
 export async function GET() {
   try {
-    const rows = await prisma.$queryRaw<Array<{ value: string }>>`
-      SELECT value FROM "SiteSetting" WHERE key = 'career_banners' OR key = 'career_banner'
-      ORDER BY CASE WHEN key = 'career_banners' THEN 1 ELSE 2 END
-      LIMIT 1
+    const rows = await prisma.$queryRaw<Array<{ key: string; value: string }>>`
+      SELECT key, value FROM "SiteSetting" 
+      WHERE key IN ('career_banners', 'career_banner', 'career_banners_active')
     `;
-    const banners = rows.length > 0 ? parseBanners(rows[0].value) : [];
-    return NextResponse.json({ success: true, banners });
+
+    const activeRow = rows.find(r => r.key === 'career_banners_active');
+    const isActive = activeRow ? activeRow.value !== 'false' : true;
+
+    if (!isActive) {
+      return NextResponse.json({ success: true, banners: [], isActive: false });
+    }
+
+    const bannerRow = rows.find(r => r.key === 'career_banners') || rows.find(r => r.key === 'career_banner');
+    const banners = bannerRow ? parseBanners(bannerRow.value) : [];
+
+    return NextResponse.json({ success: true, banners, isActive: true });
   } catch (error: any) {
     console.error('Public career banners fetch error:', error);
-    return NextResponse.json({ success: true, banners: [] });
+    return NextResponse.json({ success: true, banners: [], isActive: false });
   }
 }

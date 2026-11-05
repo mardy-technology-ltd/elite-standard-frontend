@@ -33,6 +33,7 @@ export async function PUT(
         salary: data.salary.trim(),
         salaryBadge: data.salaryBadge || data.salary.trim(),
         summary: data.summary || '',
+        bannerUrl: data.bannerUrl || null,
         qualifications: Array.isArray(data.qualifications) ? data.qualifications : [],
         responsibilities: Array.isArray(data.responsibilities) ? data.responsibilities : [],
         isActive: data.isActive !== false,

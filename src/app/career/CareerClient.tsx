@@ -37,6 +37,7 @@ export interface JobPositionItem {
   summary: string;
   qualifications: string[];
   responsibilities?: string[];
+  bannerUrl?: string | null;
   isActive: boolean;
   deadline?: string;
 }
@@ -241,134 +242,6 @@ export default function CareerClient({
       </section>
 
       
-      {/* Dynamic Recruitment / Career Circular Banner Slider */}
-      {banners.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-          <div
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-            className="bg-white rounded-3xl p-3 sm:p-5 border border-slate-200/90 shadow-xl overflow-hidden group hover:border-brand-800/40 transition-all relative"
-          >
-            {/* Header with counter and full view link */}
-            <div className="flex items-center justify-between pb-3 px-2 border-b border-slate-100 mb-3">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
-                <span className="text-xs font-bold text-brand-950 uppercase tracking-wider">
-                  Official Recruitment Circular
-                </span>
-                {banners.length > 1 && (
-                  <span className="ml-2 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">
-                    {currentSlide + 1} / {banners.length}
-                  </span>
-                )}
-              </div>
-
-
-            </div>
-
-            {/* Slider Content */}
-            <div className="relative w-full rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center border border-slate-100 min-h-[320px] sm:min-h-[460px]">
-              <div className="relative w-full overflow-hidden flex items-center justify-center">
-                <AnimatePresence initial={false} custom={direction} mode="wait">
-                  <motion.div
-                    key={currentSlide}
-                    custom={direction}
-                    variants={{
-                      enter: (dir: number) => ({
-                        x: dir > 0 ? 100 : -100,
-                        opacity: 0,
-                        scale: 0.98,
-                      }),
-                      center: {
-                        x: 0,
-                        opacity: 1,
-                        scale: 1,
-                        transition: {
-                          x: { type: "spring", stiffness: 300, damping: 30 },
-                          opacity: { duration: 0.4, ease: "easeInOut" },
-                          scale: { duration: 0.4 },
-                        },
-                      },
-                      exit: (dir: number) => ({
-                        x: dir > 0 ? -100 : 100,
-                        opacity: 0,
-                        scale: 0.98,
-                        transition: {
-                          x: { type: "spring", stiffness: 300, damping: 30 },
-                          opacity: { duration: 0.3, ease: "easeInOut" },
-                          scale: { duration: 0.3 },
-                        },
-                      }),
-                    }}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    className="w-full flex items-center justify-center"
-                  >
-                    <Image
-                      src={banners[currentSlide]}
-                      alt={`Elite Standard Limited Recruitment Circular Banner ${currentSlide + 1}`}
-                      width={1200}
-                      height={700}
-                      className="w-full h-auto object-contain max-h-[750px] rounded-2xl shadow-sm"
-                      priority
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              {/* Prev / Next Navigation Arrows (visible if multiple banners) */}
-              {banners.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handlePrevSlide();
-                    }}
-                    aria-label="Previous circular banner"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center shadow-lg hover:scale-110 transition-all z-10 border border-slate-200/80"
-                  >
-                    <FaChevronLeft className="text-xs" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNextSlide();
-                    }}
-                    aria-label="Next circular banner"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center shadow-lg hover:scale-110 transition-all z-10 border border-slate-200/80"
-                  >
-                    <FaChevronRight className="text-xs" />
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Pagination Dots (visible if multiple banners) */}
-            {banners.length > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-4">
-                {banners.map((_: string, idx: number) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleDotClick(idx)}
-                    aria-label={`Go to circular banner ${idx + 1}`}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      currentSlide === idx
-                        ? "w-8 bg-brand-950"
-                        : "w-2.5 bg-slate-300 hover:bg-slate-400"
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
       {/* 3. Open Positions */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-slate-200">
@@ -418,102 +291,233 @@ export default function CareerClient({
             {filteredPositions.map((job) => (
               <div
                 key={job.id}
-                className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 group hover:border-brand-800/40 flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+                className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 group hover:border-brand-800/40 flex flex-col lg:flex-row items-stretch justify-between gap-8"
               >
-                <div className="flex flex-col gap-3 max-w-3xl">
-                  <div className="flex flex-wrap items-center gap-2">
-                                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
-                      {job.type}
-                    </span>
-                    <span className="px-3 py-0.5 rounded-full bg-amber-50 border border-amber-200/80 text-amber-800 text-[11px] font-bold flex items-center gap-1.5 shadow-sm">
-                      <FaMoneyBillWave className="text-xs text-amber-600" />
-                      <span>{job.salaryBadge || job.salary}</span>
-                    </span>
-                    {job.deadline && (
-                      <span className="px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-bold flex items-center gap-1">
-                        <FaClock className="text-[9px]" />
-                        <span>Deadline: {job.deadline}</span>
+                {/* LEFT SIDE: All Job Details + Salary + Apply Button + HR review note */}
+                <div className="flex-1 flex flex-col justify-between gap-6 min-w-0">
+                  <div className="flex flex-col gap-3.5">
+                    {/* Header Badges */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-[11px] font-bold">
+                        {job.type}
                       </span>
+                      <span className="px-3 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-800 text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
+                        <FaMoneyBillWave className="text-xs text-amber-600" />
+                        <span>{job.salaryBadge || job.salary}</span>
+                      </span>
+                      {job.deadline && (
+                        <span className="px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[11px] font-bold flex items-center gap-1.5">
+                          <FaClock className="text-[10px]" />
+                          <span>Deadline: {job.deadline}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Job Title */}
+                    <h3 className="font-heading text-xl sm:text-2xl font-extrabold text-brand-950 group-hover:text-brand-800 transition-colors leading-tight">
+                      {job.title}
+                    </h3>
+
+                    {/* Summary / Description */}
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                      {job.summary}
+                    </p>
+
+                    {/* Location, Exp, Salary tags */}
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs text-slate-600 pt-1">
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <FaMapMarkerAlt className="text-accent" />
+                        <span>{job.location}</span>
+                      </span>
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <FaClock className="text-accent" />
+                        <span>Experience: {job.experience}</span>
+                      </span>
+                      <span className="flex items-center gap-1.5 text-brand-950 font-bold bg-slate-100/80 px-3 py-1 rounded-lg border border-slate-200/80">
+                        <FaMoneyBillWave className="text-emerald-600 text-xs shrink-0" />
+                        <span className="text-slate-500 font-normal">Salary:</span>
+                        <span>{job.salary}</span>
+                      </span>
+                    </div>
+
+                    {/* Key Responsibilities */}
+                    {job.responsibilities && job.responsibilities.length > 0 && (
+                      <div className="mt-2 pt-3 border-t border-slate-100 space-y-2">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block">
+                          Key Responsibilities:
+                        </span>
+                        <div className="space-y-1.5">
+                          {job.responsibilities.map((r, rIdx) => (
+                            <div key={rIdx} className="flex items-start gap-2 text-xs text-slate-700 leading-relaxed">
+                              <span className="w-1.5 h-1.5 rounded-full bg-brand-800 mt-1.5 shrink-0" />
+                              <span>{r}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Key Qualifications */}
+                    {job.qualifications && job.qualifications.length > 0 && (
+                      <div className="mt-2 pt-3 border-t border-slate-100 space-y-2">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block">
+                          Key Qualifications:
+                        </span>
+                        <div className="space-y-1.5">
+                          {job.qualifications.map((q, qIdx) => (
+                            <div key={qIdx} className="flex items-start gap-2 text-xs text-slate-700 leading-relaxed">
+                              <FaCheckCircle className="text-emerald-500 text-xs mt-0.5 shrink-0" />
+                              <span>{q}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
 
-                  <h3 className="font-heading text-xl sm:text-2xl font-extrabold text-brand-950 group-hover:text-brand-800 transition-colors">
-                    {job.title}
-                  </h3>
+                  {/* LEFT SIDE BOTTOM: Salary and directly UNDER it Apply Button & HR Note */}
+                  <div className="pt-5 border-t border-slate-100 flex flex-col items-start gap-4">
+                    {/* Monthly Salary */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 flex items-center justify-center text-lg shrink-0">
+                        <FaMoneyBillWave />
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-bold">
+                          Monthly Salary Range
+                        </span>
+                        <span className="text-base sm:text-lg font-black text-brand-950 tracking-tight">
+                          {job.salaryBadge || job.salary}
+                        </span>
+                      </div>
+                    </div>
 
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                    {job.summary}
-                  </p>
+                    {/* Directly UNDER Salary: Apply Button & HR Note aligned completely to the LEFT */}
+                    <div className="flex flex-col items-start gap-1.5">
+                      <button
+                        onClick={() => handleOpenApply(job)}
+                        className="inline-flex items-center justify-center gap-2.5 bg-brand-950 hover:bg-brand-900 text-white font-bold text-xs sm:text-sm px-8 py-3.5 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 group/btn whitespace-nowrap cursor-pointer"
+                      >
+                        <span>Apply for this Position</span>
+                        <FaPaperPlane className="text-xs text-amber-400 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-0.5 transition-transform" />
+                      </button>
 
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs text-slate-600 pt-1">
-                    <span className="flex items-center gap-1.5">
-                      <FaMapMarkerAlt className="text-accent" />
-                      <span>{job.location}</span>
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <FaClock className="text-accent" />
-                      <span>Experience: {job.experience}</span>
-                    </span>
-                    <span className="flex items-center gap-1.5 text-brand-950 font-bold bg-slate-100 px-3 py-1 rounded-lg border border-slate-200/80">
-                      <FaMoneyBillWave className="text-emerald-600 text-xs shrink-0" />
-                      <span className="text-slate-500 font-normal">Salary:</span>
-                      <span>{job.salary}</span>
-                    </span>
+                      <span className="text-[10px] text-slate-400 font-medium pl-1">
+                        Immediate consideration & direct HR review
+                      </span>
+                    </div>
                   </div>
-
-                  {/* Key Responsibilities */}
-                  {job.responsibilities && job.responsibilities.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block mb-1">
-                        Key Responsibilities:
-                      </span>
-                      {job.responsibilities.map((r, rIdx) => (
-                        <div key={rIdx} className="flex items-start gap-2 text-xs text-slate-700 leading-relaxed">
-                          <span className="w-1.5 h-1.5 rounded-full bg-brand-800 mt-1.5 shrink-0" />
-                          <span>{r}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Key Qualifications */}
-                  {job.qualifications && job.qualifications.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block mb-1">
-                        Key Qualifications:
-                      </span>
-                      {job.qualifications.map((q, qIdx) => (
-                        <div key={qIdx} className="flex items-start gap-2 text-xs text-slate-700 leading-relaxed">
-                          <FaCheckCircle className="text-emerald-500 text-xs mt-0.5 shrink-0" />
-                          <span>{q}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
-                <div className="shrink-0 flex flex-col items-start lg:items-end gap-3 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100">
-                  <div className="text-left lg:text-right">
-                    <span className="text-[10px] uppercase tracking-wider text-slate-400 block font-bold">
-                      Monthly Salary Range
-                    </span>
-                    <span className="text-sm sm:text-base font-extrabold text-brand-950">
-                      {job.salaryBadge || job.salary}
-                    </span>
+                {/* RIGHT SIDE: Dedicated Banner for this Position (Fallback to general banners if any) */}
+                {(job.bannerUrl || banners.length > 0) && (
+                  <div className="shrink-0 w-full lg:w-[400px] xl:w-[440px] flex flex-col justify-center">
+                    <div className="w-full relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-white group/banner">
+                      <div className="relative w-full h-64 sm:h-72 lg:h-80 overflow-hidden flex items-center justify-center bg-slate-50">
+                        {job.bannerUrl ? (
+                          <div className="w-full h-full relative">
+                            <Image
+                              src={job.bannerUrl}
+                              alt={`${job.title} Recruitment Circular Banner`}
+                              fill
+                              className="object-contain p-1 hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        ) : (
+                          <AnimatePresence initial={false} custom={direction} mode="wait">
+                            <motion.div
+                              key={currentSlide}
+                              custom={direction}
+                              variants={{
+                                enter: (dir: number) => ({
+                                  x: dir > 0 ? 50 : -50,
+                                  opacity: 0,
+                                }),
+                                center: {
+                                  x: 0,
+                                  opacity: 1,
+                                  transition: {
+                                    x: { type: "spring", stiffness: 300, damping: 30 },
+                                    opacity: { duration: 0.3 },
+                                  },
+                                },
+                                exit: (dir: number) => ({
+                                  x: dir > 0 ? -50 : 50,
+                                  opacity: 0,
+                                  transition: {
+                                    x: { type: "spring", stiffness: 300, damping: 30 },
+                                    opacity: { duration: 0.2 },
+                                  },
+                                }),
+                              }}
+                              initial="enter"
+                              animate="center"
+                              exit="exit"
+                              className="w-full h-full relative"
+                            >
+                              <Image
+                                src={banners[currentSlide]}
+                                alt="Recruitment Circular Banner"
+                                fill
+                                className="object-contain p-1"
+                              />
+                            </motion.div>
+                          </AnimatePresence>
+                        )}
+
+                        {/* Navigation Buttons (only for general multi-banners when position has no specific banner) */}
+                        {!job.bannerUrl && banners.length > 1 && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePrevSlide();
+                              }}
+                              aria-label="Previous Banner"
+                              className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-900/75 hover:bg-slate-900 text-white flex items-center justify-center text-xs z-10 transition-colors shadow-md backdrop-blur-xs"
+                            >
+                              <FaChevronLeft />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleNextSlide();
+                              }}
+                              aria-label="Next Banner"
+                              className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-900/75 hover:bg-slate-900 text-white flex items-center justify-center text-xs z-10 transition-colors shadow-md backdrop-blur-xs"
+                            >
+                              <FaChevronRight />
+                            </button>
+                          </>
+                        )}
+
+                        {/* Top badge */}
+                        <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-brand-950/80 text-white text-[9px] font-bold tracking-widest uppercase backdrop-blur-sm pointer-events-none border border-white/10">
+                          Hiring Circular {!job.bannerUrl && banners.length > 1 ? `(${currentSlide + 1}/${banners.length})` : ''}
+                        </div>
+                      </div>
+
+                      {/* Pagination dots (only for general multi-banners) */}
+                      {!job.bannerUrl && banners.length > 1 && (
+                        <div className="flex items-center justify-center gap-1.5 py-2 bg-slate-50 border-t border-slate-100">
+                          {banners.map((_: string, idx: number) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => handleDotClick(idx)}
+                              aria-label={`Go to banner ${idx + 1}`}
+                              className={`h-1.5 rounded-full transition-all duration-300 ${
+                                currentSlide === idx ? "w-6 bg-brand-950" : "w-1.5 bg-slate-300 hover:bg-slate-400"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-
-                  <button
-                    onClick={() => handleOpenApply(job)}
-                    className="inline-flex items-center gap-2 bg-brand-900 hover:bg-brand-950 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group/btn whitespace-nowrap cursor-pointer active:scale-95"
-                  >
-                    <span>Apply for this Position</span>
-                    <FaPaperPlane className="text-xs text-accent group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
-
-                  <span className="text-[10px] text-slate-400">
-                    Online application or direct HR review
-                  </span>
-                </div>
+                )}
               </div>
             ))}
           </div>

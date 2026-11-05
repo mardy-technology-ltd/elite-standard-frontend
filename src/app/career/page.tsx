@@ -34,12 +34,17 @@ function parseBanners(rawValue: string | null): string[] {
 
 async function getCareerBanners(): Promise<string[]> {
   try {
-    const rows = await prisma.$queryRaw<Array<{ value: string }>>`
-      SELECT value FROM "SiteSetting" WHERE key = 'career_banners' OR key = 'career_banner'
-      ORDER BY CASE WHEN key = 'career_banners' THEN 1 ELSE 2 END
-      LIMIT 1
+    const rows = await prisma.$queryRaw<Array<{ key: string; value: string }>>`
+      SELECT key, value FROM "SiteSetting" 
+      WHERE key IN ('career_banners', 'career_banner', 'career_banners_active')
     `;
-    return rows.length > 0 ? parseBanners(rows[0].value) : [];
+
+    const activeRow = rows.find(r => r.key === 'career_banners_active');
+    const isActive = activeRow ? activeRow.value !== 'false' : true;
+    if (!isActive) return [];
+
+    const bannerRow = rows.find(r => r.key === 'career_banners') || rows.find(r => r.key === 'career_banner');
+    return bannerRow ? parseBanners(bannerRow.value) : [];
   } catch (err) {
     console.error("Career banners fetch error:", err);
     return [];
@@ -65,6 +70,7 @@ async function getOpenPositions(): Promise<JobPositionItem[]> {
         salary: j.salary,
         salaryBadge: j.salaryBadge || j.salary,
         summary: j.summary,
+        bannerUrl: (j as any).bannerUrl || null,
         qualifications: j.qualifications,
         responsibilities: j.responsibilities || [],
         isActive: j.isActive,
