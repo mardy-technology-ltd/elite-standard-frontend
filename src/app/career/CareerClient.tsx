@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FaBriefcase,
   FaMapMarkerAlt,
@@ -19,6 +20,8 @@ import {
   FaTimes,
   FaSpinner,
   FaFileAlt,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 
 export interface JobPositionItem {
@@ -67,14 +70,48 @@ const culturePerks = [
 
 export default function CareerClient({
   initialPositions,
+  initialBanners = [],
   initialBanner = null,
 }: {
   initialPositions: JobPositionItem[];
+  initialBanners?: string[];
   initialBanner?: string | null;
 }) {
   const [positions, setPositions] = useState<JobPositionItem[]>(initialPositions);
   const [search, setSearch] = useState("");
-  const [bannerUrl, setBannerUrl] = useState<string | null>(initialBanner);
+  // Banner slider state
+  const rawBanners = initialBanners && initialBanners.length > 0
+    ? initialBanners
+    : (initialBanner ? [initialBanner] : []);
+  const [banners, setBanners] = useState<string[]>(rawBanners);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Auto-slide effect (every 5 seconds)
+  useEffect(() => {
+    if (banners.length <= 1 || isPaused) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners.length, isPaused]);
+
+  const [direction, setDirection] = useState<number>(1);
+
+  const handleNextSlide = () => {
+    setDirection(1);
+    setCurrentSlide((prev) => (prev + 1) % banners.length);
+  };
+
+  const handlePrevSlide = () => {
+    setDirection(-1);
+    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
+  };
+
+  const handleDotClick = (idx: number) => {
+    setDirection(idx > currentSlide ? 1 : -1);
+    setCurrentSlide(idx);
+  };
   
   // Application Modal State
   const [applyModalOpen, setApplyModalOpen] = useState(false);
@@ -204,37 +241,130 @@ export default function CareerClient({
       </section>
 
       
-      {/* Dynamic Recruitment / Career Circular Banner */}
-      {bannerUrl && (
+      {/* Dynamic Recruitment / Career Circular Banner Slider */}
+      {banners.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-          <div className="bg-white rounded-3xl p-3 sm:p-5 border border-slate-200/90 shadow-xl overflow-hidden group hover:border-brand-800/40 transition-all">
+          <div
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            className="bg-white rounded-3xl p-3 sm:p-5 border border-slate-200/90 shadow-xl overflow-hidden group hover:border-brand-800/40 transition-all relative"
+          >
+            {/* Header with counter and full view link */}
             <div className="flex items-center justify-between pb-3 px-2 border-b border-slate-100 mb-3">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
                 <span className="text-xs font-bold text-brand-950 uppercase tracking-wider">
                   Official Recruitment Circular
                 </span>
+                {banners.length > 1 && (
+                  <span className="ml-2 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">
+                    {currentSlide + 1} / {banners.length}
+                  </span>
+                )}
               </div>
-              <a
-                href={bannerUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-semibold text-brand-800 hover:text-brand-950 hover:underline flex items-center gap-1.5"
-              >
-                <span>View Full Size</span>
-                <FaArrowRight className="text-[10px]" />
-              </a>
+
+
             </div>
-            <div className="relative w-full rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center border border-slate-100">
-              <Image
-                src={bannerUrl}
-                alt="Elite Standard Limited Recruitment Circular Banner"
-                width={1200}
-                height={700}
-                className="w-full h-auto object-contain max-h-[750px] rounded-2xl shadow-sm transition-transform duration-300 group-hover:scale-[1.01]"
-                priority
-              />
+
+            {/* Slider Content */}
+            <div className="relative w-full rounded-2xl overflow-hidden bg-slate-50 flex items-center justify-center border border-slate-100 min-h-[320px] sm:min-h-[460px]">
+              <div className="relative w-full overflow-hidden flex items-center justify-center">
+                <AnimatePresence initial={false} custom={direction} mode="wait">
+                  <motion.div
+                    key={currentSlide}
+                    custom={direction}
+                    variants={{
+                      enter: (dir: number) => ({
+                        x: dir > 0 ? 100 : -100,
+                        opacity: 0,
+                        scale: 0.98,
+                      }),
+                      center: {
+                        x: 0,
+                        opacity: 1,
+                        scale: 1,
+                        transition: {
+                          x: { type: "spring", stiffness: 300, damping: 30 },
+                          opacity: { duration: 0.4, ease: "easeInOut" },
+                          scale: { duration: 0.4 },
+                        },
+                      },
+                      exit: (dir: number) => ({
+                        x: dir > 0 ? -100 : 100,
+                        opacity: 0,
+                        scale: 0.98,
+                        transition: {
+                          x: { type: "spring", stiffness: 300, damping: 30 },
+                          opacity: { duration: 0.3, ease: "easeInOut" },
+                          scale: { duration: 0.3 },
+                        },
+                      }),
+                    }}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    className="w-full flex items-center justify-center"
+                  >
+                    <Image
+                      src={banners[currentSlide]}
+                      alt={`Elite Standard Limited Recruitment Circular Banner ${currentSlide + 1}`}
+                      width={1200}
+                      height={700}
+                      className="w-full h-auto object-contain max-h-[750px] rounded-2xl shadow-sm"
+                      priority
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Prev / Next Navigation Arrows (visible if multiple banners) */}
+              {banners.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePrevSlide();
+                    }}
+                    aria-label="Previous circular banner"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center shadow-lg hover:scale-110 transition-all z-10 border border-slate-200/80"
+                  >
+                    <FaChevronLeft className="text-xs" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNextSlide();
+                    }}
+                    aria-label="Next circular banner"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center shadow-lg hover:scale-110 transition-all z-10 border border-slate-200/80"
+                  >
+                    <FaChevronRight className="text-xs" />
+                  </button>
+                </>
+              )}
             </div>
+
+            {/* Pagination Dots (visible if multiple banners) */}
+            {banners.length > 1 && (
+              <div className="flex items-center justify-center gap-2 pt-4">
+                {banners.map((_: string, idx: number) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleDotClick(idx)}
+                    aria-label={`Go to circular banner ${idx + 1}`}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      currentSlide === idx
+                        ? "w-8 bg-brand-950"
+                        : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}

@@ -17,15 +17,32 @@ export const metadata: Metadata = {
   ],
 };
 
-async function getCareerBanner(): Promise<string | null> {
+function parseBanners(rawValue: string | null): string[] {
+  if (!rawValue) return [];
+  try {
+    const parsed = JSON.parse(rawValue);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((b): b is string => typeof b === 'string' && b.trim().length > 0);
+    }
+  } catch {
+    if (typeof rawValue === 'string' && rawValue.trim().length > 0) {
+      return [rawValue.trim()];
+    }
+  }
+  return [];
+}
+
+async function getCareerBanners(): Promise<string[]> {
   try {
     const rows = await prisma.$queryRaw<Array<{ value: string }>>`
-      SELECT value FROM "SiteSetting" WHERE key = 'career_banner' LIMIT 1
+      SELECT value FROM "SiteSetting" WHERE key = 'career_banners' OR key = 'career_banner'
+      ORDER BY CASE WHEN key = 'career_banners' THEN 1 ELSE 2 END
+      LIMIT 1
     `;
-    return rows.length > 0 ? rows[0].value : null;
+    return rows.length > 0 ? parseBanners(rows[0].value) : [];
   } catch (err) {
-    console.error("Career banner fetch error:", err);
-    return null;
+    console.error("Career banners fetch error:", err);
+    return [];
   }
 }
 
@@ -62,10 +79,10 @@ async function getOpenPositions(): Promise<JobPositionItem[]> {
 }
 
 export default async function CareerPage() {
-  const [positions, banner] = await Promise.all([
+  const [positions, banners] = await Promise.all([
     getOpenPositions(),
-    getCareerBanner(),
+    getCareerBanners(),
   ]);
 
-  return <CareerClient initialPositions={positions} initialBanner={banner} />;
+  return <CareerClient initialPositions={positions} initialBanners={banners} />;
 }
