@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   FaEnvelopeOpenText,
@@ -20,6 +21,8 @@ import {
   FaSnowflake,
   FaTimes,
   FaChevronDown,
+  FaSearch,
+  FaFilePdf,
 } from "react-icons/fa";
 
 interface BulletinItem {
@@ -31,6 +34,7 @@ interface BulletinItem {
   readTime?: string | null;
   summary: string;
   highlights: string[];
+  imageUrl?: string | null;
   pdfUrl?: string | null;
 }
 
@@ -52,6 +56,8 @@ export default function NewsletterPage() {
   const [bulletinList, setBulletinList] = useState<BulletinItem[]>([]);
   const [loadingBulletins, setLoadingBulletins] = useState(true);
   const [readingModalBulletin, setReadingModalBulletin] = useState<BulletinItem | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   React.useEffect(() => {
     async function loadBulletins() {
@@ -259,12 +265,12 @@ export default function NewsletterPage() {
 
       {/* 3. Published Engineering Bulletins Archive */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 pb-6 border-b border-slate-200">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-slate-200">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="w-8 h-0.5 bg-accent" />
               <span className="text-xs font-extrabold text-brand-800 uppercase tracking-widest">
-                Technical Knowledge Base
+                Technical Knowledge Base ({bulletinList.length})
               </span>
             </div>
             <h3 className="font-heading text-2xl sm:text-3xl font-extrabold text-brand-950">
@@ -274,6 +280,37 @@ export default function NewsletterPage() {
           <p className="text-xs sm:text-sm text-slate-500 max-w-md">
             Explore whitepapers and research summaries written by our lead electro-mechanical engineers.
           </p>
+        </div>
+
+        {/* Search & Filter Bar like Careers */}
+        <div className="mb-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:max-w-md">
+            <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+            <input
+              type="text"
+              placeholder="Search bulletins by title, topic or issue..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-brand-800 transition-colors"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+            {["all", "HVAC", "Safety", "Water", "Electrical"].map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  selectedCategory === cat
+                    ? "bg-brand-950 text-white shadow-sm"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-600"
+                }`}
+              >
+                {cat === "all" ? "All Disciplines" : cat}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loadingBulletins ? (
@@ -288,119 +325,212 @@ export default function NewsletterPage() {
             <p className="text-xs text-slate-500 mt-1">Please check back soon for our latest technical releases.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {bulletinList.map((bulletin) => {
-              const { icon: Icon, color: iconColor } = getCategoryIcon(bulletin.category);
-              return (
-                <div
-                  key={bulletin.id}
-                  className="bg-white rounded-3xl p-8 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-brand-800/40"
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-4 mb-4">
-                      <span className="text-[10px] font-mono font-extrabold uppercase px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
-                        {bulletin.issue}
-                      </span>
-                      <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
-                        <FaRegCalendarAlt />
-                        <span>{bulletin.date}</span>
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 mb-3">
-                      <Icon className={`text-base ${iconColor}`} />
-                      <span className="text-xs font-bold text-accent uppercase tracking-wider">
-                        {bulletin.category}
-                      </span>
-                    </div>
-
-                    <h4 className="font-heading text-xl font-bold text-brand-950 group-hover:text-brand-800 transition-colors mb-3 leading-snug">
-                      {bulletin.title}
-                    </h4>
-
-                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4 line-clamp-3">
-                      {bulletin.summary}
-                    </p>
-
-                    {bulletin.highlights && bulletin.highlights.length > 0 && (
-                      <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                            Key Engineering Insights:
+          <div className="space-y-6">
+            {bulletinList
+              .filter((bulletin) => {
+                const matchesSearch =
+                  bulletin.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  bulletin.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  bulletin.issue.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  bulletin.category.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesCategory =
+                  selectedCategory === "all" ||
+                  bulletin.category.toLowerCase().includes(selectedCategory.toLowerCase());
+                return matchesSearch && matchesCategory;
+              })
+              .map((bulletin) => {
+                const { icon: Icon, color: iconColor } = getCategoryIcon(bulletin.category);
+                return (
+                  <div
+                    key={bulletin.id}
+                    className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 group hover:border-brand-800/40 flex flex-col lg:flex-row items-stretch justify-between gap-8"
+                  >
+                    {/* LEFT SIDE: All Bulletin Details + Insights + Buttons */}
+                    <div className="flex-1 flex flex-col justify-between gap-6 min-w-0">
+                      <div className="flex flex-col gap-3.5">
+                        {/* Header Badges */}
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="px-3 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-slate-800 text-[11px] font-bold font-mono">
+                            {bulletin.issue}
                           </span>
-                          {bulletin.highlights.length > 3 && (
-                            <span className="text-[10px] font-semibold text-brand-800 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">
-                              {bulletin.highlights.length} Points
-                            </span>
-                          )}
+                          <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-[11px] font-bold flex items-center gap-1.5">
+                            <Icon className={`text-xs ${iconColor}`} />
+                            <span>{bulletin.category}</span>
+                          </span>
+                          <span className="px-3 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-800 text-[11px] font-bold flex items-center gap-1.5 shadow-xs">
+                            <FaRegClock className="text-xs text-amber-600" />
+                            <span>{bulletin.readTime || "5 min read"}</span>
+                          </span>
+                          <span className="px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-[11px] font-medium flex items-center gap-1.5">
+                            <FaRegCalendarAlt className="text-[10px] text-slate-400" />
+                            <span>{bulletin.date}</span>
+                          </span>
                         </div>
 
-                        {/* Show first 3 highlights */}
-                        {bulletin.highlights.slice(0, 3).map((h, i) => (
-                          <div key={i} className="flex items-start gap-2 text-xs text-slate-700 leading-snug">
-                            <FaCheckCircle className="text-emerald-500 text-[10px] mt-1 shrink-0" />
-                            <span className="line-clamp-2">{h}</span>
-                          </div>
-                        ))}
+                        {/* Bulletin Title */}
+                        <h3 className="font-heading text-xl sm:text-2xl font-extrabold text-brand-950 group-hover:text-brand-800 transition-colors leading-tight">
+                          {bulletin.title}
+                        </h3>
 
-                        {/* Read More / View All Modal Trigger */}
-                        {(bulletin.highlights.length > 3 || bulletin.summary.length > 180) && (
+                        {/* Summary / Description */}
+                        <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                          {bulletin.summary}
+                        </p>
+
+                        {/* Key Engineering Insights Bullet Points */}
+                        {bulletin.highlights && bulletin.highlights.length > 0 && (
+                          <div className="mt-2 pt-3 border-t border-slate-100 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 block">
+                                Key Engineering Insights:
+                              </span>
+                              {bulletin.highlights.length > 3 && (
+                                <span className="text-[10px] font-semibold text-brand-800 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">
+                                  {bulletin.highlights.length} Technical Points
+                                </span>
+                              )}
+                            </div>
+                            <div className="space-y-1.5">
+                              {bulletin.highlights.slice(0, 3).map((h, i) => (
+                                <div key={i} className="flex items-start gap-2 text-xs text-slate-700 leading-relaxed">
+                                  <FaCheckCircle className="text-emerald-500 text-xs mt-0.5 shrink-0" />
+                                  <span>{h}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Bottom Controls Aligned to the Left (like Careers Apply & Review) */}
+                      <div className="pt-5 border-t border-slate-100 flex flex-col items-start gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
                           <button
                             type="button"
                             onClick={() => setReadingModalBulletin(bulletin)}
-                            className="mt-2 text-[11px] font-bold text-brand-800 hover:text-accent transition-colors inline-flex items-center gap-1.5 pt-1 border-t border-slate-200/60 w-full cursor-pointer"
+                            className="inline-flex items-center justify-center gap-2 bg-brand-950 hover:bg-brand-900 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer"
                           >
-                            <span>Read Full Article & All {bulletin.highlights.length} Points</span>
-                            <FaArrowRight className="text-[9px]" />
+                            <FaBookOpen className="text-xs text-amber-400" />
+                            <span>Read Full Article & Insights</span>
                           </button>
+
+                          {bulletin.pdfUrl ? (
+                            <a
+                              href={bulletin.pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl border border-slate-200 transition-all cursor-pointer"
+                            >
+                              <FaDownload className="text-xs text-slate-600" />
+                              <span>Download PDF</span>
+                            </a>
+                          ) : (
+                            <a
+                              href="#subscribe"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                window.scrollTo({ top: 200, behavior: "smooth" });
+                              }}
+                              className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-brand-950 font-bold text-xs sm:text-sm px-5 py-3 rounded-xl shadow-xs transition-all cursor-pointer"
+                            >
+                              <span>Request Whitepaper (PDF)</span>
+                              <FaArrowRight className="text-xs" />
+                            </a>
+                          )}
+                        </div>
+
+                        <span className="text-[10px] text-slate-400 font-medium pl-1">
+                          Curated by Elite Standard Electro-Mechanical Technical Research Board
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* RIGHT SIDE: Featured Article Banner Card (Matching Careers Card Right Banner Style) */}
+                    <div className="shrink-0 w-full lg:w-[360px] xl:w-[400px] flex flex-col justify-center">
+                      <div className="w-full relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-gradient-to-br from-brand-950 via-brand-900 to-slate-900 text-white min-h-[220px] lg:min-h-[260px] flex flex-col justify-between group/card">
+                        {bulletin.imageUrl ? (
+                          <div className="relative w-full h-full min-h-[220px] lg:min-h-[260px] flex flex-col justify-between overflow-hidden">
+                            <Image
+                              src={bulletin.imageUrl}
+                              alt={bulletin.title}
+                              fill
+                              className="object-cover group-hover/card:scale-105 transition-transform duration-500 brightness-75"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-brand-950/95 via-brand-950/40 to-transparent" />
+
+                            <div className="relative z-10 p-5 flex items-center justify-between">
+                              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-black/50 backdrop-blur-md text-amber-300 border border-white/20">
+                                {bulletin.issue}
+                              </span>
+                              <span className="px-2.5 py-1 rounded-md bg-black/50 backdrop-blur-md text-white text-[11px] font-bold border border-white/20 flex items-center gap-1.5">
+                                <Icon className={`text-xs ${iconColor}`} />
+                                <span>{bulletin.category}</span>
+                              </span>
+                            </div>
+
+                            <div className="relative z-10 p-5 pt-0">
+                              <h4 className="font-heading font-extrabold text-base sm:text-lg text-white line-clamp-2 leading-snug group-hover/card:text-accent transition-colors drop-shadow-md">
+                                {bulletin.title}
+                              </h4>
+                              <div className="pt-3 mt-3 border-t border-white/20 flex items-center justify-between text-xs text-slate-200">
+                                <span className="flex items-center gap-1.5 font-medium">
+                                  <FaRegClock className="text-accent" />
+                                  <span>{bulletin.readTime || "5 min read"}</span>
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => setReadingModalBulletin(bulletin)}
+                                  className="inline-flex items-center gap-1.5 text-accent font-bold hover:underline cursor-pointer"
+                                >
+                                  <span>Read Details</span>
+                                  <FaArrowRight className="text-[10px]" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-6 sm:p-8 flex flex-col justify-between h-full min-h-[220px] lg:min-h-[260px]">
+                            <div className="relative z-10 flex flex-col gap-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-white/10 text-amber-300 border border-white/10">
+                                  {bulletin.issue}
+                                </span>
+                                <Icon className={`text-xl ${iconColor}`} />
+                              </div>
+                              <div>
+                                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block">
+                                  Technical Whitepaper
+                                </span>
+                                <h4 className="font-heading font-extrabold text-base sm:text-lg text-white mt-1 line-clamp-3 leading-snug group-hover/card:text-accent transition-colors">
+                                  {bulletin.title}
+                                </h4>
+                              </div>
+                            </div>
+
+                            <div className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
+                              <span className="flex items-center gap-1.5 font-medium">
+                                <FaRegClock className="text-accent" />
+                                <span>{bulletin.readTime || "5 min read"}</span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setReadingModalBulletin(bulletin)}
+                                className="inline-flex items-center gap-1.5 text-accent font-bold hover:underline cursor-pointer"
+                              >
+                                <span>Read Synopsis</span>
+                                <FaArrowRight className="text-[10px]" />
+                              </button>
+                            </div>
+
+                            {/* Subtle decorative background watermark icon */}
+                            <Icon className="absolute -right-4 -bottom-4 text-8xl text-white/5 pointer-events-none transform -rotate-12" />
+                          </div>
                         )}
                       </div>
-                    )}
-                  </div>
-
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-                      <FaRegClock />
-                      <span>{bulletin.readTime || "5 min read"}</span>
-                    </span>
-
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setReadingModalBulletin(bulletin)}
-                        className="text-xs font-bold text-slate-600 hover:text-brand-950 transition-colors cursor-pointer"
-                      >
-                        Read Details
-                      </button>
-
-                      {bulletin.pdfUrl ? (
-                        <a
-                          href={bulletin.pdfUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-800 hover:text-accent transition-colors group/link bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl border border-slate-200"
-                        >
-                          <FaDownload className="text-[10px]" />
-                          <span>PDF</span>
-                        </a>
-                      ) : (
-                        <a
-                          href="#subscribe"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            window.scrollTo({ top: 200, behavior: "smooth" });
-                          }}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-800 hover:text-accent transition-colors group/link"
-                        >
-                          <span>Full PDF</span>
-                          <FaArrowRight className="text-[10px] group-hover/link:translate-x-1 transition-transform" />
-                        </a>
-                      )}
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         )}
 

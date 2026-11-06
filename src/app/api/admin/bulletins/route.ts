@@ -90,6 +90,7 @@ export async function POST(req: Request) {
         readTime: data.readTime?.trim() || '5 min read',
         summary: data.summary.trim(),
         highlights: Array.isArray(data.highlights) ? data.highlights : [],
+        imageUrl: data.imageUrl?.trim() || '',
         pdfUrl: data.pdfUrl?.trim() || '',
         isActive: data.isActive !== false,
         orderIndex: typeof data.orderIndex === 'number' ? data.orderIndex : count + 1,

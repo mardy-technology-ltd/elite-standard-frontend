@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // 1. Admin Authentication & User Management
@@ -218,6 +217,7 @@ model EngineeringBulletin {
   readTime    String?  // e.g. "6 min read"
   summary     String   @db.Text
   highlights  String[] // Key Engineering Insights bullet points
+  imageUrl    String?  // Article image displayed on the right side of the card
   pdfUrl      String?  // Direct PDF download or brochure URL
   isActive    Boolean  @default(true)
   orderIndex  Int      @default(0)

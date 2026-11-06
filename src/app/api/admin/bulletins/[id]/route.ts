@@ -32,6 +32,7 @@ export async function PUT(
         readTime: data.readTime?.trim(),
         summary: data.summary.trim(),
         highlights: Array.isArray(data.highlights) ? data.highlights : [],
+        imageUrl: data.imageUrl?.trim() || '',
         pdfUrl: data.pdfUrl?.trim() || '',
         isActive: data.isActive !== false,
         orderIndex: typeof data.orderIndex === 'number' ? data.orderIndex : 0,

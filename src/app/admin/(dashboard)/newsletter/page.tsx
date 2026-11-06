@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   FaMailBulk,
   FaEnvelope,
@@ -23,6 +24,9 @@ import {
   FaTimes,
   FaSpinner,
   FaClock,
+  FaArrowLeft,
+  FaImage,
+  FaUpload,
 } from "react-icons/fa";
 
 interface Subscriber {
@@ -44,6 +48,7 @@ interface Bulletin {
   readTime?: string | null;
   summary: string;
   highlights: string[];
+  imageUrl?: string | null;
   pdfUrl?: string | null;
   isActive: boolean;
   orderIndex: number;
@@ -90,10 +95,11 @@ export default function AdminNewsletterPage() {
   const [bulletinCategory, setBulletinCategory] = useState("all");
   const [bulletinStatus, setBulletinStatus] = useState("all");
 
-  // Bulletin Modal State
-  const [modalOpen, setModalOpen] = useState(false);
+  // Bulletin Form/View State
+  const [viewMode, setViewMode] = useState<"list" | "form">("list");
   const [editingBulletin, setEditingBulletin] = useState<Bulletin | null>(null);
   const [submittingBulletin, setSubmittingBulletin] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [togglingBulletinId, setTogglingBulletinId] = useState<string | null>(null);
 
   const [bulletinForm, setBulletinForm] = useState({
@@ -104,6 +110,7 @@ export default function AdminNewsletterPage() {
     readTime: "5 min read",
     summary: "",
     highlightsText: "",
+    imageUrl: "",
     pdfUrl: "",
     isActive: true,
     orderIndex: 0,
@@ -174,7 +181,7 @@ export default function AdminNewsletterPage() {
     fetchSubscribers();
   }, [statusFilter, interestFilter, search]);
 
-  // Modal Handlers
+  // Handlers
   const handleOpenCreate = () => {
     setEditingBulletin(null);
     setBulletinForm({
@@ -185,11 +192,12 @@ export default function AdminNewsletterPage() {
       readTime: "5 min read",
       summary: "",
       highlightsText: "",
+      imageUrl: "",
       pdfUrl: "",
       isActive: true,
       orderIndex: bulletins.length + 1,
     });
-    setModalOpen(true);
+    setViewMode("form");
   };
 
   const handleOpenEdit = (b: Bulletin) => {
@@ -207,11 +215,42 @@ export default function AdminNewsletterPage() {
       readTime: b.readTime || "5 min read",
       summary: b.summary,
       highlightsText: Array.isArray(b.highlights) ? b.highlights.join("\n") : "",
+      imageUrl: b.imageUrl || "",
       pdfUrl: b.pdfUrl || "",
       isActive: b.isActive,
       orderIndex: b.orderIndex,
     });
-    setModalOpen(true);
+    setViewMode("form");
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingImage(true);
+      const data = new FormData();
+      data.append("file", file);
+
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: data,
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.url) {
+          setBulletinForm((prev) => ({ ...prev, imageUrl: json.url }));
+        }
+      } else {
+        alert("Failed to upload image");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error uploading image");
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmitBulletin = async (e: React.FormEvent) => {
@@ -232,6 +271,7 @@ export default function AdminNewsletterPage() {
         readTime: bulletinForm.readTime,
         summary: bulletinForm.summary,
         highlights,
+        imageUrl: bulletinForm.imageUrl,
         pdfUrl: bulletinForm.pdfUrl,
         isActive: bulletinForm.isActive,
         orderIndex: Number(bulletinForm.orderIndex) || 0,
@@ -243,17 +283,19 @@ export default function AdminNewsletterPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error("Failed to update bulletin");
+        const result = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(result.error || "Failed to update bulletin");
       } else {
         const res = await fetch("/api/admin/bulletins", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error("Failed to create bulletin");
+        const result = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(result.error || "Failed to create bulletin");
       }
 
-      setModalOpen(false);
+      setViewMode("list");
       fetchBulletins();
     } catch (err: any) {
       alert(err.message || "Failed to save bulletin");
@@ -374,20 +416,43 @@ export default function AdminNewsletterPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
+            {viewMode === "form" && (
+              <button
+                onClick={() => setViewMode("list")}
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                title="Back to List"
+              >
+                <FaArrowLeft className="text-sm" />
+              </button>
+            )}
             <h1 className="text-2xl font-bold text-white tracking-tight">
-              Newsletter & Bulletins
+              {viewMode === "form"
+                ? editingBulletin
+                  ? "Edit Engineering Bulletin"
+                  : "Post New Engineering Bulletin / Article"
+                : "Newsletter & Bulletins"}
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
               Live DB
             </span>
           </div>
           <p className="text-slate-400 text-xs sm:text-sm mt-1">
-            Manage technical whitepapers, engineering bulletins, and client email subscribers.
+            {viewMode === "form"
+              ? "Fill out article details, upload a dedicated banner/thumbnail image, and publish to the live site."
+              : "Manage technical whitepapers, engineering bulletins, and client email subscribers."}
           </p>
         </div>
 
         <div className="flex items-center gap-2.5">
-          {activeTab === "bulletins" ? (
+          {viewMode === "form" ? (
+            <button
+              onClick={() => setViewMode("list")}
+              className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm transition-all cursor-pointer"
+            >
+              <FaArrowLeft className="text-xs" />
+              <span>Back to All Bulletins</span>
+            </button>
+          ) : activeTab === "bulletins" ? (
             <button
               onClick={handleOpenCreate}
               className="inline-flex items-center gap-2 bg-accent hover:bg-amber-600 text-brand-950 font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow-lg hover:shadow-accent/20 cursor-pointer"
@@ -405,45 +470,315 @@ export default function AdminNewsletterPage() {
             </button>
           )}
 
-          <button
-            onClick={() => {
-              if (activeTab === "bulletins") fetchBulletins();
-              else fetchSubscribers();
-            }}
-            className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-colors border border-slate-700/80"
-            title="Refresh"
-          >
-            <FaSync className={loadingBulletins || loadingSubs ? "animate-spin" : ""} />
-          </button>
+          {viewMode === "list" && (
+            <button
+              onClick={() => {
+                if (activeTab === "bulletins") fetchBulletins();
+                else fetchSubscribers();
+              }}
+              className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-colors border border-slate-700/80"
+              title="Refresh"
+            >
+              <FaSync className={loadingBulletins || loadingSubs ? "animate-spin" : ""} />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Tabs Switcher */}
-      <div className="flex items-center gap-2 p-1.5 bg-slate-900/60 rounded-xl border border-slate-800 w-fit">
-        <button
-          onClick={() => setActiveTab("bulletins")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-            activeTab === "bulletins"
-              ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
-              : "text-slate-400 hover:text-white"
-          }`}
-        >
-          <FaBookOpen />
-          <span>Engineering Bulletins ({bulletins.length})</span>
-        </button>
+      {/* VIEW MODE: FORM (Dedicated page content instead of popup) */}
+      {viewMode === "form" && (
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+          <form onSubmit={handleSubmitBulletin} className="space-y-6">
+            <div className="flex flex-col lg:flex-row items-start gap-8">
+              {/* Left Column: Form Fields */}
+              <div className="flex-1 w-full space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      Issue Tag <span className="text-slate-500 font-normal">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={bulletinForm.issue}
+                      onChange={(e) => setBulletinForm({ ...bulletinForm, issue: e.target.value })}
+                      placeholder="e.g. Bulletin #25 — Q4 Edition"
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+                    />
+                  </div>
 
-        <button
-          onClick={() => setActiveTab("subscribers")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-            activeTab === "subscribers"
-              ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
-              : "text-slate-400 hover:text-white"
-          }`}
-        >
-          <FaMailBulk />
-          <span>Email Subscribers ({subscribers.length})</span>
-        </button>
-      </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      Category / Engineering Discipline <span className="text-red-400">*</span>
+                    </label>
+                    <select
+                      value={bulletinForm.category}
+                      onChange={(e) =>
+                        setBulletinForm({ ...bulletinForm, category: e.target.value })
+                      }
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                    >
+                      {CORE_DISCIPLINES.map((d) => (
+                        <option key={d.value} value={d.value}>
+                          {d.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Bulletin / Article Title <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={bulletinForm.title}
+                    onChange={(e) => setBulletinForm({ ...bulletinForm, title: e.target.value })}
+                    placeholder="e.g. Tropical VRF Air Conditioning: Optimizing COP in High Ambient Temperatures"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      Publication Month / Year
+                    </label>
+                    <input
+                      type="text"
+                      value={bulletinForm.date}
+                      onChange={(e) => setBulletinForm({ ...bulletinForm, date: e.target.value })}
+                      placeholder="e.g. October 2026"
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      Estimated Read Time
+                    </label>
+                    <input
+                      type="text"
+                      value={bulletinForm.readTime}
+                      onChange={(e) => setBulletinForm({ ...bulletinForm, readTime: e.target.value })}
+                      placeholder="e.g. 6 min read"
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      Display Order Index
+                    </label>
+                    <input
+                      type="number"
+                      value={bulletinForm.orderIndex}
+                      onChange={(e) =>
+                        setBulletinForm({ ...bulletinForm, orderIndex: Number(e.target.value) })
+                      }
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Executive Summary / Abstract <span className="text-red-400">*</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={bulletinForm.summary}
+                    onChange={(e) => setBulletinForm({ ...bulletinForm, summary: e.target.value })}
+                    placeholder="A concise synopsis of the engineering challenge, technical standard, and practical solution..."
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Key Engineering Insights (one per line)
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={bulletinForm.highlightsText}
+                    onChange={(e) =>
+                      setBulletinForm({ ...bulletinForm, highlightsText: e.target.value })
+                    }
+                    placeholder={"Inverter compressor frequency modulation curves\nOil recovery cycle timing without thermal shock\nModbus/BACnet BMS telemetry integration"}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono text-[11px] leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Direct PDF Download URL <span className="text-slate-500 font-normal">(optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={bulletinForm.pdfUrl}
+                    onChange={(e) => setBulletinForm({ ...bulletinForm, pdfUrl: e.target.value })}
+                    placeholder="https://... or /brochures/bulletin-24.pdf"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Right Column: Image Upload & Live Card Right-Side Preview */}
+              <div className="w-full lg:w-[380px] xl:w-[420px] shrink-0 space-y-5">
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-extrabold text-white flex items-center gap-2">
+                      <FaImage className="text-amber-500" />
+                      <span>Article Right-Side Image</span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-medium">Shows on Card Right</span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-400 leading-normal">
+                    Upload an image that will be featured prominently on the right side of the newsletter card.
+                  </p>
+
+                  {/* Image Preview Box */}
+                  <div className="relative w-full h-48 rounded-xl overflow-hidden border border-slate-800 bg-slate-900/60 flex items-center justify-center">
+                    {bulletinForm.imageUrl ? (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={bulletinForm.imageUrl}
+                          alt="Article preview"
+                          fill
+                          className="object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setBulletinForm({ ...bulletinForm, imageUrl: "" })}
+                          className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/70 hover:bg-red-600 text-white transition-colors cursor-pointer"
+                          title="Remove image"
+                        >
+                          <FaTimes className="text-xs" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-2 text-slate-500 p-4 text-center">
+                        <FaImage className="text-3xl text-slate-600" />
+                        <span className="text-xs">No image selected</span>
+                        <span className="text-[10px] text-slate-600">Default dark gradient with watermark will be used</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Upload Controls */}
+                  <div className="space-y-2">
+                    <label className="block w-full">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                        className="hidden"
+                      />
+                      <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-all cursor-pointer">
+                        {uploadingImage ? (
+                          <>
+                            <FaSpinner className="animate-spin text-amber-500 text-xs" />
+                            <span>Uploading image...</span>
+                          </>
+                        ) : (
+                          <>
+                            <FaUpload className="text-xs text-amber-400" />
+                            <span>{bulletinForm.imageUrl ? "Replace Image" : "Upload Article Image"}</span>
+                          </>
+                        )}
+                      </div>
+                    </label>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={bulletinForm.imageUrl}
+                        onChange={(e) => setBulletinForm({ ...bulletinForm, imageUrl: e.target.value })}
+                        placeholder="Or enter direct image URL..."
+                        className="flex-1 px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-[11px] text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Publish Live Toggle */}
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+                  <div>
+                    <label htmlFor="isActiveBulletin" className="text-xs text-white font-bold block cursor-pointer">
+                      Live Status
+                    </label>
+                    <span className="text-[11px] text-slate-400 block mt-0.5">
+                      Publish immediately to live public page
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    id="isActiveBulletin"
+                    checked={bulletinForm.isActive}
+                    onChange={(e) =>
+                      setBulletinForm({ ...bulletinForm, isActive: e.target.checked })
+                    }
+                    className="w-5 h-5 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+              >
+                Cancel & Go Back
+              </button>
+              <button
+                type="submit"
+                disabled={submittingBulletin || uploadingImage}
+                className="inline-flex items-center gap-2 px-8 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-xl shadow-lg hover:shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
+              >
+                {submittingBulletin && <FaSpinner className="animate-spin text-xs" />}
+                <span>{editingBulletin ? "Update Engineering Bulletin" : "Publish Engineering Bulletin"}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* VIEW MODE: LIST (Tabs & Tables) */}
+      {viewMode === "list" && (
+        <>
+          {/* Tabs Switcher */}
+          <div className="flex items-center gap-2 p-1.5 bg-slate-900/60 rounded-xl border border-slate-800 w-fit">
+            <button
+              onClick={() => setActiveTab("bulletins")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeTab === "bulletins"
+                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <FaBookOpen />
+              <span>Engineering Bulletins ({bulletins.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("subscribers")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeTab === "subscribers"
+                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <FaMailBulk />
+              <span>Email Subscribers ({subscribers.length})</span>
+            </button>
+          </div>
 
       {/* TAB 1: ENGINEERING BULLETINS */}
       {activeTab === "bulletins" && (
@@ -793,194 +1128,7 @@ export default function AdminNewsletterPage() {
           </div>
         </div>
       )}
-
-      {/* CREATE / EDIT BULLETIN MODAL */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-          <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden my-8">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/60">
-              <div className="flex items-center gap-2">
-                <FaBookOpen className="text-amber-500 text-sm" />
-                <h3 className="font-bold text-white text-base">
-                  {editingBulletin ? "Edit Engineering Bulletin" : "Create New Engineering Bulletin"}
-                </h3>
-              </div>
-              <button
-                onClick={() => setModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
-              >
-                <FaTimes />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmitBulletin} className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
-                    Issue Tag <span className="text-slate-500 font-normal">(optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={bulletinForm.issue}
-                    onChange={(e) => setBulletinForm({ ...bulletinForm, issue: e.target.value })}
-                    placeholder="e.g. Bulletin #25 — Q4 Edition"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
-                    Category <span className="text-red-400">*</span>
-                  </label>
-                  <select
-                    value={bulletinForm.category}
-                    onChange={(e) =>
-                      setBulletinForm({ ...bulletinForm, category: e.target.value })
-                    }
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                  >
-                    {CORE_DISCIPLINES.map((d) => (
-                      <option key={d.value} value={d.value}>
-                        {d.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
-                  Bulletin Title <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={bulletinForm.title}
-                  onChange={(e) => setBulletinForm({ ...bulletinForm, title: e.target.value })}
-                  placeholder="e.g. Tropical VRF Air Conditioning: Optimizing COP in High Ambient Temperatures"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
-                    Publication Month/Year
-                  </label>
-                  <input
-                    type="text"
-                    value={bulletinForm.date}
-                    onChange={(e) => setBulletinForm({ ...bulletinForm, date: e.target.value })}
-                    placeholder="e.g. October 2026"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
-                    Estimated Read Time
-                  </label>
-                  <input
-                    type="text"
-                    value={bulletinForm.readTime}
-                    onChange={(e) => setBulletinForm({ ...bulletinForm, readTime: e.target.value })}
-                    placeholder="e.g. 6 min read"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
-                    Display Order Index
-                  </label>
-                  <input
-                    type="number"
-                    value={bulletinForm.orderIndex}
-                    onChange={(e) =>
-                      setBulletinForm({ ...bulletinForm, orderIndex: Number(e.target.value) })
-                    }
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
-                  Executive Summary / Abstract <span className="text-red-400">*</span>
-                </label>
-                <textarea
-                  rows={3}
-                  required
-                  value={bulletinForm.summary}
-                  onChange={(e) => setBulletinForm({ ...bulletinForm, summary: e.target.value })}
-                  placeholder="A concise synopsis of the engineering challenge, technical standard, and practical solution..."
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
-                  Key Engineering Insights (one per line)
-                </label>
-                <textarea
-                  rows={3}
-                  value={bulletinForm.highlightsText}
-                  onChange={(e) =>
-                    setBulletinForm({ ...bulletinForm, highlightsText: e.target.value })
-                  }
-                  placeholder={"Inverter compressor frequency modulation curves\nOil recovery cycle timing\nModbus/BACnet BMS telemetry"}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500 font-mono text-[11px]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
-                  Direct PDF URL <span className="text-slate-500 font-normal">(optional, for instant download)</span>
-                </label>
-                <input
-                  type="text"
-                  value={bulletinForm.pdfUrl}
-                  onChange={(e) => setBulletinForm({ ...bulletinForm, pdfUrl: e.target.value })}
-                  placeholder="https://... or /brochures/bulletin-24.pdf"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="isActiveBulletin"
-                  checked={bulletinForm.isActive}
-                  onChange={(e) =>
-                    setBulletinForm({ ...bulletinForm, isActive: e.target.checked })
-                  }
-                  className="rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-0"
-                />
-                <label htmlFor="isActiveBulletin" className="text-xs text-slate-300 font-semibold cursor-pointer">
-                  Publish live on public Newsletter page
-                </label>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submittingBulletin}
-                  className="inline-flex items-center gap-1.5 px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold rounded-lg shadow-md transition-all disabled:opacity-50 cursor-pointer"
-                >
-                  {submittingBulletin && <FaSpinner className="animate-spin text-xs" />}
-                  <span>{editingBulletin ? "Update Bulletin" : "Save & Publish"}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
