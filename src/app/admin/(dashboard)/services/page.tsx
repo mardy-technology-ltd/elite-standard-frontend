@@ -28,6 +28,8 @@ import {
   FaShower,
   FaWater,
   FaSun,
+  FaArrowLeft,
+  FaSave,
 } from "react-icons/fa";
 
 interface SubService {
@@ -83,12 +85,13 @@ export default function AdminServicesPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  // Modal State
-  const [modalOpen, setModalOpen] = useState(false);
+  // Screen View State: "list" | "create" | "edit"
+  const [viewMode, setViewMode] = useState<"list" | "create" | "edit">("list");
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [activeTab, setActiveTab] = useState<"general" | "banner" | "scope" | "subservices">("general");
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -112,6 +115,34 @@ export default function AdminServicesPage() {
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Handle URL params and browser back/forward
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const action = params.get("action");
+      if (action === "create" || action === "new") {
+        handleOpenCreate();
+      }
+    }
+  }, [services.length]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const action = params.get("action");
+      if (action === "create" || action === "new") {
+        setViewMode("create");
+      } else if (action === "edit") {
+        setViewMode("edit");
+      } else {
+        setViewMode("list");
+        setEditingService(null);
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Fetch Services
   const fetchServices = async () => {
@@ -139,7 +170,7 @@ export default function AdminServicesPage() {
     fetchServices();
   }, [selectedCategory, search]);
 
-  // Open Create Modal
+  // Open Create Screen (Separate Screen, Not Pop-Up)
   const handleOpenCreate = () => {
     setEditingService(null);
     const defaultMech = services.find((s) => s.category === "mechanical");
@@ -172,10 +203,14 @@ export default function AdminServicesPage() {
       orderIndex: services.length,
     });
     setActiveTab("general");
-    setModalOpen(true);
+    setViewMode("create");
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", "/admin/services?action=create");
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Open Edit Modal
+  // Open Edit Screen (Separate Screen, Not Pop-Up)
   const handleOpenEdit = (s: Service) => {
     setEditingService(s);
     setFormData({
@@ -198,7 +233,21 @@ export default function AdminServicesPage() {
       orderIndex: typeof s.orderIndex === "number" ? s.orderIndex : 0,
     });
     setActiveTab("general");
-    setModalOpen(true);
+    setViewMode("edit");
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", `/admin/services?action=edit&id=${s.id}`);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Back to Services List Screen
+  const handleBackToList = () => {
+    setViewMode("list");
+    setEditingService(null);
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", "/admin/services");
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Upload file from computer
@@ -298,8 +347,17 @@ export default function AdminServicesPage() {
         }
       }
 
-      setModalOpen(false);
+      setViewMode("list");
+      setEditingService(null);
+      if (typeof window !== "undefined") {
+        window.history.pushState(null, "", "/admin/services");
+      }
+      setNotification({
+        type: "success",
+        message: editingService ? "Service updated successfully!" : "New service created successfully!",
+      });
       fetchServices();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err: any) {
       alert(err.message || "An error occurred");
     } finally {
@@ -382,7 +440,32 @@ export default function AdminServicesPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12 font-sans">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16 font-sans">
+      {/* Toast Notification */}
+      {notification && (
+        <div
+          className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
+            notification.type === "success"
+              ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-300"
+              : "bg-red-950/40 border-red-500/40 text-red-300"
+          }`}
+        >
+          <div className="flex items-center gap-2.5 text-xs font-semibold">
+            <FaCheckCircle className="text-sm" />
+            <span>{notification.message}</span>
+          </div>
+          <button
+            onClick={() => setNotification(null)}
+            className="text-xs hover:opacity-75 transition-opacity"
+          >
+            <FaTimes />
+          </button>
+        </div>
+      )}
+
+      {/* VIEW 1: SERVICES CATALOG LIST SCREEN */}
+      {viewMode === "list" ? (
+        <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 shadow-xl">
         <div>
@@ -595,48 +678,101 @@ export default function AdminServicesPage() {
         </div>
       )}
 
-      {/* Create / Edit Service Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-          <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden my-8">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/60">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-sm font-bold">
-                  <FaCogs />
+        </div>
+      ) : (
+        /* VIEW 2: DEDICATED FULL SCREEN SERVICE STUDIO / CREATION SCREEN */
+        <div className="space-y-6">
+          {/* Screen Top Header with Breadcrumbs, Back Button, and Quick Actions */}
+          <div className="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-xl backdrop-blur-md">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleBackToList}
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 text-xs font-semibold transition-all active:scale-95"
+                  >
+                    <FaArrowLeft className="text-xs" />
+                    <span>Back to Services</span>
+                  </button>
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <span>Admin</span>
+                    <span>/</span>
+                    <span>Services</span>
+                    <span>/</span>
+                    <span className="text-blue-400 font-semibold">
+                      {viewMode === "edit" ? "Edit Service" : "Add New Service"}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-base font-bold text-white">
-                    {editingService ? `Edit Service: ${editingService.title}` : "Add New Engineering Service"}
-                  </h2>
-                  <p className="text-[11px] text-slate-400">
-                    Configure service discipline, compliance standards, engineering scope, and sub-services.
-                  </p>
+
+                <div className="flex items-center gap-3 pt-1">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg font-bold border border-blue-500/30">
+                    <FaCogs />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-white tracking-tight">
+                      {viewMode === "edit"
+                        ? `Edit Service: ${formData.title || editingService?.title || "Untitled"}`
+                        : "Add New Engineering Service"}
+                    </h1>
+                    <p className="text-slate-400 text-xs sm:text-sm mt-0.5">
+                      {viewMode === "edit"
+                        ? "Update service parameters, engineering specifications, media banners, and sub-services."
+                        : "Configure and publish a new MEP discipline service with full technical specifications."}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <button
-                onClick={() => setModalOpen(false)}
-                className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-              >
-                <FaTimes />
-              </button>
-            </div>
 
-            {/* Modal Tabs */}
-            <div className="flex border-b border-slate-800 bg-slate-950/40 px-6 pt-2 gap-2 overflow-x-auto">
+              {/* Top Action Buttons */}
+              <div className="flex items-center gap-3 self-end md:self-center">
+                <button
+                  type="button"
+                  onClick={handleBackToList}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition-colors border border-slate-700/60"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const form = document.getElementById("service-editor-form") as HTMLFormElement;
+                    if (form) form.requestSubmit();
+                  }}
+                  disabled={submitting}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50 active:scale-95"
+                >
+                  <FaSave />
+                  <span>
+                    {submitting
+                      ? "Saving to Database..."
+                      : viewMode === "edit"
+                      ? "Update Service"
+                      : "Create Service"}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Dedicated Screen Content Card */}
+          <div className="bg-slate-900/60 rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
+            {/* Screen Tabs Bar */}
+            <div className="flex border-b border-slate-800 bg-slate-950/60 px-6 pt-3 gap-3 overflow-x-auto">
               {[
                 { id: "general", label: "1. Basic Info & Category" },
-                { id: "banner", label: "2. Visual Banner" },
+                { id: "banner", label: "2. Visual Banner & Media" },
                 { id: "scope", label: "3. Scope & Compliance" },
-                { id: "subservices", label: `4. Sub-Services (${formData.subServices.length})` },
+                { id: "subservices", label: `4. Sub-Services (${formData.subServices.length}) & FAQs` },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`pb-3 px-3 text-xs font-semibold border-b-2 transition-all whitespace-nowrap ${
+                  className={`pb-3.5 px-4 text-xs font-bold border-b-2 transition-all whitespace-nowrap flex items-center gap-2 ${
                     activeTab === tab.id
-                      ? "border-blue-500 text-blue-400"
+                      ? "border-blue-500 text-blue-400 bg-blue-500/5 rounded-t-lg"
                       : "border-transparent text-slate-400 hover:text-slate-200"
                   }`}
                 >
@@ -645,14 +781,18 @@ export default function AdminServicesPage() {
               ))}
             </div>
 
-            {/* Modal Body Form */}
-            <form onSubmit={handleSubmit} className="p-6 max-h-[70vh] overflow-y-auto space-y-5">
+            {/* Screen Form Content */}
+            <form
+              id="service-editor-form"
+              onSubmit={handleSubmit}
+              className="p-6 sm:p-8 space-y-8"
+            >
               {/* TAB 1: General Info */}
               {activeTab === "general" && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         Service Title <span className="text-red-400">*</span>
                       </label>
                       <input
@@ -669,12 +809,12 @@ export default function AdminServicesPage() {
                           })
                         }
                         placeholder="e.g. Heating, Ventilation & Air Conditioning"
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         Service Code <span className="text-red-400">*</span>
                       </label>
                       <input
@@ -683,14 +823,14 @@ export default function AdminServicesPage() {
                         value={formData.code}
                         onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                         placeholder="e.g. ESL-MEP-HVAC"
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500 uppercase font-mono"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 uppercase font-mono transition-colors"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         1. Discipline / Main Category <span className="text-red-400">*</span>
                       </label>
                       <select
@@ -704,7 +844,7 @@ export default function AdminServicesPage() {
                             parentFlagshipId: matchingParent ? matchingParent.id : "",
                           });
                         }}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
                       >
                         <option value="mechanical">Mechanical Services</option>
                         <option value="electrical">Electrical Services</option>
@@ -713,13 +853,13 @@ export default function AdminServicesPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         2. Parent Flagship Service (Sub-category of) <span className="text-red-400">*</span>
                       </label>
                       <select
                         value={formData.parentFlagshipId}
                         onChange={(e) => setFormData({ ...formData, parentFlagshipId: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-blue-500/50 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500 font-semibold"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-blue-500/50 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 font-semibold transition-colors"
                       >
                         {services
                           .filter((s) => s.category === formData.category)
@@ -728,13 +868,16 @@ export default function AdminServicesPage() {
                               {s.code} - {s.title}
                             </option>
                           ))}
+                        {services.filter((s) => s.category === formData.category).length === 0 && (
+                          <option value="">Flagship Primary Core</option>
+                        )}
                       </select>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         URL Slug <span className="text-red-400">*</span>
                       </label>
                       <input
@@ -743,18 +886,18 @@ export default function AdminServicesPage() {
                         value={formData.slug}
                         onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                         placeholder="e.g. hvac-systems"
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 font-mono transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         Icon Symbol
                       </label>
                       <select
                         value={formData.icon}
                         onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
                       >
                         {AVAILABLE_ICONS.map((ic) => (
                           <option key={ic.name} value={ic.name}>
@@ -763,10 +906,23 @@ export default function AdminServicesPage() {
                         ))}
                       </select>
                     </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                        Display Order Index
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.orderIndex}
+                        onChange={(e) => setFormData({ ...formData, orderIndex: parseInt(e.target.value) || 0 })}
+                        placeholder="0"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 font-mono transition-colors"
+                      />
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
                       Subtitle / Tagline
                     </label>
                     <input
@@ -774,45 +930,49 @@ export default function AdminServicesPage() {
                       value={formData.subtitle}
                       onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                       placeholder="e.g. High-efficiency VRF, central chillers & cleanroom HVAC engineering."
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
                       Short Description (Overview & SEO)
                     </label>
                     <textarea
-                      rows={2}
+                      rows={3}
                       value={formData.shortDescription}
                       onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
-                      placeholder="Short summary displayed on cards and overview grids..."
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                      placeholder="Short summary displayed on cards, hero banners, and overview grids..."
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
                       Full Engineering Description
                     </label>
                     <textarea
-                      rows={4}
+                      rows={6}
                       value={formData.fullDescription}
                       onChange={(e) => setFormData({ ...formData, fullDescription: e.target.value })}
-                      placeholder="Comprehensive description of engineering capabilities, methodologies, and technical credentials..."
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                      placeholder="Comprehensive description of engineering capabilities, methodologies, standards adherence, and technical credentials..."
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                     />
                   </div>
                 </div>
               )}
 
-              {/* TAB 2: Visual Banner */}
+              {/* TAB 2: Visual Banner & Media */}
               {activeTab === "banner" && (
-                <div className="space-y-4">
-                  <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Upload Banner Image from Computer
-                    </label>
+                <div className="space-y-6">
+                  <div className="p-6 bg-slate-950/70 border border-slate-800 rounded-2xl space-y-4">
+                    <div>
+                      <h3 className="text-sm font-bold text-white">Upload Banner Image</h3>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        High-resolution engineering photo displayed across the service hero banner and header section.
+                      </p>
+                    </div>
+
                     <div className="flex flex-wrap items-center gap-3">
                       <input
                         type="file"
@@ -825,18 +985,18 @@ export default function AdminServicesPage() {
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploading}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all disabled:opacity-50"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all disabled:opacity-50 shadow-md shadow-blue-500/20 active:scale-95"
                       >
                         <FaUpload />
-                        <span>{uploading ? "Uploading Image..." : "Choose Computer File"}</span>
+                        <span>{uploading ? "Uploading Image..." : "Choose File from Computer"}</span>
                       </button>
                       <span className="text-slate-400 text-xs">
-                        JPG, PNG, WebP supported (recommended 1920x1080)
+                        JPG, PNG, WebP supported (Recommended ratio: 16:9, e.g. 1920x1080)
                       </span>
                     </div>
 
                     <div className="pt-2">
-                      <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         Or specify direct image URL:
                       </label>
                       <input
@@ -844,7 +1004,7 @@ export default function AdminServicesPage() {
                         value={formData.bannerImage}
                         onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
                         placeholder="https://images.unsplash.com/..."
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                       />
                     </div>
                   </div>
@@ -853,40 +1013,45 @@ export default function AdminServicesPage() {
                   {formData.bannerImage ? (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-300">Live Banner Preview:</span>
+                        <span className="text-xs font-bold text-slate-300">Live Visual Banner Preview:</span>
                         <button
                           type="button"
                           onClick={() => setFormData((prev) => ({ ...prev, bannerImage: "" }))}
-                          className="text-[11px] text-red-400 hover:text-red-300 font-semibold"
+                          className="text-xs text-red-400 hover:text-red-300 font-semibold transition-colors"
                         >
                           Clear Image
                         </button>
                       </div>
-                      <div className="relative w-full h-56 rounded-xl overflow-hidden border border-slate-800 shadow-md">
+                      <div className="relative w-full h-72 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
                         <Image
                           src={formData.bannerImage}
                           alt="Banner Preview"
                           fill
                           className="object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-4">
-                          <span className="text-xs font-bold text-blue-400 font-mono">
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-6">
+                          <span className="text-xs font-bold text-blue-400 font-mono tracking-wider">
                             {formData.code || "ESL-MEP-CODE"}
                           </span>
-                          <h3 className="text-lg font-bold text-white">
+                          <h3 className="text-xl font-bold text-white mt-1">
                             {formData.title || "Service Title Preview"}
                           </h3>
+                          {formData.subtitle && (
+                            <p className="text-xs text-slate-300 mt-1 max-w-xl">
+                              {formData.subtitle}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="p-8 border-2 border-dashed border-slate-800 rounded-xl text-center flex flex-col items-center justify-center gap-2">
-                      <FaImage className="text-2xl text-slate-600" />
-                      <span className="text-xs font-semibold text-slate-400">
+                    <div className="p-12 border-2 border-dashed border-slate-800 rounded-2xl text-center flex flex-col items-center justify-center gap-3 bg-slate-950/30">
+                      <FaImage className="text-3xl text-slate-600" />
+                      <span className="text-xs font-semibold text-slate-300">
                         No banner image uploaded yet
                       </span>
-                      <span className="text-[11px] text-slate-500">
-                        Choose a file from your computer or paste an image URL above.
+                      <span className="text-[11px] text-slate-500 max-w-sm">
+                        Choose a high-resolution file from your computer or paste an image URL above to see the live hero preview.
                       </span>
                     </div>
                   )}
@@ -895,58 +1060,74 @@ export default function AdminServicesPage() {
 
               {/* TAB 3: Scope & Compliance */}
               {activeTab === "scope" && (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
                       Compliance Standards (comma-separated)
                     </label>
                     <input
                       type="text"
                       value={formData.complianceText}
                       onChange={(e) => setFormData({ ...formData, complianceText: e.target.value })}
-                      placeholder="e.g. BNBC, ASHRAE, SMACNA, NFPA 20, ISO 9001"
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                      placeholder="e.g. BNBC, ASHRAE, SMACNA, NFPA 20, ISO 9001, FSCD"
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                     />
+                    {formData.complianceText && (
+                      <div className="flex flex-wrap gap-1.5 mt-2.5">
+                        {formData.complianceText
+                          .split(",")
+                          .map((c) => c.trim())
+                          .filter(Boolean)
+                          .map((item, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2.5 py-1 rounded-md text-[11px] bg-blue-500/10 text-blue-400 border border-blue-500/20 font-semibold"
+                            >
+                              ✓ {item}
+                            </span>
+                          ))}
+                      </div>
+                    )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         Client Pain Points / Problems (one per line)
                       </label>
                       <textarea
-                        rows={4}
+                        rows={6}
                         value={formData.problemsText}
                         onChange={(e) => setFormData({ ...formData, problemsText: e.target.value })}
                         placeholder="High energy consumption in conventional systems&#10;Uneven temperature distribution and humidity issues&#10;Inadequate ventilation causing compliance risks"
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
                         Engineering Solutions (one per line)
                       </label>
                       <textarea
-                        rows={4}
+                        rows={6}
                         value={formData.solutionsText}
                         onChange={(e) => setFormData({ ...formData, solutionsText: e.target.value })}
                         placeholder="Custom VRF/VRV system integration with smart thermostats&#10;Precision air handling units (AHU) with HEPA filtration&#10;Automated building management system (BMS) integration"
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
                       Scope of Work Steps (one per line)
                     </label>
                     <textarea
-                      rows={4}
+                      rows={6}
                       value={formData.scopeText}
                       onChange={(e) => setFormData({ ...formData, scopeText: e.target.value })}
                       placeholder="Heat load calculation & psychrometric analysis&#10;Ductwork design & fabrication compliant with SMACNA&#10;Chillers, AHU, FCU installation & commissioning&#10;Cleanroom positive pressure validation"
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -954,17 +1135,22 @@ export default function AdminServicesPage() {
 
               {/* TAB 4: Sub-Services & FAQs */}
               {activeTab === "subservices" && (
-                <div className="space-y-6">
+                <div className="space-y-8">
                   {/* Sub-Services Section */}
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                        Sub-Service Modules ({formData.subServices.length})
-                      </h4>
+                      <div>
+                        <h4 className="text-sm font-bold text-white">
+                          Sub-Service Modules ({formData.subServices.length})
+                        </h4>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          Add individual specialized packages and equipment solutions for this discipline.
+                        </p>
+                      </div>
                       <button
                         type="button"
                         onClick={handleAddSubService}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 active:scale-95 transition-all"
                       >
                         <FaPlus />
                         <span>Add Sub-Service</span>
@@ -972,61 +1158,81 @@ export default function AdminServicesPage() {
                     </div>
 
                     {formData.subServices.length === 0 ? (
-                      <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 text-center text-xs text-slate-500">
-                        No sub-services configured yet. Click &quot;Add Sub-Service&quot; to create modular services (e.g. VRF, Chillers, AHU).
+                      <div className="p-8 bg-slate-950/40 rounded-2xl border border-slate-800 text-center text-xs text-slate-400">
+                        No sub-services configured yet. Click &quot;Add Sub-Service&quot; to create modular services (e.g. VRF Systems, Central Chillers, Air Handling Units).
                       </div>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {formData.subServices.map((sub, idx) => (
                           <div
                             key={sub.id || idx}
-                            className="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-2.5"
+                            className="p-5 bg-slate-950 border border-slate-800 rounded-2xl space-y-3.5 shadow-md"
                           >
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                               <span className="text-xs font-bold text-blue-400">
                                 Sub-Service #{idx + 1}
                               </span>
                               <button
                                 type="button"
                                 onClick={() => handleRemoveSubService(idx)}
-                                className="text-red-400 hover:text-red-300 text-xs"
+                                className="text-red-400 hover:text-red-300 text-xs font-semibold transition-colors"
                               >
                                 Remove
                               </button>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                                  Title
+                                </label>
+                                <input
+                                  type="text"
+                                  value={sub.title}
+                                  onChange={(e) => handleUpdateSubService(idx, "title", e.target.value)}
+                                  placeholder="e.g. VRF Multi-Split Systems"
+                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                                  Slug
+                                </label>
+                                <input
+                                  type="text"
+                                  value={sub.slug}
+                                  onChange={(e) => handleUpdateSubService(idx, "slug", e.target.value)}
+                                  placeholder="vrf"
+                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white font-mono focus:outline-none focus:border-blue-500"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                                Short Description
+                              </label>
                               <input
                                 type="text"
-                                value={sub.title}
-                                onChange={(e) => handleUpdateSubService(idx, "title", e.target.value)}
-                                placeholder="Sub-service Title (e.g. VRF/VRV Multi-Split Systems)"
-                                className="px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded text-xs text-white"
-                              />
-                              <input
-                                type="text"
-                                value={sub.slug}
-                                onChange={(e) => handleUpdateSubService(idx, "slug", e.target.value)}
-                                placeholder="Slug (e.g. vrf)"
-                                className="px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded text-xs text-white font-mono"
+                                value={sub.shortDesc}
+                                onChange={(e) => handleUpdateSubService(idx, "shortDesc", e.target.value)}
+                                placeholder="Short description of this sub-service module..."
+                                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
                               />
                             </div>
 
-                            <input
-                              type="text"
-                              value={sub.shortDesc}
-                              onChange={(e) => handleUpdateSubService(idx, "shortDesc", e.target.value)}
-                              placeholder="Short description..."
-                              className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded text-xs text-white"
-                            />
-
-                            <input
-                              type="text"
-                              value={sub.image}
-                              onChange={(e) => handleUpdateSubService(idx, "image", e.target.value)}
-                              placeholder="Image URL..."
-                              className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded text-xs text-white"
-                            />
+                            <div>
+                              <label className="block text-[11px] font-bold text-slate-400 mb-1">
+                                Image URL
+                              </label>
+                              <input
+                                type="text"
+                                value={sub.image}
+                                onChange={(e) => handleUpdateSubService(idx, "image", e.target.value)}
+                                placeholder="https://images.unsplash.com/..."
+                                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                              />
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -1034,35 +1240,40 @@ export default function AdminServicesPage() {
                   </div>
 
                   {/* FAQ Section */}
-                  <div className="space-y-3 pt-4 border-t border-slate-800">
+                  <div className="space-y-4 pt-6 border-t border-slate-800">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                        Frequently Asked Questions (FAQs)
-                      </h4>
+                      <div>
+                        <h4 className="text-sm font-bold text-white">
+                          Frequently Asked Questions (FAQs)
+                        </h4>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          Questions displayed on this service&apos;s detailed engineering page.
+                        </p>
+                      </div>
                       <button
                         type="button"
                         onClick={handleAddFaq}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700/60 active:scale-95 transition-all"
                       >
                         <FaPlus />
                         <span>Add FAQ</span>
                       </button>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {formData.faqs.map((faq, idx) => (
                         <div
                           key={idx}
-                          className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2"
+                          className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-2.5"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-[11px] font-bold text-slate-400">
+                            <span className="text-xs font-bold text-slate-400">
                               Question #{idx + 1}
                             </span>
                             <button
                               type="button"
                               onClick={() => handleRemoveFaq(idx)}
-                              className="text-red-400 hover:text-red-300 text-xs"
+                              className="text-red-400 hover:text-red-300 text-xs font-semibold transition-colors"
                             >
                               Remove
                             </button>
@@ -1071,15 +1282,15 @@ export default function AdminServicesPage() {
                             type="text"
                             value={faq.question}
                             onChange={(e) => handleUpdateFaq(idx, "question", e.target.value)}
-                            placeholder="Question..."
-                            className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded text-xs text-white"
+                            placeholder="Enter the question..."
+                            className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
                           />
                           <textarea
                             rows={2}
                             value={faq.answer}
                             onChange={(e) => handleUpdateFaq(idx, "answer", e.target.value)}
-                            placeholder="Answer..."
-                            className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded text-xs text-white"
+                            placeholder="Enter the answer..."
+                            className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
                           />
                         </div>
                       ))}
@@ -1088,26 +1299,40 @@ export default function AdminServicesPage() {
                 </div>
               )}
 
-              {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+              {/* Bottom Actions Bar */}
+              <div className="flex items-center justify-between pt-6 border-t border-slate-800">
                 <button
                   type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+                  onClick={handleBackToList}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition-colors border border-slate-700/60"
                 >
-                  Cancel
+                  <FaArrowLeft className="text-xs" />
+                  <span>Discard & Back to Services</span>
                 </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20 disabled:opacity-50"
-                >
-                  {submitting
-                    ? "Saving to Database..."
-                    : editingService
-                    ? "Update Service"
-                    : "Create Service"}
-                </button>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleBackToList}
+                    className="px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition-colors border border-slate-700/60"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50 active:scale-95"
+                  >
+                    <FaSave />
+                    <span>
+                      {submitting
+                        ? "Saving to Database..."
+                        : viewMode === "edit"
+                        ? "Update Service"
+                        : "Create Service"}
+                    </span>
+                  </button>
+                </div>
               </div>
             </form>
           </div>
