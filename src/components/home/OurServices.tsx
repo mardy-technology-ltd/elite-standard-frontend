@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { servicesData, ServiceItem } from "@/lib/mockData";
+import { ServiceItem } from "@/lib/mockData";
 import {
   FaSnowflake,
   FaFireExtinguisher,
@@ -45,6 +45,26 @@ const renderServiceIcon = (iconName: string) => {
 };
 
 export default function OurServices() {
+  const [services, setServices] = React.useState<ServiceItem[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    fetch("/api/services", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.services && Array.isArray(data.services)) {
+          setServices(data.services);
+        } else {
+          setServices([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Live services fetch error:", err);
+        setServices([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <section className="py-24 bg-white text-slate-800 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,7 +81,7 @@ export default function OurServices() {
               Comprehensive <span className="text-gradient">MEP & Engineering</span> Services
             </h2>
             <p className="text-slate-600 text-base leading-relaxed">
-              We provide end-to-end design, procurement, installation, and commissioning for 9 major MEP and industrial utility domains.
+              We provide end-to-end design, procurement, installation, and commissioning for our full suite of MEP and industrial utility domains.
             </p>
           </div>
 
@@ -69,77 +89,92 @@ export default function OurServices() {
             href="/services"
             className="group hidden md:inline-flex items-center gap-2 text-brand-800 hover:text-accent font-bold text-sm bg-brand-50 hover:bg-brand-900 px-5 py-3 rounded-lg transition-all duration-300"
           >
-            <span>Explore All 9 Services</span>
+            <span>Explore All {services.length} Services</span>
             <FaArrowRight className="text-xs group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        {/* 9 Services Grid (3 Columns Desktop) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {servicesData.map((service: ServiceItem, idx: number) => (
-            <Link
-              key={service.id}
-              href={`/services/${service.slug}`}
-              className="block h-full cursor-pointer group"
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.08 }}
-                className="group h-full bg-slate-50 hover:bg-brand-950 p-8 rounded-2xl border border-slate-200/80 hover:border-brand-800/60 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
+        {/* Services Grid (3 Columns Desktop) */}
+        {loading ? (
+          <div className="py-16 text-center text-slate-400 font-medium text-sm">
+            Loading engineering services...
+          </div>
+        ) : services.length === 0 ? (
+          <div className="py-16 px-6 text-center rounded-2xl bg-slate-50 border border-dashed border-slate-200">
+            <p className="text-slate-500 font-medium text-base">No services are currently published.</p>
+            <p className="text-slate-400 text-xs mt-1">
+              Please check back soon or contact our engineering desk for custom solutions.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service: ServiceItem, idx: number) => (
+              <Link
+                key={service.id}
+                href={`/services/${service.slug}`}
+                className="block h-full cursor-pointer group"
               >
-                <div>
-                  {/* Header: Icon & Code Badge */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-14 h-14 rounded-xl bg-brand-900 group-hover:bg-brand-900/90 flex items-center justify-center shadow-md border border-brand-800/40">
-                      {renderServiceIcon(service.icon)}
+                <motion.div
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.08 }}
+                  className="group h-full bg-slate-50 hover:bg-brand-950 p-8 rounded-2xl border border-slate-200/80 hover:border-brand-800/60 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Header: Icon & Code Badge */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="w-14 h-14 rounded-xl bg-brand-900 group-hover:bg-brand-900/90 flex items-center justify-center shadow-md border border-brand-800/40">
+                        {renderServiceIcon(service.icon)}
+                      </div>
+                      <span className="text-xs font-mono font-extrabold text-brand-800 group-hover:text-accent bg-white group-hover:bg-brand-900/90 px-3 py-1 rounded-md border border-slate-200 group-hover:border-brand-800/60 uppercase tracking-widest transition-colors">
+                        {service.code}
+                      </span>
                     </div>
-                    <span className="text-xs font-mono font-extrabold text-brand-800 group-hover:text-accent bg-white group-hover:bg-brand-900/90 px-3 py-1 rounded-md border border-slate-200 group-hover:border-brand-800/60 uppercase tracking-widest transition-colors">
-                      {service.code}
+
+                    {/* Service Title */}
+                    <h3 className="font-heading text-xl font-bold text-brand-950 group-hover:text-white mb-2 transition-colors">
+                      {service.title}
+                    </h3>
+
+                    {/* Subtitle */}
+                    <span className="block text-xs font-semibold text-accent mb-3 uppercase tracking-wider">
+                      {service.subtitle}
                     </span>
+
+                    {/* Short Description */}
+                    <p className="text-slate-600 group-hover:text-slate-300 text-sm leading-relaxed mb-6 line-clamp-3 transition-colors">
+                      {service.shortDescription}
+                    </p>
                   </div>
 
-                  {/* Service Title */}
-                  <h3 className="font-heading text-xl font-bold text-brand-950 group-hover:text-white mb-2 transition-colors">
-                    {service.title}
-                  </h3>
-
-                  {/* Subtitle */}
-                  <span className="block text-xs font-semibold text-accent mb-3 uppercase tracking-wider">
-                    {service.subtitle}
-                  </span>
-
-                  {/* Short Description */}
-                  <p className="text-slate-600 group-hover:text-slate-300 text-sm leading-relaxed mb-6 line-clamp-3 transition-colors">
-                    {service.shortDescription}
-                  </p>
-                </div>
-
-                {/* Read More Link */}
-                <div className="pt-4 border-t border-slate-200/70 group-hover:border-slate-800/80 transition-colors">
-                  <div
-                    className="inline-flex items-center gap-2 text-xs font-bold text-brand-800 group-hover:text-accent tracking-wider uppercase group/link"
-                  >
-                    <span>Read Full Scope</span>
-                    <FaArrowRight className="text-[10px] group-hover/link:translate-x-1.5 transition-transform" />
+                  {/* Read More Link */}
+                  <div className="pt-4 border-t border-slate-200/70 group-hover:border-slate-800/80 transition-colors">
+                    <div
+                      className="inline-flex items-center gap-2 text-xs font-bold text-brand-800 group-hover:text-accent tracking-wider uppercase group/link"
+                    >
+                      <span>Read Full Scope</span>
+                      <FaArrowRight className="text-[10px] group-hover/link:translate-x-1.5 transition-transform" />
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            </Link>
-          ))}
-        </div>
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        )}
 
         {/* Mobile View All CTA Button */}
-        <div className="mt-12 text-center md:hidden">
-          <Link
-            href="/services"
-            className="w-full inline-flex items-center justify-center gap-2 text-white font-bold text-sm bg-brand-900 py-3.5 rounded-lg shadow-md"
-          >
-            <span>Explore All 9 Services</span>
-            <FaArrowRight className="text-xs text-accent" />
-          </Link>
-        </div>
+        {services.length > 0 && (
+          <div className="mt-12 text-center md:hidden">
+            <Link
+              href="/services"
+              className="w-full inline-flex items-center justify-center gap-2 text-white font-bold text-sm bg-brand-900 py-3.5 rounded-lg shadow-md"
+            >
+              <span>Explore All {services.length} Services</span>
+              <FaArrowRight className="text-xs text-accent" />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

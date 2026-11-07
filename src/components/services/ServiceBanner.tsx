@@ -17,7 +17,7 @@ export default function ServiceBanner({ service }: ServiceBannerProps) {
       {/* Background Image Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
-          src={service.bannerImage}
+          src={service.bannerImage || "/images/company-info.png"}
           alt={service.title}
           fill
           className="object-cover object-center opacity-25 scale-105"

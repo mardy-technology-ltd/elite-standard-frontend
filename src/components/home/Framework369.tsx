@@ -21,13 +21,13 @@ import {
   FaProjectDiagram,
   FaThLarge,
 } from "react-icons/fa";
-import { framework369Data, servicesData } from "@/lib/mockData";
+import { framework369Data } from "@/lib/mockData";
 
 export default function Framework369({ initialServices = [] }: { initialServices?: any[] }) {
   const [activeFrameworkTab, setActiveFrameworkTab] = useState<"solutions" | "actions" | "services">("solutions");
   const [activeCategory, setActiveCategory] = useState<"mechanical" | "electrical" | "plumbing">("mechanical");
   const [liveServices, setLiveServices] = useState<any[]>(
-    initialServices && initialServices.length > 0 ? initialServices : servicesData
+    initialServices && initialServices.length > 0 ? initialServices : []
   );
 
   React.useEffect(() => {
@@ -37,11 +37,13 @@ export default function Framework369({ initialServices = [] }: { initialServices
       fetch("/api/services", { cache: "no-store" })
         .then((r) => r.json())
         .then((d) => {
-          if (d.services && Array.isArray(d.services) && d.services.length > 0) {
+          if (d.services && Array.isArray(d.services)) {
             setLiveServices(d.services);
+          } else {
+            setLiveServices([]);
           }
         })
-        .catch(() => {});
+        .catch(() => setLiveServices([]));
     }
   }, [initialServices]);
 
@@ -390,8 +392,13 @@ export default function Framework369({ initialServices = [] }: { initialServices
                 transition={{ duration: 0.35, ease: "easeOut" }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
-                <AnimatePresence mode="popLayout">
-                  {filteredServices.map((service, idx) => (
+                {filteredServices.length === 0 ? (
+                  <div className="col-span-full py-12 px-6 text-center rounded-2xl bg-slate-800/40 border border-dashed border-slate-700">
+                    <p className="text-slate-400 text-sm">No services currently published under {activeCategory}.</p>
+                  </div>
+                ) : (
+                  <AnimatePresence mode="popLayout">
+                    {filteredServices.map((service, idx) => (
                     <Link
                       key={service.id}
                       href={`/services/${service.slug}`}
@@ -443,6 +450,7 @@ export default function Framework369({ initialServices = [] }: { initialServices
                     </Link>
                   ))}
                 </AnimatePresence>
+                )}
               </motion.div>
             </motion.div>
           )}

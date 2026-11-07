@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { servicesData } from '@/lib/mockData';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,28 +26,9 @@ export async function GET(req: Request) {
       orderBy: [{ orderIndex: 'asc' }, { createdAt: 'desc' }],
     });
 
-    if (services.length > 0) {
-      return NextResponse.json({ success: true, services });
-    }
-
-    // Fallback to mockData if table empty
-    let fallback = servicesData;
-    if (category && category !== 'all') {
-      fallback = fallback.filter((s) => s.category === category.toLowerCase());
-    }
-    if (search) {
-      const q = search.toLowerCase();
-      fallback = fallback.filter(
-        (s) =>
-          s.title.toLowerCase().includes(q) ||
-          s.code.toLowerCase().includes(q) ||
-          s.shortDescription.toLowerCase().includes(q)
-      );
-    }
-    return NextResponse.json({ success: true, services: fallback });
+    return NextResponse.json({ success: true, services });
   } catch (error: any) {
     console.error('Public services fetch error:', error);
-    // Fallback on error
-    return NextResponse.json({ success: true, services: servicesData });
+    return NextResponse.json({ success: false, services: [], error: 'Failed to fetch services' }, { status: 500 });
   }
 }

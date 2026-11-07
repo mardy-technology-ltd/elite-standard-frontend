@@ -82,9 +82,9 @@ export default function ServiceIntro({ service }: ServiceIntroProps) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="lg:col-span-5 relative"
           >
-            <div className="relative h-[340px] sm:h-[420px] w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-200">
+            <div className="relative h-[340px] sm:h-[420px] w-full rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-slate-100">
               <Image
-                src={service.bannerImage}
+                src={service.bannerImage || "/images/company-info.png"}
                 alt={service.title}
                 fill
                 className="object-cover"

@@ -116,34 +116,6 @@ export default function AdminServicesPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle URL params and browser back/forward
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const action = params.get("action");
-      if (action === "create" || action === "new") {
-        handleOpenCreate();
-      }
-    }
-  }, [services.length]);
-
-  useEffect(() => {
-    const handlePopState = () => {
-      const params = new URLSearchParams(window.location.search);
-      const action = params.get("action");
-      if (action === "create" || action === "new") {
-        setViewMode("create");
-      } else if (action === "edit") {
-        setViewMode("edit");
-      } else {
-        setViewMode("list");
-        setEditingService(null);
-      }
-    };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
   // Fetch Services
   const fetchServices = async () => {
     setLoading(true);
@@ -214,11 +186,11 @@ export default function AdminServicesPage() {
   const handleOpenEdit = (s: Service) => {
     setEditingService(s);
     setFormData({
-      title: s.title,
-      code: s.code,
-      slug: s.slug,
-      category: s.category,
-      parentFlagshipId: s.id,
+      title: s.title || "",
+      code: s.code || "",
+      slug: s.slug || "",
+      category: s.category || "mechanical",
+      parentFlagshipId: "",
       subtitle: s.subtitle || "",
       shortDescription: s.shortDescription || "",
       fullDescription: s.fullDescription || "",
@@ -249,6 +221,46 @@ export default function AdminServicesPage() {
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Handle URL params on initial load and route changes
+  useEffect(() => {
+    if (typeof window !== "undefined" && services.length > 0) {
+      const params = new URLSearchParams(window.location.search);
+      const action = params.get("action");
+      const id = params.get("id");
+      if (action === "create" || action === "new") {
+        if (viewMode !== "create") handleOpenCreate();
+      } else if (action === "edit" && id) {
+        const found = services.find((s) => s.id === id);
+        if (found && editingService?.id !== id) {
+          handleOpenEdit(found);
+        }
+      }
+    }
+  }, [services]);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const action = params.get("action");
+      const id = params.get("id");
+      if (action === "create" || action === "new") {
+        handleOpenCreate();
+      } else if (action === "edit" && id) {
+        const found = services.find((s) => s.id === id);
+        if (found) {
+          handleOpenEdit(found);
+        } else {
+          handleBackToList();
+        }
+      } else {
+        handleBackToList();
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [services]);
 
   // Upload file from computer
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -854,23 +866,21 @@ export default function AdminServicesPage() {
 
                     <div>
                       <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                        2. Parent Flagship Service (Sub-category of) <span className="text-red-400">*</span>
+                        2. Parent Flagship Service (Optional / Sub-category)
                       </label>
                       <select
                         value={formData.parentFlagshipId}
                         onChange={(e) => setFormData({ ...formData, parentFlagshipId: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-blue-500/50 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 font-semibold transition-colors"
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 font-semibold transition-colors"
                       >
+                        <option value="">Standalone Flagship Service (Primary Core)</option>
                         {services
-                          .filter((s) => s.category === formData.category)
+                          .filter((s) => s.category === formData.category && s.id !== editingService?.id)
                           .map((s) => (
                             <option key={s.id} value={s.id}>
                               {s.code} - {s.title}
                             </option>
                           ))}
-                        {services.filter((s) => s.category === formData.category).length === 0 && (
-                          <option value="">Flagship Primary Core</option>
-                        )}
                       </select>
                     </div>
                   </div>

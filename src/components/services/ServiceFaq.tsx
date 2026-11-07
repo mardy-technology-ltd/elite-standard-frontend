@@ -12,6 +12,10 @@ interface ServiceFaqProps {
 export default function ServiceFaq({ service }: ServiceFaqProps) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
+  if (!service.faqs || !Array.isArray(service.faqs) || service.faqs.length === 0) {
+    return null;
+  }
+
   const toggleFaq = (idx: number) => {
     setOpenIdx(openIdx === idx ? null : idx);
   };

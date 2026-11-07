@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { servicesData, ServiceItem } from "@/lib/mockData";
+import { ServiceItem } from "@/lib/mockData";
 import {
   FaSnowflake,
   FaFireExtinguisher,
@@ -39,17 +39,24 @@ function ServicesOverviewContent() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<"all" | "mechanical" | "electrical" | "plumbing">("all");
-  const [servicesList, setServicesList] = useState<ServiceItem[]>(servicesData);
+  const [servicesList, setServicesList] = useState<ServiceItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/services", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        if (data.services && Array.isArray(data.services) && data.services.length > 0) {
+        if (data.services && Array.isArray(data.services)) {
           setServicesList(data.services);
+        } else {
+          setServicesList([]);
         }
       })
-      .catch((err) => console.error("Error fetching live services:", err));
+      .catch((err) => {
+        console.error("Error fetching live services:", err);
+        setServicesList([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -143,8 +150,20 @@ function ServicesOverviewContent() {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredServices.map((service: ServiceItem, idx: number) => (
+        {loading ? (
+          <div className="py-20 text-center text-slate-400 font-medium text-sm">
+            Loading engineering services...
+          </div>
+        ) : filteredServices.length === 0 ? (
+          <div className="py-20 px-6 text-center rounded-2xl bg-white border border-dashed border-slate-200 max-w-xl mx-auto">
+            <p className="text-slate-600 font-bold text-base">No services found</p>
+            <p className="text-slate-400 text-xs mt-1">
+              There are currently no services published matching your criteria.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredServices.map((service: ServiceItem, idx: number) => (
             <motion.div
               key={service.id}
               initial={{ opacity: 0, y: 25 }}
@@ -154,9 +173,9 @@ function ServicesOverviewContent() {
               className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-200/80 hover:border-brand-800/40 transition-all duration-300 flex flex-col justify-between"
             >
               {/* Image Header */}
-              <div className="relative h-48 w-full overflow-hidden shrink-0">
+              <div className="relative h-48 w-full overflow-hidden shrink-0 bg-slate-100">
                 <Image
-                  src={service.bannerImage}
+                  src={service.bannerImage || "/images/company-info.png"}
                   alt={service.title}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -207,7 +226,8 @@ function ServicesOverviewContent() {
               <Link href={`/services/${service.slug}`} className="absolute inset-0 z-10" aria-label={service.title} />
             </motion.div>
           ))}
-        </div>
+          </div>
+        )}
       </section>
     </main>
   );

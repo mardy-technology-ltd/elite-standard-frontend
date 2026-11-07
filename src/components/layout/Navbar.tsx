@@ -264,19 +264,108 @@ export const mepPillars: MepPillar[] = [
   },
 ];
 
+const getNavIcon = (name?: string) => {
+  switch (name) {
+    case "FaSnowflake":
+      return <FaSnowflake className="text-sky-500" />;
+    case "FaFireExtinguisher":
+      return <FaFireExtinguisher className="text-rose-500" />;
+    case "FaBolt":
+      return <FaBolt className="text-amber-500" />;
+    case "FaMicrochip":
+      return <FaMicrochip className="text-blue-500" />;
+    case "FaLightbulb":
+      return <FaLightbulb className="text-yellow-500" />;
+    case "FaShower":
+      return <FaShower className="text-cyan-500" />;
+    case "FaWater":
+      return <FaWater className="text-blue-400" />;
+    case "FaSun":
+      return <FaSun className="text-amber-400" />;
+    default:
+      return <FaIndustry className="text-slate-500" />;
+  }
+};
+
 export default function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<ServiceCategory>(serviceCategories[0]);
-  const [activePillar, setActivePillar] = useState<MepPillar | null>(null);
+  const [activePillar, setActivePillar] = useState<MepPillar | null>(mepPillars[0]);
+  const [pillars, setPillars] = useState<MepPillar[]>(mepPillars);
   const [mobileServicesExpanded, setMobileServicesExpanded] = useState(false);
   const [mobileMoreExpanded, setMobileMoreExpanded] = useState(false);
 
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const moreTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    fetch("/api/services", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.services && Array.isArray(data.services) && data.services.length > 0) {
+          const updated = mepPillars.map((p) => {
+            const pillarServices = data.services.filter(
+              (s: any) => s.category?.toLowerCase() === p.id.toLowerCase()
+            );
+
+            const mergedCategories: ServiceCategory[] = [...p.categories];
+
+            pillarServices.forEach((s: any) => {
+              const idx = mergedCategories.findIndex(
+                (c) => c.slug === s.slug || c.code.toLowerCase() === s.code.toLowerCase()
+              );
+              if (idx >= 0) {
+                mergedCategories[idx] = {
+                  ...mergedCategories[idx],
+                  title: s.title || mergedCategories[idx].title,
+                  shortDesc: s.shortDescription || s.subtitle || mergedCategories[idx].shortDesc,
+                  subServices:
+                    Array.isArray(s.subServices) && s.subServices.length > 0
+                      ? s.subServices.map((sub: any) => ({
+                          title: sub.title,
+                          desc: sub.shortDesc,
+                          href: `/services/${s.slug}#${sub.slug || ""}`,
+                        }))
+                      : mergedCategories[idx].subServices,
+                };
+              } else {
+                mergedCategories.push({
+                  id: s.id,
+                  slug: s.slug,
+                  code: s.code,
+                  title: s.title,
+                  shortDesc: s.shortDescription || s.subtitle || "",
+                  icon: getNavIcon(s.icon),
+                  subServices: Array.isArray(s.subServices)
+                    ? s.subServices.map((sub: any) => ({
+                        title: sub.title,
+                        desc: sub.shortDesc,
+                        href: `/services/${s.slug}#${sub.slug || ""}`,
+                      }))
+                    : [],
+                });
+              }
+            });
+
+            return {
+              ...p,
+              categories: mergedCategories,
+            };
+          });
+
+          setPillars(updated);
+          setActivePillar((curr) => {
+            if (!curr) return updated[0];
+            const refreshed = updated.find((p) => p.id === curr.id);
+            return refreshed || updated[0];
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -410,7 +499,7 @@ export default function Navbar() {
                               </div>
 
                               <div className="flex flex-col gap-1">
-                                {mepPillars.map((pillar) => {
+                                {pillars.map((pillar) => {
                                   const isSelected = activePillar?.id === pillar.id;
 
                                   return (
@@ -508,38 +597,45 @@ export default function Navbar() {
                                     </div>
 
                                     <div className="flex flex-col gap-2">
-                                      {activePillar.categories.map((cat) => (
-                                        <Link
-                                          key={cat.id}
-                                          href={`/services/${cat.slug}`}
-                                          className="group/sub flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 bg-white border border-slate-200/80 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm"
-                                        >
-                                          <div className="flex items-center gap-3 flex-grow">
-                                            <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover/sub:bg-brand-950 group-hover/sub:text-accent flex items-center justify-center shrink-0 text-base text-slate-700 transition-colors">
-                                              {cat.icon}
+                                      {activePillar.categories.length === 0 ? (
+                                        <div className="p-6 text-center bg-white rounded-2xl border border-dashed border-slate-200">
+                                          <p className="text-xs font-semibold text-slate-500">No services published yet</p>
+                                          <p className="text-[10px] text-slate-400 mt-1">Services created in Admin Panel will appear here.</p>
+                                        </div>
+                                      ) : (
+                                        activePillar.categories.map((cat) => (
+                                          <Link
+                                            key={cat.id}
+                                            href={`/services/${cat.slug}`}
+                                            className="group/sub flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 bg-white border border-slate-200/80 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm"
+                                          >
+                                            <div className="flex items-center gap-3 flex-grow">
+                                              <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover/sub:bg-brand-950 group-hover/sub:text-accent flex items-center justify-center shrink-0 text-base text-slate-700 transition-colors">
+                                                {cat.icon}
+                                              </div>
+                                              <div className="flex flex-col">
+                                                <span className="text-xs font-bold text-slate-900 group-hover/sub:text-brand-900 transition-colors">
+                                                  {cat.title}
+                                                </span>
+                                                <span className="text-[10px] text-slate-400 line-clamp-1">
+                                                  {cat.shortDesc}
+                                                </span>
+                                              </div>
                                             </div>
-                                            <div className="flex flex-col">
-                                              <span className="text-xs font-bold text-slate-900 group-hover/sub:text-brand-900 transition-colors">
-                                                {cat.title}
-                                              </span>
-                                              <span className="text-[10px] text-slate-400 line-clamp-1">
-                                                {cat.shortDesc}
+                                            <div className="pl-2 shrink-0">
+                                              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 group-hover/sub:bg-accent group-hover/sub:text-brand-950 transition-colors">
+                                                {cat.code}
                                               </span>
                                             </div>
-                                          </div>
-                                          <div className="pl-2 shrink-0">
-                                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 group-hover/sub:bg-accent group-hover/sub:text-brand-950 transition-colors">
-                                              {cat.code}
-                                            </span>
-                                          </div>
-                                        </Link>
-                                      ))}
+                                          </Link>
+                                        ))
+                                      )}
                                     </div>
                                   </div>
 
                                   <div className="pt-2.5 border-t border-slate-200/80 flex items-center justify-between text-[10px] text-slate-500 font-medium">
                                     <span>Sectors: Residential • Commercial • Industrial</span>
-                                    <span className="text-brand-900 font-bold">27 Sub-Sections</span>
+                                    <span className="text-brand-900 font-bold">{activePillar.categories.length} Core Services</span>
                                   </div>
                                 </div>
                               </motion.div>
@@ -734,7 +830,7 @@ export default function Navbar() {
                                 transition={{ duration: 0.25 }}
                                 className="overflow-hidden pl-3 pr-2 py-2 flex flex-col gap-3 bg-slate-50 rounded-lg mt-1 border border-slate-100"
                               >
-                                {mepPillars.map((pillar) => (
+                                {pillars.map((pillar) => (
                                   <div key={pillar.id} className="flex flex-col border-b border-slate-200/80 pb-2.5 last:border-0 last:pb-0">
                                     <div className="flex items-center justify-between px-2.5 py-1.5 font-extrabold text-xs text-brand-950 bg-slate-200/70 rounded-md mb-1.5">
                                       <span className="flex items-center gap-2">
@@ -747,21 +843,27 @@ export default function Navbar() {
                                     </div>
 
                                     <div className="flex flex-col gap-1 pl-2">
-                                      {pillar.categories.map((cat) => (
-                                        <Link
-                                          key={cat.id}
-                                          href={`/services/${cat.slug}`}
-                                          className="flex items-center justify-between p-1.5 rounded-md hover:bg-white text-xs font-semibold text-slate-800 hover:text-brand-900"
-                                        >
-                                          <span className="flex items-center gap-2">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-                                            <span>{cat.title}</span>
-                                          </span>
-                                          <span className="text-[9px] font-mono px-1 py-0.5 rounded bg-slate-200 text-slate-600">
-                                            {cat.code}
-                                          </span>
-                                        </Link>
-                                      ))}
+                                      {pillar.categories.length === 0 ? (
+                                        <p className="text-[11px] text-slate-400 italic py-1 pl-1">
+                                          No services listed yet.
+                                        </p>
+                                      ) : (
+                                        pillar.categories.map((cat) => (
+                                          <Link
+                                            key={cat.id}
+                                            href={`/services/${cat.slug}`}
+                                            className="flex items-center justify-between p-1.5 rounded-md hover:bg-white text-xs font-semibold text-slate-800 hover:text-brand-900"
+                                          >
+                                            <span className="flex items-center gap-2">
+                                              <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                                              <span>{cat.title}</span>
+                                            </span>
+                                            <span className="text-[9px] font-mono px-1 py-0.5 rounded bg-slate-200 text-slate-600">
+                                              {cat.code}
+                                            </span>
+                                          </Link>
+                                        ))
+                                      )}
                                     </div>
                                   </div>
                                 ))}

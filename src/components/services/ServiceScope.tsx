@@ -10,6 +10,10 @@ interface ServiceScopeProps {
 }
 
 export default function ServiceScope({ service }: ServiceScopeProps) {
+  if (!service.scopeOfWork || !Array.isArray(service.scopeOfWork) || service.scopeOfWork.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-20 sm:py-24 bg-white text-slate-800 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

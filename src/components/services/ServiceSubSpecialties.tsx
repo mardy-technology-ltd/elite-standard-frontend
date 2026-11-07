@@ -74,19 +74,21 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
                 </p>
 
                 {/* Key Technical Features */}
-                <div className="pt-2 flex flex-col gap-2.5">
-                  <h4 className="text-xs font-extrabold text-brand-950 uppercase tracking-wider">
-                    Key Technical Features:
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {sub.features.map((feat, fIdx) => (
-                      <div key={fIdx} className="flex items-start gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <FaCheckCircle className="text-emerald-500 text-xs shrink-0 mt-0.5" />
-                        <span className="text-slate-700 text-xs font-medium leading-relaxed">{feat}</span>
-                      </div>
-                    ))}
+                {Array.isArray(sub.features) && sub.features.length > 0 && (
+                  <div className="pt-2 flex flex-col gap-2.5">
+                    <h4 className="text-xs font-extrabold text-brand-950 uppercase tracking-wider">
+                      Key Technical Features:
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {sub.features.map((feat, fIdx) => (
+                        <div key={fIdx} className="flex items-start gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                          <FaCheckCircle className="text-emerald-500 text-xs shrink-0 mt-0.5" />
+                          <span className="text-slate-700 text-xs font-medium leading-relaxed">{feat}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="pt-4 flex flex-wrap items-center gap-3">
                   <Link
@@ -107,9 +109,9 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
 
               {/* Right Column: Image Showcase */}
               <div className="lg:col-span-5">
-                <div className="relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden shadow-lg border border-slate-200">
+                <div className="relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-slate-100">
                   <Image
-                    src={sub.image}
+                    src={sub.image || "/images/placeholder.jpg"}
                     alt={sub.title}
                     fill
                     className="object-cover"

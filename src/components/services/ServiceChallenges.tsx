@@ -51,7 +51,7 @@ export default function ServiceChallenges({ service }: ServiceChallengesProps) {
             </div>
 
             <ul className="flex flex-col gap-4">
-              {service.problems.map((prob, idx) => (
+              {(Array.isArray(service.problems) ? service.problems : []).map((prob, idx) => (
                 <li key={idx} className="flex items-start gap-3.5 bg-red-50/50 p-4 rounded-xl border border-red-100/60">
                   <span className="w-6 h-6 rounded-full bg-red-100 text-red-600 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                     !
@@ -81,7 +81,7 @@ export default function ServiceChallenges({ service }: ServiceChallengesProps) {
             </div>
 
             <ul className="flex flex-col gap-4">
-              {service.solutions.map((sol, idx) => (
+              {(Array.isArray(service.solutions) ? service.solutions : []).map((sol, idx) => (
                 <li key={idx} className="flex items-start gap-3.5 bg-brand-900/80 p-4 rounded-xl border border-brand-800">
                   <FaCheckCircle className="text-emerald-400 text-base shrink-0 mt-0.5" />
                   <span className="text-slate-200 text-sm font-medium leading-relaxed">{sol}</span>

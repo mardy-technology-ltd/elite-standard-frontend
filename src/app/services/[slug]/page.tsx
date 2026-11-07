@@ -1,7 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { servicesData, ServiceItem } from "@/lib/mockData";
+import { ServiceItem } from "@/lib/mockData";
 import ServiceBanner from "@/components/services/ServiceBanner";
 import ServiceIntro from "@/components/services/ServiceIntro";
 import ServiceSectorBreakdown from "@/components/services/ServiceSectorBreakdown";
@@ -11,6 +10,7 @@ import ServiceScope from "@/components/services/ServiceScope";
 import ServiceFaq from "@/components/services/ServiceFaq";
 import ServiceCTA from "@/components/services/ServiceCTA";
 import ServiceRelatedProjects from "@/components/services/ServiceRelatedProjects";
+import NoServiceAvailable, { getServiceFullName } from "@/components/services/NoServiceAvailable";
 import { projectsData, ProjectItem } from "@/lib/mockData";
 
 import prisma from "@/lib/prisma";
@@ -96,12 +96,7 @@ async function getService(slug: string): Promise<ServiceItem | null> {
     console.error("DB service lookup error:", e);
   }
 
-  return (
-    servicesData.find(
-      (s: ServiceItem) =>
-        s.slug === slug || s.code.toLowerCase() === slug.toLowerCase()
-    ) || null
-  );
+  return null;
 }
 
 // Dynamic SEO Metadata for Each Service
@@ -109,8 +104,10 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   const service = await getService(params.slug);
 
   if (!service) {
+    const fullName = getServiceFullName(params.slug);
     return {
-      title: "Service Not Found | Elite Standard Limited",
+      title: `${fullName} - No Service Available | Elite Standard Limited`,
+      description: `Technical specifications for ${fullName} are currently not published or under review.`,
     };
   }
 
@@ -137,7 +134,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const service = await getService(params.slug);
 
   if (!service) {
-    notFound();
+    return <NoServiceAvailable slug={params.slug} />;
   }
 
   const relatedProjects = await getRelatedProjects(service.category);

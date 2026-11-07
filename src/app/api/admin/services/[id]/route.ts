@@ -22,11 +22,34 @@ export async function PUT(
       );
     }
 
+    const code = data.code.trim().toUpperCase();
+    const slug = (data.slug || data.title)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    // Check if code or slug conflicts with another service
+    const existing = await prisma.service.findFirst({
+      where: {
+        id: { not: id },
+        OR: [{ slug }, { code }],
+      },
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        { error: `Another service with code '${code}' or slug '${slug}' already exists` },
+        { status: 409 }
+      );
+    }
+
     const updated = await prisma.service.update({
       where: { id },
       data: {
         title: data.title.trim(),
-        code: data.code.trim().toUpperCase(),
+        code,
+        slug,
         category: data.category.toLowerCase(),
         subtitle: data.subtitle || '',
         shortDescription: data.shortDescription || '',
