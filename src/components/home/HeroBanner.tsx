@@ -157,32 +157,29 @@ export default function HeroBanner() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="lg:col-span-5 relative h-[380px] sm:h-[440px] w-full rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl p-6 overflow-hidden flex flex-col justify-between shadow-2xl group"
+            className="lg:col-span-5 relative h-[480px] sm:h-[540px] lg:h-[580px] w-full rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl p-5 sm:p-6 overflow-hidden flex flex-col justify-between shadow-2xl group"
           >
-            {/* Embedded 3D Canvas Mesh */}
+            {/* Embedded Realtime 3D Three.js Building Canvas */}
             <ThreeDCanvas />
 
             {/* Top Floating Glass Badge */}
-            <div className="relative z-10 flex items-center justify-between">
-              <div className="inline-flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-accent/40 text-[11px] font-bold text-accent shadow-md">
+            <div className="relative z-10 flex items-center justify-between pointer-events-none">
+              <div className="inline-flex items-center gap-2 bg-slate-900/85 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-accent/40 text-[11px] font-bold text-accent shadow-md pointer-events-auto">
                 <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                 <span>Real-Time Building Automation</span>
               </div>
-              <span className="text-[10px] font-mono font-extrabold text-emerald-400 bg-slate-900/90 px-2.5 py-1 rounded-md border border-slate-800 flex items-center gap-1.5">
+              <span className="text-[10px] font-mono font-extrabold text-emerald-400 bg-slate-900/90 px-2.5 py-1 rounded-md border border-slate-800 flex items-center gap-1.5 pointer-events-auto">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                 BMS ONLINE
               </span>
             </div>
 
-            {/* Center Floating Graphic Card */}
-            <div className="relative z-10 my-auto text-center pointer-events-none">
-              <div className="w-16 h-16 rounded-2xl bg-brand-900/90 border border-accent/40 flex items-center justify-center text-accent text-2xl mx-auto shadow-2xl shadow-accent/20 group-hover:scale-110 transition-transform duration-300">
-                <FaBuilding />
-              </div>
-              <span className="block text-xs font-extrabold text-white uppercase tracking-widest mt-24">
-                Integrated MEP Building Matrix
+            {/* Center Label (Integrated MEP Building Matrix) */}
+            <div className="relative z-10 text-center pointer-events-none mt-auto mb-3">
+              <span className="block text-xs font-black text-white uppercase tracking-widest drop-shadow-md">
+                INTEGRATED MEP BUILDING MATRIX
               </span>
-              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[10px] font-semibold text-slate-300 mt-1.5">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[10px] font-semibold text-slate-300 mt-1">
                 <span className="text-sky-400 flex items-center gap-1">❄️ Central HVAC</span>
                 <span className="text-slate-600">•</span>
                 <span className="text-amber-400 flex items-center gap-1">⚡ LT/HT Power</span>
@@ -192,7 +189,7 @@ export default function HeroBanner() {
             </div>
 
             {/* Bottom Floating Stats Badge */}
-            <div className="relative z-10 bg-slate-900/90 backdrop-blur-md p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between">
+            <div className="relative z-10 bg-slate-900/90 backdrop-blur-md p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between pointer-events-auto">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-accent/20 text-accent flex items-center justify-center text-xs font-bold">
                   <FaShieldAlt />
