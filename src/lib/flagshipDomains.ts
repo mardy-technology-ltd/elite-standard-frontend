@@ -125,3 +125,4 @@ export function getFlagshipDomain(keyOrSlug: string): FlagshipDomainInfo | null 
   const clean = keyOrSlug.toLowerCase().trim().replace("-systems", "");
   return FLAGSHIP_DOMAINS_OVERVIEW[clean] || null;
 }
+
