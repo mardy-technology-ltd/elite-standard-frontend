@@ -478,129 +478,136 @@ export default function ThreeDCanvas() {
 
     // --- EXACT ORTHOGONAL DEAD-STRAIGHT PIPELINES MATCHING REFERENCE IMAGE ---
 
-    // 1. RED FIRE PROTECTION SYSTEM (Front-Left Perimeter Riser + 90° Branches)
+    // 1. RED FIRE PROTECTION SYSTEM (Stepped Facade Riser: Wide Left-to-Right & Right-to-Left Runs in Open Window Bays)
     buildPipeline(
       [
         new THREE.Vector3(-3.2, 0.4, 4.85),     // Ground Plant Room
-        new THREE.Vector3(-1.6, 0.4, 4.85),     // 90° elbow to Front-Left Bay
-        new THREE.Vector3(-1.6, 6.45, 4.85),    // STRAIGHT VERTICAL RISER Floor 1-3
-        new THREE.Vector3(-4.85, 6.45, 4.85),   // 90° horizontal branch to Left Corner
-        new THREE.Vector3(-4.85, 6.45, 1.5),    // 90° depth turn along Left Facade
-        new THREE.Vector3(-1.6, 6.45, 4.85),    // Main riser intersection
-        new THREE.Vector3(-1.6, 17.4, 4.85),    // STRAIGHT VERTICAL RISER up to Roof
-        new THREE.Vector3(-1.6, 18.2, 4.85),    // 90° over the roof parapet
-        new THREE.Vector3(-1.6, 18.2, 1.2),     // Straight across roof
+        new THREE.Vector3(-1.8, 0.4, 4.85),     // 90° elbow to Front-Left Bay
+        new THREE.Vector3(-1.8, 5.35, 4.85),    // UP to Mid-Story 2-3 (Open Window Zone)
+        new THREE.Vector3(-4.5, 5.35, 4.85),    // WIDE HORIZONTAL RUN (Right-to-Left across 2 bays)
+        new THREE.Vector3(-4.5, 9.65, 4.85),    // UP to Mid-Story 4-5 (Open Window Zone)
+        new THREE.Vector3(2.2, 9.65, 4.85),     // HUGE HORIZONTAL RUN (Left-to-Right across 3 bays!)
+        new THREE.Vector3(2.2, 13.95, 4.85),    // UP to Mid-Story 6-7 (Open Window Zone)
+        new THREE.Vector3(-1.8, 13.95, 4.85),   // WIDE HORIZONTAL RUN (Right-to-Left across center bays)
+        new THREE.Vector3(-1.8, 17.4, 4.85),    // UP to Roof Parapet
+        new THREE.Vector3(-1.8, 18.2, 4.85),    // 90° over the roof parapet
+        new THREE.Vector3(-1.8, 18.2, 1.2),     // Across roof
         new THREE.Vector3(0.8, 18.2, 1.2),      // Enters penthouse
       ],
       0xdc2626, // Vivid Red Pipe
       0xef4444, // Red Glow
-      0.10,     // Slim 0.10 radius
+      0.12,     // Bold 0.12 radius for unmistakable visibility
       16,
       0.08
     );
 
-    // 2. ORANGE POWER / ELECTRICAL BUSDUCT (Front-Right & Right Facade Riser)
+    // 2. ORANGE POWER / ELECTRICAL BUSDUCT (Stepped Riser: Wide Left-to-Right & Right-to-Left Runs in Open Window Bays)
     buildPipeline(
       [
         new THREE.Vector3(2.8, 0.4, 4.85),      // Ground Front-Right
-        new THREE.Vector3(2.8, 6.45, 4.85),     // STRAIGHT VERTICAL RISER Floor 1-3
-        new THREE.Vector3(4.85, 6.45, 4.85),    // 90° horizontal branch to Right Corner
-        new THREE.Vector3(4.85, 6.45, 1.5),     // 90° turn along Right Facade
-        new THREE.Vector3(4.85, 12.9, 1.5),     // STRAIGHT VERTICAL RISER Floor 4-6 on Right Facade
-        new THREE.Vector3(4.85, 12.9, 4.85),    // 90° horizontal branch forward to Front Facade
-        new THREE.Vector3(2.0, 12.9, 4.85),     // Straight cross-feed across Floor 6 Front
-        new THREE.Vector3(4.85, 12.9, 1.5),     // Riser junction
-        new THREE.Vector3(4.85, 17.2, 1.5),     // STRAIGHT VERTICAL to Floor 8
-        new THREE.Vector3(1.2, 17.2, 1.5),      // Enters electrical control room
+        new THREE.Vector3(2.8, 3.2, 4.85),      // UP to Mid-Story 1-2 (Open Window Zone)
+        new THREE.Vector3(4.85, 3.2, 4.85),     // Step RIGHT across Front Facade
+        new THREE.Vector3(4.85, 3.2, 1.5),      // Along Right Facade
+        new THREE.Vector3(4.85, 7.5, 1.5),      // UP to Mid-Story 3-4 (Open Window Zone)
+        new THREE.Vector3(4.85, 7.5, -3.2),     // WIDE RUN along Right Facade (Front to Back)
+        new THREE.Vector3(4.85, 11.8, -3.2),    // UP to Mid-Story 5-6 (Open Window Zone)
+        new THREE.Vector3(4.85, 11.8, 4.85),    // Turn to Front Facade
+        new THREE.Vector3(0.5, 11.8, 4.85),     // WIDE HORIZONTAL RUN across Front Facade (Right to Left!)
+        new THREE.Vector3(0.5, 16.1, 4.85),     // UP to Mid-Story 7-8 (Open Window Zone)
+        new THREE.Vector3(2.8, 16.1, 4.85),     // Step RIGHT across Front Facade
+        new THREE.Vector3(2.8, 17.4, 4.85),     // UP to Roof
+        new THREE.Vector3(1.2, 17.4, 1.5),      // Enters electrical control room
       ],
       0xd97706, // Amber/Gold Pipe
       0xfbbf24, // Gold Glow
-      0.10,     // Slim 0.10 radius
+      0.105,    // 0.105 radius
       16,
       0.085
     );
 
-    // 3. GREEN BMS AUTOMATION & DRAINAGE (Front Center-Bottom & Top Right Ceiling)
+    // 3. GREEN BMS AUTOMATION & DRAINAGE (Stepped Network: Wide Front & Back Runs in Open Window Bays)
     buildPipeline(
       [
         new THREE.Vector3(0.5, 0.4, 4.85),      // Ground Center-Front
-        new THREE.Vector3(0.5, 8.6, 4.85),      // STRAIGHT VERTICAL through Floor 1-4
-        new THREE.Vector3(-1.6, 8.6, 4.85),     // 90° horizontal tie to Floor 4
-        new THREE.Vector3(-1.6, 8.6, -4.85),    // 90° depth run to Back Facade
-        new THREE.Vector3(2.55, 8.6, -4.85),    // Straight horizontal across Back Facade
-        new THREE.Vector3(2.55, 15.05, -4.85),  // Vertical Riser along Back Facade to Floor 7
-        new THREE.Vector3(4.85, 15.05, -4.85),  // 90° corner to Right Facade ceiling
-        new THREE.Vector3(4.85, 15.05, 1.5),    // Straight along Right ceiling
-        new THREE.Vector3(2.55, 17.4, -4.85),   // Roof BMS sensor
+        new THREE.Vector3(0.5, 5.35, 4.85),     // UP to Mid-Story 2-3 (Open Window Zone)
+        new THREE.Vector3(-2.5, 5.35, 4.85),    // WIDE HORIZONTAL RUN across Front Facade (Right to Left!)
+        new THREE.Vector3(-2.5, 9.65, 4.85),    // UP to Mid-Story 4-5 (Open Window Zone)
+        new THREE.Vector3(0.5, 9.65, 4.85),     // WIDE HORIZONTAL RUN across Front Facade (Left to Right!)
+        new THREE.Vector3(0.5, 9.65, -4.85),    // Traverses depth straight to Back Facade
+        new THREE.Vector3(0.5, 13.95, -4.85),   // UP along Back Facade to Mid-Story 6-7
+        new THREE.Vector3(4.2, 13.95, -4.85),   // WIDE HORIZONTAL RUN across Back Facade (Left to Right!)
+        new THREE.Vector3(4.2, 17.4, -4.85),    // UP to Roof BMS Sensor
       ],
       0x059669, // Emerald Pipe
       0x34d399, // Green Glow
-      0.095,    // Slim 0.095 radius
+      0.10,     // 0.10 radius
       15,
       0.075
     );
 
-    // 4. BLUE/CYAN HVAC CHILLED WATER - RAZOR-STRAIGHT 4-SIDED HORIZONTAL PERIMETER MANIFOLD (Floor 2)
+    // 4. BLUE/CYAN HVAC CHILLED WATER - 4-SIDED HORIZONTAL PERIMETER MANIFOLD (Mid-Story 1-2 Open Glass Zone)
     buildPipeline(
       [
-        new THREE.Vector3(-4.85, 4.3, -4.85),   // Back-Left Outer Corner
-        new THREE.Vector3(-4.85, 4.3, 4.85),    // STRAIGHT HORIZONTAL along full Left Facade
-        new THREE.Vector3(4.85, 4.3, 4.85),     // STRAIGHT HORIZONTAL along full Front Facade
-        new THREE.Vector3(4.85, 4.3, -4.85),    // STRAIGHT HORIZONTAL along full Right Facade
-        new THREE.Vector3(-2.2, 4.3, -4.85),    // STRAIGHT HORIZONTAL along Back Facade to Riser
+        new THREE.Vector3(-4.85, 3.2, -4.85),   // Back-Left Outer Corner
+        new THREE.Vector3(-4.85, 3.2, 4.85),    // STRAIGHT HORIZONTAL along full Left Facade
+        new THREE.Vector3(4.85, 3.2, 4.85),     // WIDE HORIZONTAL along full Front Facade (Left to Right!)
+        new THREE.Vector3(4.85, 3.2, -4.85),    // STRAIGHT HORIZONTAL along full Right Facade
+        new THREE.Vector3(-2.2, 3.2, -4.85),    // STRAIGHT HORIZONTAL along Back Facade to Riser
         new THREE.Vector3(-2.2, 17.5, -4.85),   // STRAIGHT VERTICAL RISER to Roof Chillers
         new THREE.Vector3(-2.8, 17.8, -1.0),    // Directly enters rooftop chiller
       ],
       0x0284c7, // Sky Blue Pipe
       0x38bdf8, // Cyan Glow
-      0.105,    // Slim 0.105 radius
+      0.11,     // 0.11 radius
       18,
       0.07
     );
 
-    // 5. BLUE/CYAN HVAC CHILLED WATER - SECONDARY RAZOR-STRAIGHT PERIMETER RING (Floor 5)
+    // 5. BLUE/CYAN HVAC CHILLED WATER - SECONDARY PERIMETER RING (Mid-Story 5-6 Open Glass Zone)
     buildPipeline(
       [
-        new THREE.Vector3(4.85, 10.75, 4.85),   // Front-Right Corner
-        new THREE.Vector3(-4.85, 10.75, 4.85),  // STRAIGHT across Front Facade
-        new THREE.Vector3(-4.85, 10.75, -4.85), // STRAIGHT across Left Facade
-        new THREE.Vector3(4.85, 10.75, -4.85),  // STRAIGHT across Back Facade
-        new THREE.Vector3(4.85, 10.75, 4.85),   // STRAIGHT across Right Facade (Full 360° ring)
+        new THREE.Vector3(4.85, 11.8, 4.85),    // Front-Right Corner
+        new THREE.Vector3(-4.85, 11.8, 4.85),   // WIDE HORIZONTAL across Front Facade (Right to Left!)
+        new THREE.Vector3(-4.85, 11.8, -4.85),  // STRAIGHT across Left Facade
+        new THREE.Vector3(4.85, 11.8, -4.85),   // STRAIGHT across Back Facade
+        new THREE.Vector3(4.85, 11.8, 4.85),    // STRAIGHT across Right Facade (Full 360° ring)
       ],
       0x0ea5e9, // Bright Sky Blue
       0x7dd3fc,
-      0.09,     // Slim 0.09 radius
+      0.095,
       16,
       0.07
     );
 
-    // 6. RED SECONDARY FIRE STANDPIPE (Left & Back Facade Loops)
+    // 6. RED SECONDARY FIRE STANDPIPE (Stepped Left Facade: Wide Runs in Open Glass Zones)
     buildPipeline(
       [
-        new THREE.Vector3(-4.85, 0.4, -1.8),    // Ground Left Facade
-        new THREE.Vector3(-4.85, 8.6, -1.8),    // STRAIGHT VERTICAL along Left Facade to Floor 4
-        new THREE.Vector3(-4.85, 8.6, -4.85),   // 90° Corner to Back Facade
-        new THREE.Vector3(0.0, 8.6, -4.85),     // Straight across Back Facade
-        new THREE.Vector3(-4.85, 8.6, -1.8),    // Loop junction
-        new THREE.Vector3(-4.85, 15.05, -1.8),  // STRAIGHT VERTICAL to Floor 7
-        new THREE.Vector3(-4.85, 15.05, 3.2),   // Straight forward along Left Facade
+        new THREE.Vector3(-4.85, 0.4, -2.5),    // Ground Left Facade
+        new THREE.Vector3(-4.85, 5.35, -2.5),   // UP to Mid-Story 2-3
+        new THREE.Vector3(-4.85, 5.35, 2.5),    // WIDE HORIZONTAL along Left Facade (Back to Front)
+        new THREE.Vector3(-4.85, 11.8, 2.5),    // UP to Mid-Story 5-6
+        new THREE.Vector3(-4.85, 11.8, -2.5),   // WIDE HORIZONTAL along Left Facade (Front to Back)
+        new THREE.Vector3(-4.85, 17.2, -2.5),   // UP to Floor 8
+        new THREE.Vector3(-3.2, 17.2, -2.5),    // Enters floor distribution
       ],
       0xdc2626, // Vivid Red Pipe
       0xef4444, // Red Glow
-      0.095,
+      0.10,
       15,
       0.08
     );
 
-    // 7. ORANGE SECONDARY SUBSTATION FEEDER (Back & Right Facade Distribution)
+    // 7. ORANGE SECONDARY SUBSTATION FEEDER (Stepped Runs across Back & Right Facades in Open Window Bays)
     buildPipeline(
       [
         new THREE.Vector3(1.6, 0.4, -4.85),     // Ground Back Substation
-        new THREE.Vector3(1.6, 6.45, -4.85),    // STRAIGHT VERTICAL up Back Facade to Floor 3
-        new THREE.Vector3(4.85, 6.45, -4.85),   // 90° to Back-Right Corner
-        new THREE.Vector3(4.85, 6.45, -1.8),    // Along Right Facade
-        new THREE.Vector3(4.85, 15.05, -4.85),  // Straight UP Right-Back Corner to Floor 7
-        new THREE.Vector3(2.2, 15.05, -4.85),   // Straight across Back ceiling
+        new THREE.Vector3(1.6, 5.35, -4.85),    // UP to Mid-Story 2-3 (Open Window Zone)
+        new THREE.Vector3(4.85, 5.35, -4.85),   // WIDE RUN across Back Facade (Left to Right!)
+        new THREE.Vector3(4.85, 5.35, -1.5),    // Along Right Facade
+        new THREE.Vector3(4.85, 11.8, -1.5),    // UP to Mid-Story 5-6 (Open Window Zone)
+        new THREE.Vector3(4.85, 11.8, -4.85),   // Along Right Facade corner
+        new THREE.Vector3(1.6, 11.8, -4.85),    // WIDE RUN across Back Facade (Right to Left!)
+        new THREE.Vector3(1.6, 17.2, -4.85),    // UP to Floor 8
       ],
       0xd97706, // Amber/Gold Pipe
       0xfbbf24, // Gold Glow
@@ -609,28 +616,34 @@ export default function ThreeDCanvas() {
       0.08
     );
 
-    // 8. BLUE/CYAN CHILLED WATER RETURN HEADER (Floor 3 Front & Left Facades)
+    // 8. BLUE/CYAN CHILLED WATER RETURN HEADER (Mid-Story 3-4 Full Front Facade Run)
     buildPipeline(
       [
-        new THREE.Vector3(-4.85, 6.45, -2.5),   // Left Facade
-        new THREE.Vector3(-4.85, 6.45, 4.85),   // Outer Front-Left Corner
-        new THREE.Vector3(3.5, 6.45, 4.85),     // STRAIGHT across FRONT FACADE (Floor 3)
-        new THREE.Vector3(3.5, 6.45, 2.0),      // 90° into Right Facade
+        new THREE.Vector3(-4.85, 7.5, -2.5),    // Left Facade
+        new THREE.Vector3(-4.85, 7.5, 4.85),    // Outer Front-Left Corner
+        new THREE.Vector3(4.2, 7.5, 4.85),      // FULL HORIZONTAL RUN across entire Front Facade (Left to Right!)
+        new THREE.Vector3(4.2, 7.5, 1.5),       // 90° into Right Facade
       ],
       0x0284c7, // Sky Blue Pipe
       0x38bdf8, // Cyan Glow
-      0.10,
-      15,
+      0.11,     // 0.11 radius
+      16,
       0.075
     );
 
-    // 9. GREEN BMS & DRAINAGE UTILITY STACK (Left-Front Facade Floors 1-5)
+    // 9. GREEN BMS & DRAINAGE UTILITY STACK (Stepped Left & Front Facades in Open Window Bays)
     buildPipeline(
       [
         new THREE.Vector3(-3.2, 0.4, 4.85),     // Ground Left-Front
-        new THREE.Vector3(-3.2, 10.75, 4.85),   // STRAIGHT VERTICAL up to Floor 5
-        new THREE.Vector3(-4.85, 10.75, 4.85),  // 90° to Outer Left-Front Corner
-        new THREE.Vector3(-4.85, 10.75, 1.8),   // Along Left Facade
+        new THREE.Vector3(-3.2, 3.2, 4.85),     // UP to Mid-Story 1-2 (Open Window Zone)
+        new THREE.Vector3(-4.85, 3.2, 4.85),    // Step LEFT across Front Facade
+        new THREE.Vector3(-4.85, 3.2, 0.5),     // Along Left Facade
+        new THREE.Vector3(-4.85, 7.5, 0.5),     // UP to Mid-Story 3-4 (Open Window Zone)
+        new THREE.Vector3(-4.85, 7.5, -3.2),    // WIDE RUN along Left Facade (Front to Back!)
+        new THREE.Vector3(-4.85, 11.8, -3.2),   // UP to Mid-Story 5-6 (Open Window Zone)
+        new THREE.Vector3(-4.85, 11.8, 1.8),    // WIDE RUN along Left Facade (Back to Front!)
+        new THREE.Vector3(-2.5, 11.8, 4.85),    // Step across Front Facade
+        new THREE.Vector3(-2.5, 15.05, 4.85),   // UP to Floor 7
       ],
       0x059669, // Emerald Pipe
       0x34d399, // Green Glow
