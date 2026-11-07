@@ -17,7 +17,7 @@ export default function ThreeDCanvas() {
     const height = container.clientHeight || 500;
 
     const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 1000);
-    // Pulled farther back for an expansive, fully centered view with plenty of breathing room
+    // Pulled back for an expansive, fully centered view with plenty of breathing room
     camera.position.set(11.5, 19.0, 44.0);
 
     const renderer = new THREE.WebGLRenderer({
@@ -28,7 +28,7 @@ export default function ThreeDCanvas() {
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.3;
+    renderer.toneMappingExposure = 1.18; // Perfectly balanced brightness
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
@@ -43,26 +43,26 @@ export default function ThreeDCanvas() {
     controls.autoRotate = false; // Locked to the exact visual orientation requested
     controls.maxPolarAngle = Math.PI / 2 + 0.02;
 
-    // 3. Realistic Architectural Lighting Setup
-    const ambientLight = new THREE.AmbientLight(0xe0f2fe, 1.5);
+    // 3. Balanced Architectural Lighting (Bright & crisp, no dark gloom or white washout)
+    const ambientLight = new THREE.AmbientLight(0xa0aec0, 1.25);
     scene.add(ambientLight);
 
-    // Primary Sun Light (Directional with sharp architectural contrast)
-    const sunLight = new THREE.DirectionalLight(0xffffff, 2.6);
-    sunLight.position.set(26, 42, 28);
+    // Primary Sun Light (Directional architectural sunlight)
+    const sunLight = new THREE.DirectionalLight(0xffffff, 2.3);
+    sunLight.position.set(24, 40, 26);
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 1024;
     sunLight.shadow.mapSize.height = 1024;
     scene.add(sunLight);
 
-    // Cool Blue Rim Backlight (Creates the distinctive glowing column edges)
-    const rimLight = new THREE.DirectionalLight(0x38bdf8, 3.2);
-    rimLight.position.set(-28, 22, -26);
+    // Cool Blue Rim Backlight (Accentuates structural concrete edges with cyan highlights)
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 2.8);
+    rimLight.position.set(-26, 20, -24);
     scene.add(rimLight);
 
-    // Warm Front Fill
-    const fillLight = new THREE.DirectionalLight(0x94a3b8, 1.2);
-    fillLight.position.set(0, 14, 30);
+    // Soft Sky-Blue Front Fill Light
+    const fillLight = new THREE.DirectionalLight(0xbae6fd, 1.1);
+    fillLight.position.set(0, 14, 28);
     scene.add(fillLight);
 
     // 4. Ground Neon Grid & Base Platform
@@ -73,7 +73,7 @@ export default function ThreeDCanvas() {
     // Dark sleek foundation slab
     const baseGeo = new THREE.BoxGeometry(15, 0.25, 15);
     const baseMat = new THREE.MeshStandardMaterial({
-      color: 0x091224,
+      color: 0x070d1a,
       roughness: 0.7,
       metalness: 0.3,
     });
@@ -85,13 +85,13 @@ export default function ThreeDCanvas() {
     const baseEdges = new THREE.EdgesGeometry(baseGeo);
     const baseLine = new THREE.LineSegments(
       baseEdges,
-      new THREE.LineBasicMaterial({ color: 0x38bdf8, linewidth: 2 })
+      new THREE.LineBasicMaterial({ color: 0x0284c7, linewidth: 2 })
     );
     baseLine.position.y = -0.125;
     scene.add(baseLine);
 
     // ========================================================
-    // 5. ARCHITECTURAL SKELETAL BUILDING (MATCHING REFERENCE)
+    // 5. ARCHITECTURAL SKELETAL BUILDING (REALISTIC CONCRETE GREY)
     // ========================================================
     const buildingGroup = new THREE.Group();
     scene.add(buildingGroup);
@@ -102,49 +102,48 @@ export default function ThreeDCanvas() {
     const BUILDING_WIDTH = 11.2;
     const BUILDING_DEPTH = 11.2;
 
-    // Materials
-    // Realistic Architectural Concrete (Light Grey / Off-White)
+    // Authentic Architectural Concrete Material (Clean, bright silver-grey concrete)
     const concreteMat = new THREE.MeshStandardMaterial({
-      color: 0xc8d3df,
-      roughness: 0.38,
+      color: 0x8fa3b7, // Balanced architectural concrete silver-grey (bright and clear, not dark and not chalky white)
+      roughness: 0.48,
       metalness: 0.12,
     });
 
-    // Dark Concrete Core Material (Elevator / Stair shaft)
+    // Dark Structural Core Material (Elevator / Service Shaft)
     const coreMat = new THREE.MeshStandardMaterial({
       color: 0x1e293b,
-      roughness: 0.6,
+      roughness: 0.65,
       metalness: 0.2,
     });
 
-    // Balcony Glass Material (Semi-transparent cyan architectural safety glass)
+    // Balcony Glass Material (Semi-transparent glowing cyan architectural safety glass)
     const glassRailingMat = new THREE.MeshPhysicalMaterial({
       color: 0x38bdf8,
-      metalness: 0.1,
-      roughness: 0.05,
+      metalness: 0.12,
+      roughness: 0.06,
       transmission: 0.82,
       transparent: true,
       opacity: 0.42,
-      reflectivity: 0.85,
+      reflectivity: 0.88,
     });
 
     // Stainless Steel Handrails & Baluster Posts
     const metalTrimMat = new THREE.MeshStandardMaterial({
-      color: 0x94a3b8,
+      color: 0x64748b,
       metalness: 0.8,
-      roughness: 0.2,
+      roughness: 0.25,
     });
 
     // 5.1 Central Structural Core (Service Shaft for MEP vertical risers)
-    const coreWidth = 3.6;
-    const coreDepth = 3.6;
+    const coreWidth = 3.4;
+    const coreDepth = 3.4;
     const coreGeo = new THREE.BoxGeometry(coreWidth, TOTAL_HEIGHT + 0.4, coreDepth);
     const coreMesh = new THREE.Mesh(coreGeo, coreMat);
     coreMesh.position.set(0, (TOTAL_HEIGHT + 0.4) / 2, 0);
     buildingGroup.add(coreMesh);
 
     // 5.2 Floor Slabs, Balconies & Railings for each level
-    const slabThickness = 0.3;
+    const slabThickness = 0.28;
     const slabGeo = new THREE.BoxGeometry(BUILDING_WIDTH, slabThickness, BUILDING_DEPTH);
 
     for (let f = 0; f <= FLOORS; f++) {
@@ -159,13 +158,13 @@ export default function ThreeDCanvas() {
 
       // Glass Balcony Railings & Handrails (Floors 1 through 8)
       if (f < FLOORS && f > 0) {
-        const railHeight = 0.68;
+        const railHeight = 0.65;
         const railY = floorY + slabThickness / 2 + railHeight / 2;
         const halfW = BUILDING_WIDTH / 2;
         const halfD = BUILDING_DEPTH / 2;
 
         // Front & Back Glass Panels
-        const fbGlassGeo = new THREE.BoxGeometry(BUILDING_WIDTH - 0.4, railHeight, 0.05);
+        const fbGlassGeo = new THREE.BoxGeometry(BUILDING_WIDTH - 0.4, railHeight, 0.04);
         const frontGlass = new THREE.Mesh(fbGlassGeo, glassRailingMat);
         frontGlass.position.set(0, railY, halfD - 0.12);
         buildingGroup.add(frontGlass);
@@ -175,7 +174,7 @@ export default function ThreeDCanvas() {
         buildingGroup.add(backGlass);
 
         // Left & Right Glass Panels
-        const lrGlassGeo = new THREE.BoxGeometry(0.05, railHeight, BUILDING_DEPTH - 0.4);
+        const lrGlassGeo = new THREE.BoxGeometry(0.04, railHeight, BUILDING_DEPTH - 0.4);
         const leftGlass = new THREE.Mesh(lrGlassGeo, glassRailingMat);
         leftGlass.position.set(-halfW + 0.12, railY, 0);
         buildingGroup.add(leftGlass);
@@ -185,7 +184,7 @@ export default function ThreeDCanvas() {
         buildingGroup.add(rightGlass);
 
         // Steel Top Handrails
-        const fbRailGeo = new THREE.BoxGeometry(BUILDING_WIDTH - 0.3, 0.06, 0.08);
+        const fbRailGeo = new THREE.BoxGeometry(BUILDING_WIDTH - 0.3, 0.05, 0.07);
         const frontRail = new THREE.Mesh(fbRailGeo, metalTrimMat);
         frontRail.position.set(0, railY + railHeight / 2, halfD - 0.12);
         buildingGroup.add(frontRail);
@@ -194,7 +193,7 @@ export default function ThreeDCanvas() {
         backRail.position.set(0, railY + railHeight / 2, -halfD + 0.12);
         buildingGroup.add(backRail);
 
-        const lrRailGeo = new THREE.BoxGeometry(0.08, 0.06, BUILDING_DEPTH - 0.3);
+        const lrRailGeo = new THREE.BoxGeometry(0.07, 0.05, BUILDING_DEPTH - 0.3);
         const leftRail = new THREE.Mesh(lrRailGeo, metalTrimMat);
         leftRail.position.set(-halfW + 0.12, railY + railHeight / 2, 0);
         buildingGroup.add(leftRail);
@@ -206,17 +205,15 @@ export default function ThreeDCanvas() {
     }
 
     // 5.3 Concrete Structural Columns (5x5 Perimeter Grid -> 4 equal bays per face)
-    const colWidth = 0.42;
-    const colDepth = 0.42;
+    const colWidth = 0.40;
+    const colDepth = 0.40;
     const colGeo = new THREE.BoxGeometry(colWidth, TOTAL_HEIGHT, colDepth);
 
-    // 5 distinct column coordinates dividing 11.2 into 4 equal bays: -5.1, -2.55, 0, 2.55, 5.1
     const colXCoords = [-5.1, -2.55, 0, 2.55, 5.1];
     const colZCoords = [-5.1, -2.55, 0, 2.55, 5.1];
 
     colXCoords.forEach((x, xi) => {
       colZCoords.forEach((z, zi) => {
-        // Place columns along all 4 perimeter faces
         const isPerimeter =
           xi === 0 ||
           xi === colXCoords.length - 1 ||
@@ -234,8 +231,8 @@ export default function ThreeDCanvas() {
     });
 
     // 5.4 Perimeter Concrete Beams (Connecting columns under each floor slab)
-    const beamHeight = 0.35;
-    const beamDepth = 0.38;
+    const beamHeight = 0.32;
+    const beamDepth = 0.36;
 
     for (let f = 1; f <= FLOORS; f++) {
       const beamY = f * FLOOR_HEIGHT - beamHeight / 2 - slabThickness / 2;
@@ -266,9 +263,9 @@ export default function ThreeDCanvas() {
     }
 
     // 5.5 Ground Floor Mechanical Plant Room (Louvered enclosure at the base)
-    const plantRoomGeo = new THREE.BoxGeometry(4.8, 1.8, 4.2);
+    const plantRoomGeo = new THREE.BoxGeometry(4.8, 1.8, 4.0);
     const plantRoomMat = new THREE.MeshStandardMaterial({
-      color: 0x334155,
+      color: 0x1e293b,
       metalness: 0.4,
       roughness: 0.5,
     });
@@ -281,13 +278,13 @@ export default function ThreeDCanvas() {
 
     // Rooftop Parapet Wall
     const parapetHeight = 0.55;
-    const parapetGeo = new THREE.BoxGeometry(BUILDING_WIDTH, parapetHeight, 0.3);
+    const parapetGeo = new THREE.BoxGeometry(BUILDING_WIDTH, parapetHeight, 0.28);
     const frontParapet = new THREE.Mesh(parapetGeo, concreteMat);
-    frontParapet.position.set(0, roofY + parapetHeight / 2, BUILDING_DEPTH / 2 - 0.15);
+    frontParapet.position.set(0, roofY + parapetHeight / 2, BUILDING_DEPTH / 2 - 0.14);
     buildingGroup.add(frontParapet);
 
     const backParapet = new THREE.Mesh(parapetGeo, concreteMat);
-    backParapet.position.set(0, roofY + parapetHeight / 2, -BUILDING_DEPTH / 2 + 0.15);
+    backParapet.position.set(0, roofY + parapetHeight / 2, -BUILDING_DEPTH / 2 + 0.14);
     buildingGroup.add(backParapet);
 
     // Rooftop Penthouse (Elevator Motor Room / Mechanical Control Room)
@@ -306,50 +303,50 @@ export default function ThreeDCanvas() {
     // Rooftop Chillers (Horizontal industrial cylinders)
     const chillerMat = new THREE.MeshStandardMaterial({
       color: 0x0284c7,
-      metalness: 0.7,
+      metalness: 0.6,
       roughness: 0.25,
     });
-    const chillerGeo = new THREE.CylinderGeometry(0.7, 0.7, 2.6, 20);
+    const chillerGeo = new THREE.CylinderGeometry(0.6, 0.6, 2.4, 18);
     [-2.8, -0.6].forEach((zPos) => {
       const chiller = new THREE.Mesh(chillerGeo, chillerMat);
       chiller.rotation.z = Math.PI / 2;
-      chiller.position.set(-2.8, roofY + 0.8, zPos);
+      chiller.position.set(-2.8, roofY + 0.7, zPos);
       chiller.castShadow = true;
       buildingGroup.add(chiller);
 
       // Chiller mounting legs
-      const legGeo = new THREE.BoxGeometry(0.2, 0.4, 0.6);
+      const legGeo = new THREE.BoxGeometry(0.18, 0.35, 0.5);
       const leg1 = new THREE.Mesh(legGeo, metalTrimMat);
-      leg1.position.set(-3.8, roofY + 0.2, zPos);
+      leg1.position.set(-3.7, roofY + 0.18, zPos);
       buildingGroup.add(leg1);
       const leg2 = new THREE.Mesh(legGeo, metalTrimMat);
-      leg2.position.set(-1.8, roofY + 0.2, zPos);
+      leg2.position.set(-1.9, roofY + 0.18, zPos);
       buildingGroup.add(leg2);
     });
 
     // Rooftop Cooling Towers (Vertical cylinders with top fans)
     const towerMat = new THREE.MeshStandardMaterial({
-      color: 0x64748b,
+      color: 0x475569,
       metalness: 0.5,
       roughness: 0.35,
     });
-    const towerGeo = new THREE.CylinderGeometry(0.8, 0.8, 1.8, 20);
+    const towerGeo = new THREE.CylinderGeometry(0.7, 0.7, 1.7, 18);
     [-2.8, 2.8].forEach((xPos) => {
       const tower = new THREE.Mesh(towerGeo, towerMat);
-      tower.position.set(xPos, roofY + 0.9, 2.6);
+      tower.position.set(xPos, roofY + 0.85, 2.6);
       tower.castShadow = true;
       buildingGroup.add(tower);
 
       // Top fan cowling
-      const fanGeo = new THREE.CylinderGeometry(0.65, 0.75, 0.3, 20);
+      const fanGeo = new THREE.CylinderGeometry(0.55, 0.65, 0.25, 18);
       const fanMesh = new THREE.Mesh(fanGeo, metalTrimMat);
-      fanMesh.position.set(xPos, roofY + 1.95, 2.6);
+      fanMesh.position.set(xPos, roofY + 1.82, 2.6);
       buildingGroup.add(fanMesh);
     });
 
-    // ========================================================
-    // 6. DETAILED MEP PIPELINES & GENTLE GLOWING ELECTRONS
-    // ========================================================
+    // =========================================================================
+    // 6. ORGANIZED MEP PIPELINES (SLIM PIPES & SLEEK GLOWING ELECTRONS)
+    // =========================================================================
     const mepGroup = new THREE.Group();
     scene.add(mepGroup);
 
@@ -367,33 +364,33 @@ export default function ThreeDCanvas() {
 
     const systems: PipelineSystem[] = [];
 
-    // Helper: Build 3D Pipe with Couplings and Glowing Electron Particles
+    // Helper: Build Slim, Clean 3D Pipe with Sleek Glowing Electrons
     const buildPipeline = (
       points: THREE.Vector3[],
       pipeColor: number,
       glowColor: number,
-      radius = 0.24,
+      radius = 0.11, // Slim & elegant pipe diameter
       electronCount = 14,
-      speed = 0.09
+      speed = 0.08
     ) => {
-      const curve = new THREE.CatmullRomCurve3(points, false, "catmullrom", 0.08);
-      const pipeGeo = new THREE.TubeGeometry(curve, 140, radius, 14, false);
+      const curve = new THREE.CatmullRomCurve3(points, false, "catmullrom", 0.04);
+      const pipeGeo = new THREE.TubeGeometry(curve, 160, radius, 12, false);
       const pipeMat = new THREE.MeshStandardMaterial({
         color: pipeColor,
-        metalness: 0.75,
-        roughness: 0.22,
+        metalness: 0.8,
+        roughness: 0.2,
         emissive: pipeColor,
-        emissiveIntensity: 0.28,
+        emissiveIntensity: 0.35,
       });
 
       const pipeMesh = new THREE.Mesh(pipeGeo, pipeMat);
       pipeMesh.castShadow = true;
       mepGroup.add(pipeMesh);
 
-      // Industrial Couplings along pipe segments
-      const jointGeo = new THREE.TorusGeometry(radius * 1.35, radius * 0.35, 10, 16);
+      // Neat Industrial Couplings along pipe corners
+      const jointGeo = new THREE.TorusGeometry(radius * 1.25, radius * 0.25, 8, 14);
       const jointMat = new THREE.MeshStandardMaterial({
-        color: 0xe2e8f0,
+        color: 0x94a3b8,
         metalness: 0.85,
         roughness: 0.2,
       });
@@ -406,8 +403,8 @@ export default function ThreeDCanvas() {
         }
       });
 
-      // Glowing Electron Spheres rushing through the pipeline
-      const pulseGeo = new THREE.SphereGeometry(radius * 1.5, 12, 12);
+      // Sleek Glowing Electron Beads (Slim, intense, elegant)
+      const pulseGeo = new THREE.SphereGeometry(radius * 1.15, 10, 10);
       const pulseMat = new THREE.MeshBasicMaterial({
         color: 0xffffff,
       });
@@ -418,17 +415,17 @@ export default function ThreeDCanvas() {
         const pulse = new THREE.Mesh(pulseGeo, pulseMat);
         mepGroup.add(pulse);
 
-        // Point light on select electrons to illuminate surrounding concrete
+        // Soft Point Light on key electrons for subtle ambient glow
         let light: THREE.PointLight | undefined;
-        if (i % 3 === 0) {
-          light = new THREE.PointLight(glowColor, 2.8, 3.8);
+        if (i % 4 === 0) {
+          light = new THREE.PointLight(glowColor, 1.8, 2.5);
           mepGroup.add(light);
         }
 
         pulses.push({
           mesh: pulse,
           offset: i / electronCount,
-          speed: speed * (0.9 + Math.random() * 0.2), // gentle uniform speed
+          speed: speed * (0.92 + Math.random() * 0.16),
           light,
         });
       }
@@ -436,101 +433,103 @@ export default function ThreeDCanvas() {
       systems.push({ curve, pulses });
     };
 
-    // --- MEP PIPELINES MATCHING THE REFERENCE IMAGE EXACTLY ---
+    // --- CLEAN, STRICTLY ORGANIZED ORTHOGONAL MEP PIPING ROUTES ---
 
-    // 1. Red Fire Fighting & Suppression Riser (Prominent front vertical + horizontal loops)
+    // 1. Red Fire Fighting & Sprinkler Main Riser & Floor Branches (Organized Left Shaft)
     buildPipeline(
       [
-        new THREE.Vector3(-2.55, 0.2, 3.8),
-        new THREE.Vector3(-2.55, 6.4, 3.8), // Floor 3 branch
-        new THREE.Vector3(-4.4, 6.4, 3.8),
-        new THREE.Vector3(-4.4, 10.7, 1.8), // Floor 5 riser
-        new THREE.Vector3(2.55, 10.7, 1.8),
-        new THREE.Vector3(2.55, 15.0, 3.2), // Floor 7 riser
-        new THREE.Vector3(-2.55, 15.0, 3.2),
-        new THREE.Vector3(-2.55, roofY + 0.4, 0.5),
-        new THREE.Vector3(1.0, roofY + 0.4, 0.5), // Enters penthouse
+        new THREE.Vector3(-2.55, 0.2, 3.2),
+        new THREE.Vector3(-2.55, 6.45, 3.2),   // Straight vertical to Floor 3
+        new THREE.Vector3(-4.2, 6.45, 3.2),    // Clean 90° horizontal branch to corner
+        new THREE.Vector3(-4.2, 6.45, 1.0),    // 90° depth turn
+        new THREE.Vector3(-2.55, 6.45, 1.0),   // Returns to riser plane
+        new THREE.Vector3(-2.55, 12.9, 1.0),   // Straight vertical up to Floor 6
+        new THREE.Vector3(2.55, 12.9, 1.0),    // Clean 90° horizontal cross-tie
+        new THREE.Vector3(2.55, 15.05, 1.0),   // Up to Floor 7
+        new THREE.Vector3(2.55, roofY + 0.3, 1.0), // Reaches roof fire header
+        new THREE.Vector3(1.2, roofY + 0.3, 1.0),  // Enters penthouse
       ],
       0xdc2626, // Vivid Red Pipe
       0xef4444, // Red Glow
-      0.26,
+      0.12,     // Slim 0.12 radius
       15,
-      0.09 // Gentle, smooth elegant flow
+      0.08
     );
 
-    // 2. Central Blue/Cyan HVAC Chilled Water System (Winding across multiple levels to chillers)
+    // 2. Central Blue/Cyan HVAC Chilled Water Supply Line (Straight Plant Room to Rooftop Chiller)
     buildPipeline(
       [
-        new THREE.Vector3(-2.8, 0.2, -1.8), // From ground plant room
-        new THREE.Vector3(-2.8, 4.3, -1.8), // Floor 2
-        new THREE.Vector3(3.2, 4.3, -1.8),
-        new THREE.Vector3(3.2, 8.6, 2.6), // Floor 4
-        new THREE.Vector3(-2.5, 8.6, 2.6),
-        new THREE.Vector3(-2.5, 12.9, -2.2), // Floor 6
-        new THREE.Vector3(2.55, 12.9, -2.2),
-        new THREE.Vector3(2.55, roofY + 0.4, -2.8),
-        new THREE.Vector3(-2.8, roofY + 0.8, -2.8), // Connects to rooftop chiller
+        new THREE.Vector3(-1.8, 0.2, -1.8),   // From Ground Plant Room
+        new THREE.Vector3(-1.8, 4.3, -1.8),   // Vertical to Floor 2
+        new THREE.Vector3(1.8, 4.3, -1.8),    // Horizontal ceiling run Floor 2
+        new THREE.Vector3(1.8, 8.6, -1.8),    // Vertical to Floor 4
+        new THREE.Vector3(-1.8, 8.6, -1.8),   // Horizontal ceiling run Floor 4
+        new THREE.Vector3(-1.8, 12.9, -1.8),  // Vertical to Floor 6
+        new THREE.Vector3(-2.8, 12.9, -1.8),  // Branch toward chiller riser
+        new THREE.Vector3(-2.8, roofY + 0.7, -1.8), // Vertical directly to Chiller
       ],
       0x0284c7, // Sky Blue Pipe
       0x38bdf8, // Cyan Glow
-      0.28,
+      0.13,     // Slim 0.13 radius
       16,
-      0.08
+      0.075
     );
 
-    // 3. Orange/Gold Electrical HT/LT Power Busduct (Right vertical riser with floor feeds)
+    // 3. Central Blue HVAC Chilled Water Return Line (Parallel Organized Run)
     buildPipeline(
       [
-        new THREE.Vector3(3.8, 0.2, 2.2),
-        new THREE.Vector3(3.8, 6.4, 2.2),
-        new THREE.Vector3(1.2, 6.4, 3.8),
-        new THREE.Vector3(1.2, 12.9, 3.8),
-        new THREE.Vector3(3.8, 12.9, 0.8),
-        new THREE.Vector3(3.8, 17.2, 0.8),
-        new THREE.Vector3(1.0, 17.2, 0.8),
+        new THREE.Vector3(-1.4, 0.2, -1.8),
+        new THREE.Vector3(-1.4, 10.75, -1.8), // Floor 5
+        new THREE.Vector3(2.55, 10.75, -1.8), // Horizontal distributor
+        new THREE.Vector3(2.55, 10.75, 2.2),  // Front loop
+        new THREE.Vector3(-2.8, 10.75, 2.2),
+        new THREE.Vector3(-2.8, roofY + 0.7, 0.6), // Connects to secondary chiller
+      ],
+      0x0284c7, // Sky Blue Pipe
+      0x38bdf8, // Cyan Glow
+      0.11,
+      14,
+      0.075
+    );
+
+    // 4. Orange/Gold Electrical HT/LT Power Busduct (Strict Right-Side Electrical Shaft)
+    buildPipeline(
+      [
+        new THREE.Vector3(3.2, 0.2, 2.4),
+        new THREE.Vector3(3.2, 6.45, 2.4),   // Floor 3
+        new THREE.Vector3(1.2, 6.45, 2.4),   // Horizontal tap
+        new THREE.Vector3(1.2, 10.75, 2.4),  // Floor 5
+        new THREE.Vector3(3.2, 10.75, 2.4),  // Tap back to main shaft
+        new THREE.Vector3(3.2, 17.2, 2.4),   // Straight up to top floor
+        new THREE.Vector3(1.0, 17.2, 2.4),   // Enters top electrical room
       ],
       0xd97706, // Amber/Gold Pipe
       0xfbbf24, // Gold Glow
-      0.24,
+      0.11,     // Slim 0.11 radius
       14,
-      0.10 // Smooth electric flow
+      0.085
     );
 
-    // 4. Green Smart BMS Automation & Drainage Line (Interior vertical core)
+    // 5. Green Smart BMS Automation Backbone (Core Shaft & Horizontal Rings)
     buildPipeline(
       [
-        new THREE.Vector3(0.0, 0.2, -2.8),
-        new THREE.Vector3(0.0, 6.4, -2.8),
-        new THREE.Vector3(-2.2, 6.4, 0.5),
-        new THREE.Vector3(-2.2, 12.9, 0.5),
-        new THREE.Vector3(2.2, 12.9, -1.2),
-        new THREE.Vector3(2.2, 17.2, -1.2),
-        new THREE.Vector3(0.0, 17.2, -1.2),
+        new THREE.Vector3(0.0, 0.2, 1.8),
+        new THREE.Vector3(0.0, 4.3, 1.8),    // Floor 2
+        new THREE.Vector3(-2.2, 4.3, 1.8),   // Floor 2 sensor branch
+        new THREE.Vector3(-2.2, 8.6, 1.8),   // Floor 4
+        new THREE.Vector3(0.0, 8.6, 1.8),    // Back to core
+        new THREE.Vector3(0.0, 15.05, 1.8),  // Floor 7
+        new THREE.Vector3(2.2, 15.05, 1.8),  // Floor 7 BMS controller
+        new THREE.Vector3(2.2, roofY + 0.3, 1.8), // Roof sensor line
       ],
       0x059669, // Emerald Pipe
       0x34d399, // Green Glow
-      0.22,
+      0.10,     // Slim 0.10 radius
       13,
-      0.08
-    );
-
-    // 5. Horizontal Chilled Water Floor Distribution Ring (Mid-Level Floor 4)
-    buildPipeline(
-      [
-        new THREE.Vector3(-3.8, 8.6, -3.8),
-        new THREE.Vector3(3.8, 8.6, -3.8),
-        new THREE.Vector3(3.8, 8.6, 3.8),
-        new THREE.Vector3(-3.8, 8.6, 3.8),
-        new THREE.Vector3(-3.8, 8.6, -3.8),
-      ],
-      0x0ea5e9, // Bright Cyan
-      0x7dd3fc,
-      0.18,
-      12,
       0.07
     );
 
-    // 7. Animation Loop (Gentle Electron Movement & Turntable)
+    // 7. Animation Loop (Smooth Gentle Electron Movement)
     const clock = new THREE.Clock();
     let animId: number;
 
