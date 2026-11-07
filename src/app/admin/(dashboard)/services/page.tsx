@@ -79,6 +79,97 @@ const AVAILABLE_ICONS = [
   { name: "FaSun", icon: <FaSun />, label: "Solar & Renewables" },
 ];
 
+const MEP_SUB_CATEGORIES: Record<
+  string,
+  Array<{
+    code: string;
+    title: string;
+    slug: string;
+    icon: string;
+    subtitle: string;
+    compliance: string;
+  }>
+> = {
+  mechanical: [
+    {
+      code: "HVAC",
+      title: "Heating, Ventilation & Air Conditioning (HVAC)",
+      slug: "hvac-systems",
+      icon: "FaSnowflake",
+      subtitle: "Central HVAC, VRF & Cleanroom AHU Systems",
+      compliance: "BNBC, ASHRAE, SMACNA, NFPA",
+    },
+    {
+      code: "FDPS",
+      title: "Fire Detection & Protection System (FDPS)",
+      slug: "fdps",
+      icon: "FaFireExtinguisher",
+      subtitle: "Addressable Alarms, Sprinklers & Hydrants",
+      compliance: "BNBC, NFPA, FSCD",
+    },
+    {
+      code: "GUDS",
+      title: "Gas & Utility Distribution System (GUDS / PDCP)",
+      slug: "guds",
+      icon: "FaIndustry",
+      subtitle: "LPG / Natural Gas Pipeline & Leak Interlock Controls",
+      compliance: "BNBC, NFPA 54, Titas Gas",
+    },
+  ],
+  electrical: [
+    {
+      code: "PDCP",
+      title: "Power Distribution & Control Panel (PDCP / STAS)",
+      slug: "pdcp",
+      icon: "FaBolt",
+      subtitle: "Form-4 LT Switchgear, Substation & Smart MCC",
+      compliance: "BNBC, IEC 61439, IEEE",
+    },
+    {
+      code: "EELS",
+      title: "Electrical & Lighting Systems (EELS / ELV)",
+      slug: "eels",
+      icon: "FaLightbulb",
+      subtitle: "Busbar Trunking, ESE Lightning Grid & DALI LED",
+      compliance: "BNBC, IEC, IEEE, IESNA",
+    },
+    {
+      code: "IBA",
+      title: "Industrial Building Automation (IBA / BMS)",
+      slug: "iba",
+      icon: "FaMicrochip",
+      subtitle: "Siemens/Schneider PLC, SCADA & BMS Telemetry",
+      compliance: "BNBC, BACnet, Modbus, IEC 61131",
+    },
+  ],
+  plumbing: [
+    {
+      code: "WSDS",
+      title: "Water Supply & Drainage Systems (WSDS)",
+      slug: "wsds",
+      icon: "FaShower",
+      subtitle: "VFD Booster Pumps & PPR Supply Networks",
+      compliance: "BNBC, IPC, WASA",
+    },
+    {
+      code: "WTS",
+      title: "Water Treatment Systems (WTS / ETP / STP)",
+      slug: "wts",
+      icon: "FaWater",
+      subtitle: "Effluent ETP, STP, ZLD, IRP & Reverse Osmosis",
+      compliance: "BNBC, DoE, WHO, BDS",
+    },
+    {
+      code: "RHS",
+      title: "Renewable & Solar Solutions (RHS)",
+      slug: "rhs",
+      icon: "FaSun",
+      subtitle: "Rooftop Solar PV Plants, Net Metering & Inverters",
+      compliance: "SREDA, IEC 61215, BREB",
+    },
+  ],
+};
+
 export default function AdminServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -145,19 +236,19 @@ export default function AdminServicesPage() {
   // Open Create Screen (Separate Screen, Not Pop-Up)
   const handleOpenCreate = () => {
     setEditingService(null);
-    const defaultMech = services.find((s) => s.category === "mechanical");
+    const defaultSub = MEP_SUB_CATEGORIES.mechanical[0];
     setFormData({
       title: "",
-      code: "ESL-MEP-",
+      code: `ESL-MEP-${defaultSub.code}`,
       slug: "",
       category: "mechanical",
-      parentFlagshipId: defaultMech ? defaultMech.id : "",
-      subtitle: "",
+      parentFlagshipId: defaultSub.code,
+      subtitle: defaultSub.subtitle,
       shortDescription: "",
       fullDescription: "",
-      icon: "FaIndustry",
+      icon: defaultSub.icon,
       bannerImage: "",
-      complianceText: "",
+      complianceText: defaultSub.compliance,
       problemsText: "",
       solutionsText: "",
       scopeText: "",
@@ -185,12 +276,16 @@ export default function AdminServicesPage() {
   // Open Edit Screen (Separate Screen, Not Pop-Up)
   const handleOpenEdit = (s: Service) => {
     setEditingService(s);
+    const cat = s.category || "mechanical";
+    const matchedSub = (MEP_SUB_CATEGORIES[cat] || []).find(
+      (sub) => s.code?.toUpperCase().includes(sub.code) || s.slug?.toLowerCase().includes(sub.code.toLowerCase())
+    );
     setFormData({
       title: s.title || "",
       code: s.code || "",
       slug: s.slug || "",
-      category: s.category || "mechanical",
-      parentFlagshipId: "",
+      category: cat,
+      parentFlagshipId: matchedSub ? matchedSub.code : (MEP_SUB_CATEGORIES[cat]?.[0]?.code || ""),
       subtitle: s.subtitle || "",
       shortDescription: s.shortDescription || "",
       fullDescription: s.fullDescription || "",
@@ -817,7 +912,11 @@ export default function AdminServicesPage() {
                             title: e.target.value,
                             slug: editingService
                               ? formData.slug
-                              : e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+                              : e.target.value
+                                  .toLowerCase()
+                                  .trim()
+                                  .replace(/[^a-z0-9]+/g, "-")
+                                  .replace(/^-|-$/g, ""),
                           })
                         }
                         placeholder="e.g. Heating, Ventilation & Air Conditioning"
@@ -849,11 +948,20 @@ export default function AdminServicesPage() {
                         value={formData.category}
                         onChange={(e) => {
                           const newCat = e.target.value;
-                          const matchingParent = services.find((s) => s.category === newCat);
+                          const subs = MEP_SUB_CATEGORIES[newCat] || [];
+                          const firstSub = subs[0];
                           setFormData({
                             ...formData,
                             category: newCat,
-                            parentFlagshipId: matchingParent ? matchingParent.id : "",
+                            parentFlagshipId: firstSub ? firstSub.code : "",
+                            ...(viewMode === "create" && firstSub
+                              ? {
+                                  code: `ESL-MEP-${firstSub.code}`,
+                                  icon: firstSub.icon,
+                                  subtitle: firstSub.subtitle,
+                                  complianceText: firstSub.compliance,
+                                }
+                              : {}),
                           });
                         }}
                         className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
@@ -866,21 +974,47 @@ export default function AdminServicesPage() {
 
                     <div>
                       <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                        2. Parent Flagship Service (Optional / Sub-category)
+                        2. Flagship Sub-Category ({formData.category.toUpperCase()}) <span className="text-red-400">*</span>
                       </label>
                       <select
                         value={formData.parentFlagshipId}
-                        onChange={(e) => setFormData({ ...formData, parentFlagshipId: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 font-semibold transition-colors"
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const subs = MEP_SUB_CATEGORIES[formData.category] || [];
+                          const matchedSub = subs.find((s) => s.code === val || s.slug === val);
+                          setFormData({
+                            ...formData,
+                            parentFlagshipId: val,
+                            ...(viewMode === "create" && matchedSub
+                              ? {
+                                  code: `ESL-MEP-${matchedSub.code}`,
+                                  icon: matchedSub.icon,
+                                  subtitle: matchedSub.subtitle,
+                                  complianceText: matchedSub.compliance,
+                                }
+                              : {}),
+                          });
+                        }}
+                        className="w-full px-4 py-2.5 bg-slate-950 border border-blue-500/50 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 font-semibold transition-colors"
                       >
-                        <option value="">Standalone Flagship Service (Primary Core)</option>
-                        {services
-                          .filter((s) => s.category === formData.category && s.id !== editingService?.id)
-                          .map((s) => (
-                            <option key={s.id} value={s.id}>
-                              {s.code} - {s.title}
+                        <optgroup label={`3 Core ${formData.category.toUpperCase()} Sub-Categories`}>
+                          {(MEP_SUB_CATEGORIES[formData.category] || []).map((sub) => (
+                            <option key={sub.code} value={sub.code}>
+                              {sub.code} — {sub.title}
                             </option>
                           ))}
+                        </optgroup>
+                        {services.filter((s) => s.category === formData.category && s.id !== editingService?.id).length > 0 && (
+                          <optgroup label="Other Database Services in this Discipline">
+                            {services
+                              .filter((s) => s.category === formData.category && s.id !== editingService?.id)
+                              .map((s) => (
+                                <option key={s.id} value={s.id}>
+                                  {s.code} — {s.title}
+                                </option>
+                              ))}
+                          </optgroup>
+                        )}
                       </select>
                     </div>
                   </div>

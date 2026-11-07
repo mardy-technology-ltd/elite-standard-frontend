@@ -14,6 +14,7 @@ import NoServiceAvailable, { getServiceFullName } from "@/components/services/No
 import { projectsData, ProjectItem } from "@/lib/mockData";
 
 import prisma from "@/lib/prisma";
+import { FLAGSHIP_DOMAINS_OVERVIEW } from "@/lib/flagshipDomains";
 
 export const dynamic = "force-dynamic";
 
@@ -65,32 +66,105 @@ async function getRelatedProjects(serviceCategory: string): Promise<ProjectItem[
 
 async function getService(slug: string): Promise<ServiceItem | null> {
   try {
+    const slugLower = slug.toLowerCase().trim();
+    const cleanKey = slugLower.replace("-systems", "");
+    const slugAliases = [
+      slugLower,
+      cleanKey,
+      `${cleanKey}-systems`,
+    ];
+
+    // Find any direct service or flagship matching slug
     const dbService = await prisma.service.findFirst({
       where: {
-        OR: [{ slug }, { code: slug.toUpperCase() }],
+        OR: [
+          { slug: { in: slugAliases } },
+          { code: slug.toUpperCase() },
+          { code: `ESL-MEP-${slug.toUpperCase()}` },
+        ],
       },
     });
 
-    if (dbService) {
-      return {
-        id: dbService.id,
-        slug: dbService.slug,
-        code: dbService.code,
-        category: dbService.category as any,
-        compliance: dbService.compliance,
-        title: dbService.title,
-        subtitle: dbService.subtitle || "",
-        shortDescription: dbService.shortDescription,
-        fullDescription: dbService.fullDescription,
-        icon: dbService.icon,
-        bannerImage: dbService.bannerImage,
-        problems: dbService.problems,
-        solutions: dbService.solutions,
-        scopeOfWork: dbService.scopeOfWork,
-        subServices: (dbService.subServices as any) || [],
-        faqs: (dbService.faqs as any) || [],
-        sectors: (dbService.sectors as any) || undefined,
-      };
+    // Also find any services created in DB belonging to this flagship code (e.g. code includes "HVAC")
+    const codeMatch = cleanKey.toUpperCase();
+    const relatedDbServices = await prisma.service.findMany({
+      where: {
+        code: { contains: codeMatch },
+      },
+      orderBy: { orderIndex: "asc" },
+    });
+
+    const isFlagshipRequested = Boolean(FLAGSHIP_DOMAINS_OVERVIEW[cleanKey]);
+
+    if (dbService || relatedDbServices.length > 0 || isFlagshipRequested) {
+      const primary = dbService || relatedDbServices[0];
+      const domainOverview = FLAGSHIP_DOMAINS_OVERVIEW[cleanKey];
+
+      // Build subServices list by combining explicit subServices with services created under this flagship
+      const combinedSubServices: any[] = primary && Array.isArray(primary.subServices) ? [...primary.subServices] : [];
+
+      relatedDbServices.forEach((rel) => {
+        const alreadyExists = combinedSubServices.some(
+          (sub) => sub.title?.toLowerCase() === rel.title?.toLowerCase() || sub.slug === rel.slug
+        );
+        if (!alreadyExists && (!domainOverview || rel.title !== domainOverview.title)) {
+          combinedSubServices.push({
+            id: rel.id,
+            slug: rel.slug,
+            title: rel.title,
+            shortDesc: rel.shortDescription || rel.subtitle || "",
+            fullDesc: rel.fullDescription || rel.shortDescription || "",
+            features: Array.isArray(rel.scopeOfWork) ? rel.scopeOfWork : [],
+            image: rel.bannerImage || "/images/company-info.png",
+          });
+        }
+      });
+
+      // If viewing a core flagship page, present the Domain Overview
+      if (isFlagshipRequested && domainOverview) {
+        return {
+          id: primary?.id || `flagship-${cleanKey}`,
+          slug: slugLower,
+          code: codeMatch,
+          category: (primary?.category as any) || (["hvac", "fdps", "guds"].includes(cleanKey) ? "mechanical" : ["pdcp", "eels", "iba"].includes(cleanKey) ? "electrical" : "plumbing"),
+          compliance: domainOverview.compliance,
+          title: domainOverview.title,
+          subtitle: domainOverview.subtitle,
+          shortDescription: domainOverview.description,
+          fullDescription: domainOverview.description,
+          icon: primary?.icon || "FaIndustry",
+          bannerImage: domainOverview.bannerImage,
+          problems: primary?.problems && primary.problems.length > 0 ? primary.problems : [],
+          solutions: primary?.solutions && primary.solutions.length > 0 ? primary.solutions : [],
+          scopeOfWork: primary?.scopeOfWork && primary.scopeOfWork.length > 0 ? primary.scopeOfWork : [],
+          subServices: combinedSubServices,
+          faqs: (primary?.faqs as any) || [],
+          sectors: (primary?.sectors as any) || undefined,
+        };
+      }
+
+      // If viewing a specific service directly (e.g. /services/vrf-vrv-multi-split-systems)
+      if (primary) {
+        return {
+          id: primary.id,
+          slug: primary.slug,
+          code: primary.code,
+          category: primary.category as any,
+          compliance: primary.compliance && primary.compliance.length > 0 ? primary.compliance : ["BNBC", "ASHRAE", "NFPA"],
+          title: primary.title,
+          subtitle: primary.subtitle || `Specialized ${primary.code} Engineering Solutions`,
+          shortDescription: primary.shortDescription,
+          fullDescription: primary.fullDescription,
+          icon: primary.icon,
+          bannerImage: primary.bannerImage || "/images/company-info.png",
+          problems: primary.problems && primary.problems.length > 0 ? primary.problems : [],
+          solutions: primary.solutions && primary.solutions.length > 0 ? primary.solutions : [],
+          scopeOfWork: primary.scopeOfWork && primary.scopeOfWork.length > 0 ? primary.scopeOfWork : [],
+          subServices: combinedSubServices,
+          faqs: (primary.faqs as any) || [],
+          sectors: (primary.sectors as any) || undefined,
+        };
+      }
     }
   } catch (e) {
     console.error("DB service lookup error:", e);

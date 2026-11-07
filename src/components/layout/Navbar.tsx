@@ -314,14 +314,36 @@ export default function Navbar() {
             const mergedCategories: ServiceCategory[] = [...p.categories];
 
             pillarServices.forEach((s: any) => {
-              const idx = mergedCategories.findIndex(
-                (c) => c.slug === s.slug || c.code.toLowerCase() === s.code.toLowerCase()
+              // 1. Check if `s` is explicitly updating the flagship header itself
+              const exactIdx = mergedCategories.findIndex(
+                (c) =>
+                  (c.code && s.code && c.code.toLowerCase() === s.code.toLowerCase()) ||
+                  (c.slug && s.slug && c.slug.toLowerCase() === s.slug.toLowerCase()) ||
+                  (c.title && s.title && c.title.toLowerCase() === s.title.toLowerCase())
               );
-              if (idx >= 0) {
-                mergedCategories[idx] = {
-                  ...mergedCategories[idx],
-                  title: s.title || mergedCategories[idx].title,
-                  shortDesc: s.shortDescription || s.subtitle || mergedCategories[idx].shortDesc,
+
+              // 2. Or check which of the 3 core flagships this service belongs under
+              const parentIdx =
+                exactIdx >= 0
+                  ? exactIdx
+                  : mergedCategories.findIndex(
+                      (c) =>
+                        (s.code && c.code && s.code.toUpperCase().includes(c.code.toUpperCase())) ||
+                        (s.slug && c.code && s.slug.toLowerCase().includes(c.code.toLowerCase())) ||
+                        (s.slug && c.slug && s.slug.toLowerCase().includes(c.slug.toLowerCase()))
+                    );
+
+              if (
+                exactIdx >= 0 &&
+                (s.title?.toLowerCase() === mergedCategories[exactIdx].title.toLowerCase() ||
+                  s.code?.toUpperCase() === mergedCategories[exactIdx].code.toUpperCase())
+              ) {
+                // Direct update to the flagship category itself
+                mergedCategories[exactIdx] = {
+                  ...mergedCategories[exactIdx],
+                  title: s.title || mergedCategories[exactIdx].title,
+                  shortDesc: s.shortDescription || s.subtitle || mergedCategories[exactIdx].shortDesc,
+                  icon: s.icon ? getNavIcon(s.icon) : mergedCategories[exactIdx].icon,
                   subServices:
                     Array.isArray(s.subServices) && s.subServices.length > 0
                       ? s.subServices.map((sub: any) => ({
@@ -329,25 +351,37 @@ export default function Navbar() {
                           desc: sub.shortDesc,
                           href: `/services/${s.slug}#${sub.slug || ""}`,
                         }))
-                      : mergedCategories[idx].subServices,
+                      : mergedCategories[exactIdx].subServices,
                 };
-              } else {
-                mergedCategories.push({
-                  id: s.id,
-                  slug: s.slug,
-                  code: s.code,
+              } else if (parentIdx >= 0) {
+                // It is a specialized service under this flagship (e.g. "VRF/VRV Multi-Split Systems" under HVAC)
+                // Attach it inside the parent flagship's subServices list (never as a 4th sibling card)
+                const parentCat = mergedCategories[parentIdx];
+                const existingSubIdx = parentCat.subServices.findIndex(
+                  (sub) =>
+                    sub.title.toLowerCase() === s.title.toLowerCase() ||
+                    (s.slug && sub.href?.includes(s.slug))
+                );
+
+                const subEntry = {
                   title: s.title,
-                  shortDesc: s.shortDescription || s.subtitle || "",
-                  icon: getNavIcon(s.icon),
-                  subServices: Array.isArray(s.subServices)
-                    ? s.subServices.map((sub: any) => ({
-                        title: sub.title,
-                        desc: sub.shortDesc,
-                        href: `/services/${s.slug}#${sub.slug || ""}`,
-                      }))
-                    : [],
-                });
+                  desc: s.shortDescription || s.subtitle || "",
+                  href: `/services/${parentCat.slug}#${s.slug}`,
+                };
+
+                const updatedSubs = [...parentCat.subServices];
+                if (existingSubIdx >= 0) {
+                  updatedSubs[existingSubIdx] = subEntry;
+                } else {
+                  updatedSubs.push(subEntry);
+                }
+
+                mergedCategories[parentIdx] = {
+                  ...parentCat,
+                  subServices: updatedSubs,
+                };
               }
+              // Strictly ensure no 4th card is ever added to the column
             });
 
             return {
