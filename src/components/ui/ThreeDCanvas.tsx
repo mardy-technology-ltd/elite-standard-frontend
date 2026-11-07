@@ -17,8 +17,8 @@ export default function ThreeDCanvas() {
     const height = container.clientHeight || 500;
 
     const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 1000);
-    // Lowered perspective gazing upwards towards the towering building
-    camera.position.set(11.5, 12.5, 44.0);
+    // Lowered perspective gazing upwards towards the towering building, perfectly framed with snug, natural spacing
+    camera.position.set(11.5, 11.2, 43.0);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -37,14 +37,14 @@ export default function ThreeDCanvas() {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.target.set(0, 10.0, 0); // Focuses higher up to tilt the view upwards
+    controls.target.set(0, 8.8, 0); // Natural center framing leaving a tight, elegant cushion above text
     controls.enableZoom = false; // Zooming is completely disabled
     controls.enablePan = false;  // Disables accidental panning off-screen
     controls.autoRotate = true;  // Continuously rotates 360 degrees
     controls.autoRotateSpeed = 0.8; // Smooth, steady rotation showing all 4 sides
 
     // Lock vertical polar angle to this upward-tilted elevation
-    const fixedPolarAngle = Math.acos(2.5 / 45.55); // ~1.516 rad
+    const fixedPolarAngle = Math.acos(2.4 / 44.56); // ~1.517 rad
     controls.minPolarAngle = fixedPolarAngle;
     controls.maxPolarAngle = fixedPolarAngle;
 
@@ -70,30 +70,53 @@ export default function ThreeDCanvas() {
     fillLight.position.set(0, 14, 28);
     scene.add(fillLight);
 
-    // 4. Ground Neon Grid & Base Platform
-    const gridHelper = new THREE.GridHelper(36, 18, 0x0284c7, 0x1e293b);
+    // 4. Ground Neon Grid & Base Platform (Matching Reference Image)
+    const gridHelper = new THREE.GridHelper(44, 22, 0x00f0ff, 0x075985);
     gridHelper.position.y = -0.05;
     scene.add(gridHelper);
 
     // Dark sleek foundation slab
-    const baseGeo = new THREE.BoxGeometry(15, 0.25, 15);
+    const baseGeo = new THREE.BoxGeometry(14.8, 0.25, 14.8);
     const baseMat = new THREE.MeshStandardMaterial({
-      color: 0x070d1a,
-      roughness: 0.7,
-      metalness: 0.3,
+      color: 0x040b18,
+      roughness: 0.6,
+      metalness: 0.4,
     });
     const baseMesh = new THREE.Mesh(baseGeo, baseMat);
     baseMesh.position.y = -0.125;
     scene.add(baseMesh);
 
-    // Glowing Neon Blue perimeter outline
-    const baseEdges = new THREE.EdgesGeometry(baseGeo);
-    const baseLine = new THREE.LineSegments(
-      baseEdges,
-      new THREE.LineBasicMaterial({ color: 0x0284c7, linewidth: 2 })
-    );
-    baseLine.position.y = -0.125;
-    scene.add(baseLine);
+    // Radiant Electric-Cyan Neon Square Border (Solid glowing 3D bars matching reference image)
+    const neonWidth = 14.8;
+    const barThick = 0.16;
+    const neonBarMat = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+    });
+
+    // Front & Back Neon Bars
+    const barFBGeo = new THREE.BoxGeometry(neonWidth + 0.1, 0.12, barThick);
+    const frontNeonBar = new THREE.Mesh(barFBGeo, neonBarMat);
+    frontNeonBar.position.set(0, 0.04, neonWidth / 2);
+    scene.add(frontNeonBar);
+
+    const backNeonBar = new THREE.Mesh(barFBGeo, neonBarMat);
+    backNeonBar.position.set(0, 0.04, -neonWidth / 2);
+    scene.add(backNeonBar);
+
+    // Left & Right Neon Bars
+    const barLRGeo = new THREE.BoxGeometry(barThick, 0.12, neonWidth + 0.1);
+    const leftNeonBar = new THREE.Mesh(barLRGeo, neonBarMat);
+    leftNeonBar.position.set(-neonWidth / 2, 0.04, 0);
+    scene.add(leftNeonBar);
+
+    const rightNeonBar = new THREE.Mesh(barLRGeo, neonBarMat);
+    rightNeonBar.position.set(neonWidth / 2, 0.04, 0);
+    scene.add(rightNeonBar);
+
+    // Floor Aura (Radiant electric cyan aura under building)
+    const floorAura = new THREE.PointLight(0x00f0ff, 3.8, 16);
+    floorAura.position.set(0, 0.4, 0);
+    scene.add(floorAura);
 
     // ========================================================
     // 5. ARCHITECTURAL SKELETAL BUILDING (OPEN TRANSPARENT FRAME)

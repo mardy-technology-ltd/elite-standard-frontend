@@ -157,10 +157,27 @@ export default function HeroBanner() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="lg:col-span-5 relative h-[480px] sm:h-[540px] lg:h-[580px] w-full rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl p-5 sm:p-6 overflow-hidden flex flex-col justify-between shadow-2xl group"
+            className="lg:col-span-5 relative h-[500px] sm:h-[550px] lg:h-[590px] w-full rounded-3xl bg-[#030d22] border border-sky-500/30 backdrop-blur-xl p-5 sm:p-6 overflow-hidden flex flex-col justify-between shadow-[0_0_60px_rgba(2,132,199,0.25)] group"
           >
-            {/* Embedded Realtime 3D Three.js Building Canvas */}
-            <ThreeDCanvas />
+            {/* Background Futuristic Light Streaks & Radial Glow (Matching Reference Image) */}
+            <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+              {/* Radial Center Aura */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_55%,rgba(2,132,199,0.35)_0%,rgba(3,13,34,0.95)_75%)]" />
+
+              {/* Diagonal Light Beam 1 (Top-Left to Center) */}
+              <div className="absolute -top-24 -left-24 w-96 h-[500px] bg-gradient-to-br from-sky-500/25 via-sky-400/8 to-transparent rotate-[-35deg] blur-2xl transform" />
+
+              {/* Diagonal Light Beam 2 (Top-Right to Bottom-Left Accent) */}
+              <div className="absolute -top-32 -right-24 w-[450px] h-[600px] bg-gradient-to-bl from-sky-400/30 via-sky-500/10 to-transparent rotate-[25deg] blur-3xl transform" />
+
+              {/* Futuristic Diagonal Laser Accent Lines */}
+              <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(56,189,248,0.035)_0px,rgba(56,189,248,0.035)_2px,transparent_2px,transparent_70px)] opacity-70" />
+            </div>
+
+            {/* Embedded Realtime 3D Three.js Building Canvas (Perfect snug viewport above bottom text) */}
+            <div className="absolute inset-x-0 top-0 bottom-[108px] z-0">
+              <ThreeDCanvas />
+            </div>
 
             {/* Top Floating Glass Badge */}
             <div className="relative z-10 flex items-center justify-between pointer-events-none">
@@ -174,29 +191,32 @@ export default function HeroBanner() {
               </span>
             </div>
 
-            {/* Center Label (Integrated MEP Building Matrix) */}
-            <div className="relative z-10 text-center pointer-events-none mt-auto mb-3">
-              <span className="block text-xs font-black text-white uppercase tracking-widest drop-shadow-md">
-                INTEGRATED MEP BUILDING MATRIX
-              </span>
-              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[10px] font-semibold text-slate-300 mt-1">
-                <span className="text-sky-400 flex items-center gap-1">❄️ Central HVAC</span>
-                <span className="text-slate-600">•</span>
-                <span className="text-amber-400 flex items-center gap-1">⚡ LT/HT Power</span>
-                <span className="text-slate-600">•</span>
-                <span className="text-teal-400 flex items-center gap-1">🚰 Utility Pipelines</span>
-              </div>
-            </div>
-
-            {/* Bottom Floating Stats Badge */}
-            <div className="relative z-10 bg-slate-900/90 backdrop-blur-md p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between pointer-events-auto">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-accent/20 text-accent flex items-center justify-center text-xs font-bold">
-                  <FaShieldAlt />
+            {/* Bottom Group (Snug, compact layout sitting right below the building foundation) */}
+            <div className="relative z-10 flex flex-col gap-2 mt-auto">
+              {/* Integrated MEP Building Matrix Title & Systems */}
+              <div className="text-center pointer-events-none bg-slate-950/70 backdrop-blur-md py-1.5 px-3 rounded-xl border border-slate-800/60 shadow-md">
+                <span className="block text-xs sm:text-[13px] font-black text-white uppercase tracking-widest drop-shadow-md">
+                  INTEGRATED MEP BUILDING MATRIX
+                </span>
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] font-semibold text-slate-200 mt-0.5">
+                  <span className="text-sky-400 flex items-center gap-1 font-bold">❄️ Central HVAC</span>
+                  <span className="text-slate-500">•</span>
+                  <span className="text-amber-400 flex items-center gap-1 font-bold">⚡ LT/HT Power</span>
+                  <span className="text-slate-500">•</span>
+                  <span className="text-teal-400 flex items-center gap-1 font-bold">🚰 Utility Pipelines</span>
                 </div>
-                <div>
-                  <span className="block text-xs font-extrabold text-white">100% Code & Safety Compliant</span>
-                  <span className="block text-[10px] text-slate-400">BNBC, NFPA & ASHRAE Standards</span>
+              </div>
+
+              {/* Bottom Floating Compliance Badge */}
+              <div className="bg-slate-900/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-slate-800 flex items-center justify-between pointer-events-auto shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-accent/20 text-accent flex items-center justify-center text-xs font-bold">
+                    <FaShieldAlt />
+                  </div>
+                  <div>
+                    <span className="block text-xs font-extrabold text-white">100% Code & Safety Compliant</span>
+                    <span className="block text-[10px] text-slate-300">BNBC, NFPA & ASHRAE Standards</span>
+                  </div>
                 </div>
               </div>
             </div>
