@@ -94,7 +94,7 @@ export async function POST(req: Request) {
         pdfUrl: data.pdfUrl?.trim() || '',
         isActive: data.isActive !== false,
         orderIndex: typeof data.orderIndex === 'number' ? data.orderIndex : count + 1,
-      },
+      } as any,
     });
 
     return NextResponse.json({ success: true, bulletin });

@@ -36,7 +36,7 @@ export async function PUT(
         pdfUrl: data.pdfUrl?.trim() || '',
         isActive: data.isActive !== false,
         orderIndex: typeof data.orderIndex === 'number' ? data.orderIndex : 0,
-      },
+      } as any,
     });
 
     return NextResponse.json({ success: true, bulletin: updated });
