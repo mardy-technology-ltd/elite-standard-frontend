@@ -11,6 +11,14 @@ export default function ThreeDCanvas() {
     const container = mountRef.current;
     if (!container) return;
 
+    // Detect mobile screen or touch device for hardware optimization
+    const isMobile =
+      typeof window !== "undefined" &&
+      (window.innerWidth < 768 ||
+        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ));
+
     // 1. Scene, Camera & WebGL Renderer
     const scene = new THREE.Scene();
     const width = container.clientWidth || 500;
@@ -21,16 +29,25 @@ export default function ThreeDCanvas() {
     camera.position.set(11.5, 11.2, 43.0);
 
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias: !isMobile, // Disable on mobile to prevent GPU thermal throttling
       alpha: true,
-      powerPreference: "high-performance",
+      powerPreference: isMobile ? "default" : "high-performance",
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.18; // Balanced natural brightness
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    // Shadows enabled only on desktop
+    if (!isMobile) {
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    } else {
+      renderer.shadowMap.enabled = false;
+    }
+
+    // Set touchAction to pan-y so vertical scrolling works seamlessly
+    renderer.domElement.style.touchAction = "pan-y";
     container.appendChild(renderer.domElement);
 
     // 2. Interactive Controls (Continuous Horizontal 360° Turntable, Vertical Tilt Locked)
@@ -42,6 +59,12 @@ export default function ThreeDCanvas() {
     controls.enablePan = false;  // Disables accidental panning off-screen
     controls.autoRotate = true;  // Continuously rotates 360 degrees
     controls.autoRotateSpeed = 0.8; // Smooth, steady rotation showing all 4 sides
+
+    // On mobile, lock touch rotation so the user's natural finger swipes scroll the webpage without being blocked
+    if (isMobile) {
+      controls.enableRotate = false;
+      controls.touches = { ONE: 0 as any, TWO: 0 as any };
+    }
 
     // Lock vertical polar angle to this upward-tilted elevation
     const fixedPolarAngle = Math.acos(2.4 / 44.56); // ~1.517 rad
@@ -55,9 +78,11 @@ export default function ThreeDCanvas() {
     // Primary Sun Light (Directional architectural sunlight)
     const sunLight = new THREE.DirectionalLight(0xffffff, 2.3);
     sunLight.position.set(24, 40, 26);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 1024;
-    sunLight.shadow.mapSize.height = 1024;
+    if (!isMobile) {
+      sunLight.castShadow = true;
+      sunLight.shadow.mapSize.width = 1024;
+      sunLight.shadow.mapSize.height = 1024;
+    }
     scene.add(sunLight);
 
     // Cool Blue Rim Backlight (Accentuates structural concrete edges with cyan highlights)
@@ -481,9 +506,9 @@ export default function ThreeDCanvas() {
         const pulse = new THREE.Mesh(pulseGeo, pulseMat);
         mepGroup.add(pulse);
 
-        // Soft Point Light on select electrons for subtle ambient glow
+        // Soft Point Light on select electrons (desktop only to prevent mobile GPU thermal throttling)
         let light: THREE.PointLight | undefined;
-        if (i % 3 === 0) {
+        if (!isMobile && i % 3 === 0) {
           light = new THREE.PointLight(glowColor, 1.8, 2.6);
           mepGroup.add(light);
         }
@@ -675,12 +700,27 @@ export default function ThreeDCanvas() {
       0.075
     );
 
-    // 7. Animation Loop (Smooth Gentle Electron Movement along Straight Pipes)
+    // 7. Animation Loop (with Viewport-Aware Auto-Pausing)
     const clock = new THREE.Clock();
     let animId: number;
+    let isVisible = true;
+
+    // Pause WebGL rendering loop when user scrolls away from hero banner
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(container);
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
+
+      // Save GPU/CPU & battery when scrolled off-screen
+      if (!isVisible) return;
 
       const elapsedTime = clock.getElapsedTime();
 
@@ -718,6 +758,7 @@ export default function ThreeDCanvas() {
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      observer.disconnect();
       cancelAnimationFrame(animId);
       controls.dispose();
       renderer.dispose();
@@ -730,7 +771,8 @@ export default function ThreeDCanvas() {
   return (
     <div
       ref={mountRef}
-      className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing z-0"
+      style={{ touchAction: "pan-y" }}
+      className="absolute inset-0 w-full h-full pointer-events-none md:pointer-events-auto cursor-grab active:cursor-grabbing z-0"
     />
   );
 }

@@ -1019,36 +1019,23 @@ export default function AdminServicesPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                        URL Slug <span className="text-red-400">*</span>
-                      </label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="block text-xs font-bold text-slate-300">
+                          URL Slug (Auto-generated)
+                        </label>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          /services/{formData.parentFlagshipId?.toLowerCase() || formData.category}/{formData.slug || "..."}
+                        </span>
+                      </div>
                       <input
                         type="text"
-                        required
                         value={formData.slug}
                         onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                        placeholder="e.g. hvac-systems"
+                        placeholder="e.g. vrf-vrv-multi-split-systems"
                         className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 font-mono transition-colors"
                       />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                        Icon Symbol
-                      </label>
-                      <select
-                        value={formData.icon}
-                        onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
-                      >
-                        {AVAILABLE_ICONS.map((ic) => (
-                          <option key={ic.name} value={ic.name}>
-                            {ic.label} ({ic.name})
-                          </option>
-                        ))}
-                      </select>
                     </div>
 
                     <div>

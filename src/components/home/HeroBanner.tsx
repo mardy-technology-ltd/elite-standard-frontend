@@ -157,7 +157,7 @@ export default function HeroBanner() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="lg:col-span-5 relative h-[500px] sm:h-[550px] lg:h-[590px] w-full rounded-3xl bg-[#030d22] border border-sky-500/30 backdrop-blur-xl p-5 sm:p-6 overflow-hidden flex flex-col justify-between shadow-[0_0_60px_rgba(2,132,199,0.25)] group"
+            className="lg:col-span-5 relative h-[420px] sm:h-[500px] lg:h-[590px] w-full rounded-3xl bg-[#030d22] border border-sky-500/30 backdrop-blur-xl p-5 sm:p-6 overflow-hidden flex flex-col justify-between shadow-[0_0_60px_rgba(2,132,199,0.25)] group"
           >
             {/* Background Futuristic Light Streaks & Radial Glow (Matching Reference Image) */}
             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
@@ -175,7 +175,7 @@ export default function HeroBanner() {
             </div>
 
             {/* Embedded Realtime 3D Three.js Building Canvas (Perfect snug viewport above bottom text) */}
-            <div className="absolute inset-x-0 top-0 bottom-[108px] z-0">
+            <div className="absolute inset-x-0 top-0 bottom-[108px] z-0 pointer-events-none md:pointer-events-auto">
               <ThreeDCanvas />
             </div>
 
