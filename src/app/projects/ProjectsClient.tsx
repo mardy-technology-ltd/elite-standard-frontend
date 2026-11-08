@@ -28,6 +28,7 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import Image from "next/image";
+import Link from "next/link";
 import { projectsData, ProjectItem } from "@/lib/mockData";
 
 const clientReferences = [
@@ -370,6 +371,24 @@ export default function ProjectsClient({
                   </div>
                 </div>
               </div>
+
+              {/* Action Buttons */}
+              <div className="pt-4 flex flex-wrap items-center gap-3">
+                <Link
+                  href={`/projects/${highlightedProject.slug}`}
+                  className="inline-flex items-center gap-2.5 bg-accent hover:bg-amber-400 text-brand-950 font-extrabold text-xs py-3 px-6 rounded-xl transition-all shadow-lg active:scale-95"
+                >
+                  <span>View Full Project Details</span>
+                  <FaArrowRight className="text-xs" />
+                </Link>
+                <a
+                  href={`/contact?type=quotation&project=${encodeURIComponent(highlightedProject.title)}`}
+                  className="inline-flex items-center gap-2 bg-slate-100 hover:bg-white text-brand-950 font-bold text-xs py-3 px-5 rounded-xl border border-slate-200 transition-colors"
+                >
+                  <FaPaperPlane className="text-[10px]" />
+                  <span>Request BOQ</span>
+                </a>
+              </div>
             </div>
           </motion.div>
         </section>
@@ -466,7 +485,10 @@ export default function ProjectsClient({
             >
               <div>
                 {/* Image Showcase */}
-                <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-900 shrink-0">
+                <Link
+                  href={`/projects/${project.slug}`}
+                  className="relative block h-52 sm:h-56 w-full overflow-hidden bg-slate-900 shrink-0 cursor-pointer"
+                >
                   <Image
                     src={project.image}
                     alt={project.title}
@@ -503,18 +525,20 @@ export default function ProjectsClient({
                   {project.gallery && project.gallery.length > 0 && (
                     <button
                       type="button"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         setGalleryModalProject(project);
                         setModalPhotoIdx(0);
                       }}
-                      className="absolute bottom-3 right-3 text-[10px] font-bold bg-brand-950/85 hover:bg-accent hover:text-brand-950 text-white backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-1.5 shadow transition-all duration-200 active:scale-95"
+                      className="absolute bottom-3 right-3 text-[10px] font-bold bg-brand-950/85 hover:bg-accent hover:text-brand-950 text-white backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-1.5 shadow transition-all duration-200 active:scale-95 z-10"
                       title="View all project photos"
                     >
                       <FaImages className="text-accent hover:text-brand-950 text-[11px]" />
                       <span>{project.gallery.length} Photos</span>
                     </button>
                   )}
-                </div>
+                </Link>
 
                 {/* Body Content */}
                 <div className="p-6">
@@ -531,9 +555,11 @@ export default function ProjectsClient({
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-heading text-base sm:text-lg font-bold text-brand-950 group-hover:text-brand-800 transition-colors leading-snug mb-2 line-clamp-2">
-                    {project.title}
-                  </h3>
+                  <Link href={`/projects/${project.slug}`}>
+                    <h3 className="font-heading text-base sm:text-lg font-bold text-brand-950 hover:text-accent transition-colors leading-snug mb-2 line-clamp-2">
+                      {project.title}
+                    </h3>
+                  </Link>
 
                   {/* Description */}
                   <p className="text-slate-600 text-xs leading-relaxed mb-4 line-clamp-2">
@@ -558,13 +584,21 @@ export default function ProjectsClient({
               </div>
 
               {/* Bottom Action Bar */}
-              <div className="p-6 pt-0">
+              <div className="p-6 pt-0 flex flex-col sm:flex-row items-center gap-2">
+                <Link
+                  href={`/projects/${project.slug}`}
+                  className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 bg-brand-950 hover:bg-accent text-white hover:text-brand-950 font-extrabold text-xs py-3 px-4 rounded-xl transition-all duration-300 shadow-md active:scale-95 group/btn"
+                >
+                  <span>View Project Details</span>
+                  <FaArrowRight className="text-xs group-hover/btn:translate-x-1 transition-transform" />
+                </Link>
                 <a
                   href={`/contact?type=quotation&project=${encodeURIComponent(project.title)}`}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-brand-950 text-brand-950 hover:text-accent font-bold text-xs py-2.5 px-4 rounded-xl transition-all duration-200 border border-slate-200 hover:border-brand-950 shadow-sm"
+                  title="Request Similar BOQ"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-3 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-brand-950 text-xs font-semibold border border-slate-200 transition-colors shrink-0"
                 >
                   <FaPaperPlane className="text-[10px]" />
-                  <span>Request Similar Solution / BOQ</span>
+                  <span className="sm:hidden">Request BOQ</span>
                 </a>
               </div>
             </motion.div>

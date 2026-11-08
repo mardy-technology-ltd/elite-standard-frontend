@@ -141,10 +141,10 @@ export default function ServiceRelatedProjects({
               {/* Bottom Action Bar */}
               <div className="p-6 pt-0">
                 <Link
-                  href={`/projects#${project.slug}`}
+                  href={`/projects/${project.slug}`}
                   className="w-full inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-brand-950 text-brand-950 hover:text-accent font-bold text-xs py-2.5 px-4 rounded-xl transition-all duration-200 border border-slate-200 hover:border-brand-950 shadow-sm"
                 >
-                  <span>View Project Case Study</span>
+                  <span>View Project Details</span>
                   <FaArrowRight className="text-[10px]" />
                 </Link>
               </div>

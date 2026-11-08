@@ -105,10 +105,10 @@ export default function FeaturedProjects({ initialProjects }: FeaturedProjectsPr
                 {/* Footer Link */}
                 <div className="pt-2">
                   <Link
-                    href={`/projects#${project.slug}`}
+                    href={`/projects/${project.slug}`}
                     className="inline-flex items-center gap-2 text-xs font-bold text-accent hover:text-white uppercase tracking-wider group/link"
                   >
-                    <span>View Project Case Study</span>
+                    <span>View Project Details</span>
                     <FaArrowRight className="text-[10px] group-hover/link:translate-x-1 transition-transform" />
                   </Link>
                 </div>
