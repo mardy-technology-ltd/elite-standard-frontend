@@ -6,11 +6,12 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
+    const subCategory = searchParams.get('subCategory');
     const search = searchParams.get('search');
 
     const where: any = {};
     if (category && category !== 'all') {
-      where.category = category;
+      where.category = { equals: category, mode: 'insensitive' };
     }
     if (search) {
       where.OR = [
@@ -20,10 +21,29 @@ export async function GET(req: Request) {
       ];
     }
 
-    const projects = await prisma.project.findMany({
+    let projects = await prisma.project.findMany({
       where,
       orderBy: { createdAt: 'desc' },
     });
+
+    try {
+      const subRows: any[] = await prisma.$queryRawUnsafe(
+        `SELECT "id", "subCategory" FROM "Project"`
+      );
+      const subMap = new Map(subRows.map((r) => [r.id, r.subCategory]));
+      projects = projects.map((p: any) => ({
+        ...p,
+        subCategory: p.subCategory || subMap.get(p.id) || null,
+      }));
+    } catch (e) {
+      // ignore
+    }
+
+    // In-memory subCategory filter for 100% compatibility
+    if (subCategory && subCategory !== 'all') {
+      const subLower = subCategory.toLowerCase();
+      projects = projects.filter((p: any) => p.subCategory?.toLowerCase() === subLower);
+    }
 
     return NextResponse.json({ success: true, projects });
   } catch (error: any) {
@@ -66,6 +86,15 @@ export async function POST(req: Request) {
         isFeatured: Boolean(data.isFeatured),
       },
     });
+
+    if (data.subCategory) {
+      await prisma.$executeRawUnsafe(
+        `UPDATE "Project" SET "subCategory" = $1 WHERE "id" = $2`,
+        data.subCategory,
+        id
+      );
+      (project as any).subCategory = data.subCategory;
+    }
 
     return NextResponse.json({ success: true, project });
   } catch (error: any) {

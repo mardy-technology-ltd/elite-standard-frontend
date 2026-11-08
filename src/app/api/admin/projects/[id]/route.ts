@@ -25,10 +25,20 @@ export async function PUT(
         completionDate: data.completionDate,
         description: data.description,
         image: data.image,
+        gallery: data.gallery !== undefined ? (Array.isArray(data.gallery) ? data.gallery : []) : undefined,
         scope: data.scope,
         ...(data.isFeatured !== undefined ? { isFeatured: Boolean(data.isFeatured) } : {}),
       },
     });
+
+    if (data.subCategory !== undefined) {
+      await prisma.$executeRawUnsafe(
+        `UPDATE "Project" SET "subCategory" = $1 WHERE "id" = $2`,
+        data.subCategory || null,
+        id
+      );
+      (updated as any).subCategory = data.subCategory;
+    }
 
     return NextResponse.json({ success: true, project: updated });
   } catch (error: any) {

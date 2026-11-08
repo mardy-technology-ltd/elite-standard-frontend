@@ -126,3 +126,94 @@ export function getFlagshipDomain(keyOrSlug: string): FlagshipDomainInfo | null 
   return FLAGSHIP_DOMAINS_OVERVIEW[clean] || null;
 }
 
+export const MEP_SUB_CATEGORIES: Record<
+  string,
+  Array<{
+    code: string;
+    title: string;
+    slug: string;
+    icon: string;
+    subtitle: string;
+    compliance: string;
+  }>
+> = {
+  mechanical: [
+    {
+      code: "HVAC",
+      title: "Heating, Ventilation & Air Conditioning (HVAC)",
+      slug: "hvac-systems",
+      icon: "FaSnowflake",
+      subtitle: "Central HVAC, VRF & Cleanroom AHU Systems",
+      compliance: "BNBC, ASHRAE, SMACNA, NFPA",
+    },
+    {
+      code: "FDPS",
+      title: "Fire Detection & Protection System (FDPS)",
+      slug: "fdps",
+      icon: "FaFireExtinguisher",
+      subtitle: "Addressable Alarms, Sprinklers & Hydrants",
+      compliance: "BNBC, NFPA, FSCD",
+    },
+    {
+      code: "GUDS",
+      title: "Gas & Utility Distribution System (GUDS / PDCP)",
+      slug: "guds",
+      icon: "FaIndustry",
+      subtitle: "LPG / Natural Gas Pipeline & Leak Interlock Controls",
+      compliance: "BNBC, NFPA 54, Titas Gas",
+    },
+  ],
+  electrical: [
+    {
+      code: "PDCP",
+      title: "Power Distribution & Control Panel (PDCP / STAS)",
+      slug: "pdcp",
+      icon: "FaBolt",
+      subtitle: "Form-4 LT Switchgear, Substation & Smart MCC",
+      compliance: "BNBC, IEC 61439, IEEE",
+    },
+    {
+      code: "EELS",
+      title: "Electrical & Lighting Systems (EELS / ELV)",
+      slug: "eels",
+      icon: "FaLightbulb",
+      subtitle: "Busbar Trunking, ESE Lightning Grid & DALI LED",
+      compliance: "BNBC, IEC, IEEE, IESNA",
+    },
+    {
+      code: "IBA",
+      title: "Industrial Building Automation (IBA / BMS)",
+      slug: "iba",
+      icon: "FaMicrochip",
+      subtitle: "Siemens/Schneider PLC, SCADA & BMS Telemetry",
+      compliance: "BNBC, BACnet, Modbus, IEC 61131",
+    },
+  ],
+  plumbing: [
+    {
+      code: "WSDS",
+      title: "Water Supply & Drainage Systems (WSDS)",
+      slug: "wsds",
+      icon: "FaShower",
+      subtitle: "VFD Booster Pumps & PPR Supply Networks",
+      compliance: "BNBC, IPC, WASA",
+    },
+    {
+      code: "WTS",
+      title: "Water Treatment Systems (WTS / ETP / STP)",
+      slug: "wts",
+      icon: "FaWater",
+      subtitle: "Effluent ETP, STP, ZLD, IRP & Reverse Osmosis",
+      compliance: "BNBC, DoE, WHO, BDS",
+    },
+    {
+      code: "RHS",
+      title: "Renewable & Solar Solutions (RHS)",
+      slug: "rhs",
+      icon: "FaSun",
+      subtitle: "Rooftop Solar PV Plants, Net Metering & Inverters",
+      compliance: "SREDA, IEC 61215, BREB",
+    },
+  ],
+};
+

@@ -82,6 +82,7 @@ export interface ProjectItem {
   slug: string;
   title: string;
   category: string;
+  subCategory?: string;
   client: string;
   location: string;
   completionDate: string;

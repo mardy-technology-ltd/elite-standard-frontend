@@ -8,8 +8,8 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+// Ensure fresh PrismaClient in development when schema changes
 export const prisma =
-  globalForPrisma.prisma ??
   new PrismaClient({
     datasourceUrl: databaseUrl,
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],

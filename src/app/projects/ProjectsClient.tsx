@@ -23,6 +23,9 @@ import {
   FaSearch,
   FaTimes,
   FaPaperPlane,
+  FaImages,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import Image from "next/image";
 import { projectsData, ProjectItem } from "@/lib/mockData";
@@ -140,6 +143,8 @@ export default function ProjectsClient({
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("All Sectors");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [galleryModalProject, setGalleryModalProject] = useState<ProjectItem | null>(null);
+  const [modalPhotoIdx, setModalPhotoIdx] = useState<number>(0);
 
   useEffect(() => {
     if (initialProjects && initialProjects.length > 0) {
@@ -308,6 +313,11 @@ export default function ProjectsClient({
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">
                     {highlightedProject.category}
                   </span>
+                  {highlightedProject.subCategory && (
+                    <span className="text-[10px] font-extrabold text-blue-700 bg-blue-50 border border-blue-200/60 px-2 py-0.5 rounded uppercase tracking-wider">
+                      {highlightedProject.subCategory}
+                    </span>
+                  )}
                 </div>
                 <h3 className="font-heading text-xl sm:text-2xl font-extrabold text-brand-950 leading-snug">
                   {highlightedProject.title}
@@ -471,6 +481,11 @@ export default function ProjectsClient({
                     <div className="bg-brand-950/90 backdrop-blur-md px-3 py-1 rounded-lg border border-accent/30 text-[11px] font-bold text-accent shadow-sm">
                       {project.category}
                     </div>
+                    {project.subCategory && (
+                      <div className="bg-blue-600/90 text-white backdrop-blur-md px-2.5 py-1 rounded-lg text-[10px] font-extrabold tracking-wide uppercase shadow-sm border border-blue-400/30">
+                        {project.subCategory}
+                      </div>
+                    )}
                     {project.isFeatured && (
                       <div className="bg-amber-500 text-slate-950 font-extrabold px-2.5 py-1 rounded-lg text-[10px] tracking-wide uppercase shadow-md flex items-center gap-1">
                         <span>⭐</span> Featured Landmark
@@ -483,6 +498,22 @@ export default function ProjectsClient({
                     <FaCalendarAlt className="text-accent text-[10px]" />
                     <span>{project.completionDate}</span>
                   </div>
+
+                  {/* Multi-Photo Gallery Trigger */}
+                  {project.gallery && project.gallery.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGalleryModalProject(project);
+                        setModalPhotoIdx(0);
+                      }}
+                      className="absolute bottom-3 right-3 text-[10px] font-bold bg-brand-950/85 hover:bg-accent hover:text-brand-950 text-white backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-1.5 shadow transition-all duration-200 active:scale-95"
+                      title="View all project photos"
+                    >
+                      <FaImages className="text-accent hover:text-brand-950 text-[11px]" />
+                      <span>{project.gallery.length} Photos</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Body Content */}
@@ -647,6 +678,146 @@ export default function ProjectsClient({
           </div>
         </div>
       </section>
+
+      {/* 5. Interactive Full-Screen / Lightbox Project Photo Gallery Modal */}
+      <AnimatePresence>
+        {galleryModalProject && galleryModalProject.gallery && galleryModalProject.gallery.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6"
+            onClick={() => setGalleryModalProject(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="relative max-w-5xl w-full bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-800/80 bg-slate-900/60">
+                <div className="space-y-0.5 pr-4">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-indigo-600/30 text-indigo-300 border border-indigo-500/40">
+                      {galleryModalProject.category}
+                    </span>
+                    {galleryModalProject.subCategory && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-blue-600 text-white">
+                        {galleryModalProject.subCategory}
+                      </span>
+                    )}
+                    <span className="text-xs text-slate-400 font-mono">
+                      Photo {modalPhotoIdx + 1} of {galleryModalProject.gallery.length}
+                    </span>
+                  </div>
+                  <h3 className="font-heading text-sm sm:text-base font-bold text-white truncate max-w-lg">
+                    {galleryModalProject.title}
+                  </h3>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setGalleryModalProject(null)}
+                  className="p-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                >
+                  <FaTimes className="text-sm" />
+                </button>
+              </div>
+
+              {/* Main Photo Display */}
+              <div className="relative flex-1 min-h-[300px] sm:min-h-[460px] bg-slate-950 flex items-center justify-center overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={modalPhotoIdx}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="relative w-full h-full min-h-[300px] sm:min-h-[460px]"
+                  >
+                    <Image
+                      src={galleryModalProject.gallery[modalPhotoIdx]?.image || galleryModalProject.image}
+                      alt={galleryModalProject.gallery[modalPhotoIdx]?.title || "Project Photo"}
+                      fill
+                      className="object-contain p-2 sm:p-4"
+                      priority
+                    />
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Left/Right Navigation Arrows */}
+                {galleryModalProject.gallery.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setModalPhotoIdx((prev) =>
+                          prev === 0 ? galleryModalProject.gallery!.length - 1 : prev - 1
+                        )
+                      }
+                      className="absolute left-3 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-900/80 hover:bg-indigo-600 text-white backdrop-blur-sm border border-slate-700/60 shadow-lg transition-all"
+                    >
+                      <FaChevronLeft className="text-sm" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setModalPhotoIdx((prev) =>
+                          (prev + 1) % galleryModalProject.gallery!.length
+                        )
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-900/80 hover:bg-indigo-600 text-white backdrop-blur-sm border border-slate-700/60 shadow-lg transition-all"
+                    >
+                      <FaChevronRight className="text-sm" />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Modal Footer: Caption & Thumbnails Strip */}
+              <div className="p-4 bg-slate-900/80 border-t border-slate-800 space-y-3">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-slate-200">
+                    {galleryModalProject.gallery[modalPhotoIdx]?.title ||
+                      `Field Installation Photo #${modalPhotoIdx + 1}`}
+                  </span>
+                  <span className="text-slate-400 text-[11px]">
+                    {galleryModalProject.client} • {galleryModalProject.location}
+                  </span>
+                </div>
+
+                {/* Thumbnails Strip */}
+                {galleryModalProject.gallery.length > 1 && (
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                    {galleryModalProject.gallery.map((g, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setModalPhotoIdx(idx)}
+                        className={`relative w-16 h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all ${
+                          modalPhotoIdx === idx
+                            ? "border-indigo-400 scale-105 shadow-md shadow-indigo-500/20"
+                            : "border-slate-700/60 opacity-60 hover:opacity-100 hover:border-slate-500"
+                        }`}
+                      >
+                        <Image
+                          src={g.image}
+                          alt={g.title || "Thumb"}
+                          fill
+                          className="object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

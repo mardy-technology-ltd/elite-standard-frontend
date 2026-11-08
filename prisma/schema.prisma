@@ -54,6 +54,7 @@ model Project {
   slug           String   @unique
   title          String
   category       String
+  subCategory    String?
   client         String
   location       String
   completionDate String
@@ -66,6 +67,7 @@ model Project {
   updatedAt      DateTime @updatedAt
 
   @@index([isFeatured])
+  @@index([category])
 }
 
 // 4. Inquiries, RFQ & Customer Leads

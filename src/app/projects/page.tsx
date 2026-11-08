@@ -26,6 +26,7 @@ export default async function ProjectsPage() {
         slug: p.slug,
         title: p.title,
         category: p.category,
+        subCategory: (p as any).subCategory || undefined,
         client: p.client,
         location: p.location,
         completionDate: p.completionDate,
