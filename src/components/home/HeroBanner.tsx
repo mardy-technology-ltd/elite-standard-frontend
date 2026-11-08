@@ -157,31 +157,31 @@ export default function HeroBanner() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="lg:col-span-5 relative h-[420px] sm:h-[500px] lg:h-[590px] w-full rounded-3xl bg-[#030d22] border border-sky-500/30 backdrop-blur-xl p-5 sm:p-6 overflow-hidden flex flex-col justify-between shadow-[0_0_60px_rgba(2,132,199,0.25)] group"
+            className="lg:col-span-5 relative h-[440px] sm:h-[500px] lg:h-[590px] w-full rounded-3xl bg-[#030d22] border border-sky-500/30 md:backdrop-blur-xl p-5 sm:p-6 overflow-hidden flex flex-col justify-between shadow-[0_0_60px_rgba(2,132,199,0.25)] group"
           >
-            {/* Background Futuristic Light Streaks & Radial Glow (Matching Reference Image) */}
+            {/* Background Futuristic Light Streaks & Radial Glow */}
             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
               {/* Radial Center Aura */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_55%,rgba(2,132,199,0.35)_0%,rgba(3,13,34,0.95)_75%)]" />
 
-              {/* Diagonal Light Beam 1 (Top-Left to Center) */}
-              <div className="absolute -top-24 -left-24 w-96 h-[500px] bg-gradient-to-br from-sky-500/25 via-sky-400/8 to-transparent rotate-[-35deg] blur-2xl transform" />
+              {/* Diagonal Light Beam 1 (Desktop only to prevent mobile GPU blur throttle) */}
+              <div className="hidden md:block absolute -top-24 -left-24 w-96 h-[500px] bg-gradient-to-br from-sky-500/25 via-sky-400/8 to-transparent rotate-[-35deg] blur-2xl transform" />
 
-              {/* Diagonal Light Beam 2 (Top-Right to Bottom-Left Accent) */}
-              <div className="absolute -top-32 -right-24 w-[450px] h-[600px] bg-gradient-to-bl from-sky-400/30 via-sky-500/10 to-transparent rotate-[25deg] blur-3xl transform" />
+              {/* Diagonal Light Beam 2 (Desktop only) */}
+              <div className="hidden md:block absolute -top-32 -right-24 w-[450px] h-[600px] bg-gradient-to-bl from-sky-400/30 via-sky-500/10 to-transparent rotate-[25deg] blur-3xl transform" />
 
               {/* Futuristic Diagonal Laser Accent Lines */}
               <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,rgba(56,189,248,0.035)_0px,rgba(56,189,248,0.035)_2px,transparent_2px,transparent_70px)] opacity-70" />
             </div>
 
-            {/* Embedded Realtime 3D Three.js Building Canvas (Perfect snug viewport above bottom text) */}
+            {/* Embedded Realtime 3D Three.js Building Canvas (Mobile-optimized 35 FPS with zero touch-scroll interference) */}
             <div className="absolute inset-x-0 top-0 bottom-[108px] z-0 pointer-events-none md:pointer-events-auto">
               <ThreeDCanvas />
             </div>
 
             {/* Top Floating Glass Badge */}
             <div className="relative z-10 flex items-center justify-between pointer-events-none">
-              <div className="inline-flex items-center gap-2 bg-slate-900/85 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-accent/40 text-[11px] font-bold text-accent shadow-md pointer-events-auto">
+              <div className="inline-flex items-center gap-2 bg-slate-900/85 md:backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-accent/40 text-[11px] font-bold text-accent shadow-md pointer-events-auto">
                 <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                 <span>Real-Time Building Automation</span>
               </div>
@@ -194,7 +194,7 @@ export default function HeroBanner() {
             {/* Bottom Group (Snug, compact layout sitting right below the building foundation) */}
             <div className="relative z-10 flex flex-col gap-2 mt-auto">
               {/* Integrated MEP Building Matrix Title & Systems */}
-              <div className="text-center pointer-events-none bg-slate-950/70 backdrop-blur-md py-1.5 px-3 rounded-xl border border-slate-800/60 shadow-md">
+              <div className="text-center pointer-events-none bg-slate-950/70 md:backdrop-blur-md py-1.5 px-3 rounded-xl border border-slate-800/60 shadow-md">
                 <span className="block text-xs sm:text-[13px] font-black text-white uppercase tracking-widest drop-shadow-md">
                   INTEGRATED MEP BUILDING MATRIX
                 </span>
@@ -208,7 +208,7 @@ export default function HeroBanner() {
               </div>
 
               {/* Bottom Floating Compliance Badge */}
-              <div className="bg-slate-900/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-slate-800 flex items-center justify-between pointer-events-auto shadow-lg">
+              <div className="bg-slate-900/95 md:backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-slate-800 flex items-center justify-between pointer-events-auto shadow-lg">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-accent/20 text-accent flex items-center justify-center text-xs font-bold">
                     <FaShieldAlt />

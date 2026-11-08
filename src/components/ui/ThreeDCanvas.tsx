@@ -700,10 +700,13 @@ export default function ThreeDCanvas() {
       0.075
     );
 
-    // 7. Animation Loop (with Viewport-Aware Auto-Pausing)
+    // 7. Animation Loop (with Viewport-Aware Auto-Pausing & Mobile FPS Throttling)
     const clock = new THREE.Clock();
     let animId: number;
     let isVisible = true;
+    let lastRenderTime = 0;
+    const targetFps = isMobile ? 35 : 60;
+    const frameInterval = 1000 / targetFps;
 
     // Pause WebGL rendering loop when user scrolls away from hero banner
     const observer = new IntersectionObserver(
@@ -716,11 +719,17 @@ export default function ThreeDCanvas() {
     );
     observer.observe(container);
 
-    const animate = () => {
+    const animate = (timestamp: number) => {
       animId = requestAnimationFrame(animate);
 
       // Save GPU/CPU & battery when scrolled off-screen
       if (!isVisible) return;
+
+      // Throttle framerate on mobile to keep device cool and prevent 100% CPU lock
+      if (timestamp - lastRenderTime < frameInterval) {
+        return;
+      }
+      lastRenderTime = timestamp;
 
       const elapsedTime = clock.getElapsedTime();
 
@@ -742,7 +751,7 @@ export default function ThreeDCanvas() {
       renderer.render(scene, camera);
     };
 
-    animate();
+    animId = requestAnimationFrame(animate);
 
     // 8. Responsive Resize
     const handleResize = () => {
