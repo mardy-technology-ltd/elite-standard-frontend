@@ -133,59 +133,65 @@ export default function ProjectDetailsClient({
           </h1>
 
           {/* Key Facts Summary Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white/15 max-w-4xl">
-            <div className="flex items-center gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8 pt-6 border-t border-white/15 max-w-5xl">
+            <div className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center text-base shrink-0 border border-accent/30">
                 <FaBuilding />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
                   Enterprise Client
                 </span>
-                <span className="text-xs sm:text-sm font-bold text-white truncate block">
+                <span
+                  className="text-xs sm:text-sm font-bold text-white block truncate"
+                  title={project.client}
+                >
                   {project.client}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-red-500/15 text-red-400 flex items-center justify-center text-base shrink-0 border border-red-500/30">
                 <FaMapMarkerAlt />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
                   Site Location
                 </span>
-                <span className="text-xs sm:text-sm font-bold text-white truncate block">
+                <span
+                  className="text-xs sm:text-sm font-bold text-white block truncate"
+                  title={project.location}
+                >
                   {project.location}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-base shrink-0 border border-amber-500/30">
                 <FaCalendarAlt />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
                   Completion Timeline
                 </span>
-                <span className="text-xs sm:text-sm font-bold text-white truncate block">
+                <span className="text-xs sm:text-sm font-bold text-white block truncate">
                   {project.completionDate}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-base shrink-0 border border-emerald-500/30">
                 <FaShieldAlt />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
                   Execution Status
                 </span>
-                <span className="text-xs sm:text-sm font-bold text-emerald-400 block flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                   Commissioned
                 </span>
               </div>
@@ -445,31 +451,35 @@ export default function ProjectDetailsClient({
               </div>
 
               <dl className="space-y-3.5 text-xs">
-                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                  <dt className="text-slate-500 font-medium">Client:</dt>
-                  <dd className="font-bold text-brand-950 text-right truncate max-w-[200px]">{project.client}</dd>
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 gap-2">
+                  <dt className="text-slate-500 font-medium shrink-0">Client:</dt>
+                  <dd className="font-bold text-brand-950 text-right truncate min-w-0" title={project.client}>
+                    {project.client}
+                  </dd>
                 </div>
-                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                  <dt className="text-slate-500 font-medium">Location:</dt>
-                  <dd className="font-bold text-brand-950 text-right">{project.location}</dd>
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 gap-2">
+                  <dt className="text-slate-500 font-medium shrink-0">Location:</dt>
+                  <dd className="font-bold text-brand-950 text-right truncate min-w-0" title={project.location}>
+                    {project.location}
+                  </dd>
                 </div>
-                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                  <dt className="text-slate-500 font-medium">Sector:</dt>
-                  <dd className="font-bold text-brand-950 capitalize">{project.category}</dd>
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 gap-2">
+                  <dt className="text-slate-500 font-medium shrink-0">Sector:</dt>
+                  <dd className="font-bold text-brand-950 capitalize text-right truncate min-w-0">{project.category}</dd>
                 </div>
                 {project.subCategory && (
-                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                    <dt className="text-slate-500 font-medium">Sub-Category:</dt>
-                    <dd className="font-extrabold text-blue-600 uppercase text-[11px]">{project.subCategory}</dd>
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 gap-2">
+                    <dt className="text-slate-500 font-medium shrink-0">Sub-Category:</dt>
+                    <dd className="font-extrabold text-blue-600 uppercase text-[11px] text-right truncate min-w-0">{project.subCategory}</dd>
                   </div>
                 )}
-                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                  <dt className="text-slate-500 font-medium">Completion:</dt>
-                  <dd className="font-bold text-brand-950">{project.completionDate}</dd>
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 gap-2">
+                  <dt className="text-slate-500 font-medium shrink-0">Completion:</dt>
+                  <dd className="font-bold text-brand-950 text-right">{project.completionDate}</dd>
                 </div>
-                <div className="flex items-center justify-between">
-                  <dt className="text-slate-500 font-medium">Status:</dt>
-                  <dd className="font-bold text-emerald-600 flex items-center gap-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <dt className="text-slate-500 font-medium shrink-0">Status:</dt>
+                  <dd className="font-bold text-emerald-600 flex items-center gap-1.5 shrink-0">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     Commissioned
                   </dd>
