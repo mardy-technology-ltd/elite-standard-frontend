@@ -194,132 +194,163 @@ export default function ProjectDetailsClient({
         </div>
       </section>
 
-      {/* 2. MAIN CONTENT GRID (PHOTO GALLERY + EXECUTIVE NARRATIVE + SCOPE) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 relative z-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* LEFT 7 COLS: INTERACTIVE MULTI-PHOTO GALLERY */}
-          <div className="lg:col-span-7 bg-white rounded-3xl p-5 sm:p-7 border border-slate-200 shadow-xl space-y-4">
-            {/* Gallery Top Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <FaImages className="text-accent" />
+      {/* 2. LARGE SHOWCASE: INTERACTIVE MULTI-PHOTO GALLERY */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-14 sm:-mt-18 relative z-20">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200/90 shadow-2xl">
+          {/* Gallery Top Action Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center text-sm border border-accent/30">
+                <FaImages />
+              </div>
+              <div>
                 <h2 className="font-heading text-sm sm:text-base font-bold text-brand-950">
-                  Site Installation & Field Photography
+                  Site Installation & Engineering Photography
                 </h2>
+                <p className="text-[11px] text-slate-500">
+                  High-resolution field documentation and commissioned system snapshots
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1 rounded-full bg-slate-100 text-brand-950 font-mono text-xs font-bold border border-slate-200">
+                Photo {activePhotoIdx + 1} of {gallery.length}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsLightboxOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-950 hover:bg-accent text-white hover:text-brand-950 text-xs font-bold transition-all shadow-sm active:scale-95"
+                title="Fullscreen Zoom"
+              >
+                <FaExpand className="text-[10px]" />
+                <span>Fullscreen</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Active Big Photo Display (Cinematic & Large) */}
+          <div className="relative h-80 sm:h-[460px] md:h-[540px] lg:h-[620px] w-full rounded-2xl overflow-hidden bg-slate-950 group shadow-inner">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activePhotoIdx}
+                initial={{ opacity: 0, scale: 1.01 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
+                className="relative w-full h-full"
+              >
+                <Image
+                  src={activePhoto.image}
+                  alt={activePhoto.title || project.title}
+                  fill
+                  className="object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-700"
+                  onClick={() => setIsLightboxOpen(true)}
+                  priority
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Gradient overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/15 to-transparent pointer-events-none" />
+
+            {/* Photo Caption Overlay */}
+            <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3 pointer-events-none">
+              <div className="max-w-2xl bg-brand-950/70 backdrop-blur-md px-4 py-3 rounded-xl border border-white/10">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-accent block">
+                  Verified Field Inspection Photo • {project.client}
+                </span>
+                <p className="text-sm sm:text-base font-bold text-white drop-shadow leading-snug">
+                  {activePhoto.title || `Commissioned System Phase - Photo #${activePhotoIdx + 1}`}
+                </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 font-mono">
-                  {activePhotoIdx + 1} / {gallery.length}
-                </span>
+              <button
+                type="button"
+                onClick={() => setIsLightboxOpen(true)}
+                className="pointer-events-auto self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 hover:bg-accent text-white hover:text-brand-950 text-xs font-semibold backdrop-blur-md border border-white/20 transition-all"
+              >
+                <FaExpand className="text-[10px]" />
+                <span>Click image to zoom</span>
+              </button>
+            </div>
+
+            {/* Floating Navigation Arrows if more than 1 image */}
+            {gallery.length > 1 && (
+              <>
                 <button
                   type="button"
-                  onClick={() => setIsLightboxOpen(true)}
-                  className="p-2 rounded-xl bg-slate-100 hover:bg-brand-950 text-slate-600 hover:text-white transition-colors"
-                  title="Fullscreen Zoom"
+                  onClick={prevPhoto}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-brand-950/80 hover:bg-accent text-white hover:text-brand-950 backdrop-blur-md border border-white/20 transition-all flex items-center justify-center shadow-lg active:scale-95"
+                  aria-label="Previous Photo"
                 >
-                  <FaExpand className="text-xs" />
+                  <FaChevronLeft className="text-sm" />
                 </button>
-              </div>
-            </div>
-
-            {/* Active Big Photo Display */}
-            <div className="relative h-72 sm:h-96 md:h-[420px] w-full rounded-2xl overflow-hidden bg-slate-900 group">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activePhotoIdx}
-                  initial={{ opacity: 0, scale: 1.02 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="relative w-full h-full"
+                <button
+                  type="button"
+                  onClick={nextPhoto}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-brand-950/80 hover:bg-accent text-white hover:text-brand-950 backdrop-blur-md border border-white/20 transition-all flex items-center justify-center shadow-lg active:scale-95"
+                  aria-label="Next Photo"
                 >
-                  <Image
-                    src={activePhoto.image}
-                    alt={activePhoto.title || project.title}
-                    fill
-                    className="object-cover cursor-pointer"
-                    onClick={() => setIsLightboxOpen(true)}
-                    priority
-                  />
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
-
-              {/* Photo Caption Overlay */}
-              <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between pointer-events-none">
-                <div className="max-w-[80%]">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-accent block">
-                    Verified Field Inspection Photo:
-                  </span>
-                  <p className="text-sm font-bold text-white drop-shadow leading-snug">
-                    {activePhoto.title || `Execution Phase - Photo #${activePhotoIdx + 1}`}
-                  </p>
-                </div>
-              </div>
-
-              {/* Slider Arrows if more than 1 image */}
-              {gallery.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={prevPhoto}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-900/80 hover:bg-accent text-white hover:text-brand-950 backdrop-blur-md border border-white/20 transition-all opacity-80 group-hover:opacity-100"
-                    aria-label="Previous Photo"
-                  >
-                    <FaChevronLeft className="text-xs" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={nextPhoto}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-900/80 hover:bg-accent text-white hover:text-brand-950 backdrop-blur-md border border-white/20 transition-all opacity-80 group-hover:opacity-100"
-                    aria-label="Next Photo"
-                  >
-                    <FaChevronRight className="text-xs" />
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Thumbnail Navigation Strip */}
-            {gallery.length > 1 && (
-              <div className="flex items-center gap-2.5 overflow-x-auto pb-2 pt-1 scrollbar-thin">
-                {gallery.map((item, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setActivePhotoIdx(idx)}
-                    className={`relative w-20 h-14 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
-                      activePhotoIdx === idx
-                        ? "border-accent scale-105 shadow-md shadow-accent/20 ring-2 ring-accent/30"
-                        : "border-slate-200 opacity-60 hover:opacity-100 hover:border-slate-400"
-                    }`}
-                  >
-                    <Image
-                      src={item.image}
-                      alt={item.title || `Thumb ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
+                  <FaChevronRight className="text-sm" />
+                </button>
+              </>
             )}
           </div>
 
-          {/* RIGHT 5 COLS: EXECUTIVE SUMMARY & TECHNICAL SCOPE */}
-          <div className="lg:col-span-5 space-y-6">
-            {/* Executive Engineering Summary Card */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold border border-indigo-100">
-                <FaProjectDiagram />
-                <span>Executive Case Study Narrative</span>
+          {/* Thumbnail Navigation Ribbon */}
+          {gallery.length > 1 && (
+            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0 hidden sm:inline-block">
+                All Photos:
+              </span>
+              {gallery.map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActivePhotoIdx(idx)}
+                  className={`group relative w-24 sm:w-28 h-16 sm:h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
+                    activePhotoIdx === idx
+                      ? "border-accent scale-105 shadow-md shadow-accent/20 ring-2 ring-accent/40"
+                      : "border-slate-200 opacity-70 hover:opacity-100 hover:border-slate-400"
+                  }`}
+                >
+                  <Image
+                    src={item.image}
+                    alt={item.title || `Thumb ${idx + 1}`}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform"
+                  />
+                  <div className="absolute inset-0 bg-brand-950/20 group-hover:bg-transparent transition-colors" />
+                  <span className="absolute bottom-1 right-1.5 px-1 py-0.2 bg-brand-950/85 text-[9px] font-mono font-bold text-white rounded">
+                    {idx + 1}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 3. DETAILS CONTENT CARDS DISPLAYED BELOW THE IMAGE */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 sm:mt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* LEFT 8 COLUMNS: NARRATIVE + SCOPE OF WORK CHECKLIST */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* Card 1: Executive Case Study Narrative */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">
+                  <FaProjectDiagram />
+                  <span>Executive Case Study Narrative</span>
+                </div>
+                <span className="text-xs font-semibold text-slate-500">
+                  Sector: <strong className="text-brand-950 capitalize">{project.category}</strong>
+                </span>
               </div>
 
               <h2 className="font-heading text-xl sm:text-2xl font-bold text-brand-950">
-                Engineering Challenge & Solution
+                Engineering Challenge & Turnkey Solution
               </h2>
 
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed border-l-4 border-accent pl-4 py-1">
@@ -327,78 +358,149 @@ export default function ProjectDetailsClient({
                   "Turnkey mechanical, electrical, and plumbing engineering execution delivering full compliance with Bangladesh National Building Code (BNBC) and international safety standards."}
               </p>
 
-              {/* Compliance & Engineering Verification Badges */}
-              <div className="pt-4 border-t border-slate-100 flex flex-wrap gap-2 text-xs font-semibold text-slate-600">
-                <span className="px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 flex items-center gap-1.5">
-                  <FaCheckCircle className="text-emerald-500 text-[10px]" />
-                  BNBC & NFPA Certified
-                </span>
-                <span className="px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 flex items-center gap-1.5">
-                  <FaCheckCircle className="text-emerald-500 text-[10px]" />
-                  OEM Warranty Backed
-                </span>
-                <span className="px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 flex items-center gap-1.5">
-                  <FaCheckCircle className="text-emerald-500 text-[10px]" />
-                  24/7 Monitoring Ready
-                </span>
+              {/* Engineering Standards & Certifications Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-slate-100">
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm shrink-0">
+                    <FaCheckCircle />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-extrabold text-brand-950 block">BNBC & NFPA</span>
+                    <span className="text-[10px] text-slate-500">Full Standard Compliance</span>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-sm shrink-0">
+                    <FaShieldAlt />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-extrabold text-brand-950 block">OEM Warranty</span>
+                    <span className="text-[10px] text-slate-500">Tier-1 Certified Equipment</span>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-sm shrink-0">
+                    <FaTools />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-extrabold text-brand-950 block">24/7 Support</span>
+                    <span className="text-[10px] text-slate-500">Dedicated Service Response</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Scope of Work Deliverables Card */}
+            {/* Card 2: Scope of Work Deliverables */}
             {project.scope && project.scope.length > 0 && (
-              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-heading text-lg font-bold text-brand-950 flex items-center gap-2">
-                    <FaTools className="text-accent" />
-                    <span>Scope of Work & Deliverables</span>
-                  </h3>
-                  <span className="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-5">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center text-sm border border-accent/30">
+                      <FaTools />
+                    </div>
+                    <div>
+                      <h3 className="font-heading text-lg font-bold text-brand-950">
+                        Scope of Work & Deliverables
+                      </h3>
+                      <p className="text-[11px] text-slate-500">
+                        Executed technical milestones and turnkey deliverables
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-brand-950 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
                     {project.scope.length} Milestones
                   </span>
                 </div>
 
-                <ul className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {project.scope.map((item, idx) => (
-                    <li
+                    <div
                       key={idx}
-                      className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-blue-50/40 border border-slate-100 transition-colors"
+                      className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 hover:bg-blue-50/40 border border-slate-100 transition-colors"
                     >
-                      <div className="w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center text-xs shrink-0 mt-0.5">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center text-xs shrink-0 mt-0.5">
                         <FaCheckCircle />
                       </div>
                       <span className="text-xs sm:text-sm font-semibold text-slate-700 leading-snug">
                         {item}
                       </span>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
+          </div>
 
-            {/* Request BOQ CTA Card */}
-            <div className="bg-gradient-to-br from-brand-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl space-y-4 border border-brand-800">
+          {/* RIGHT 4 COLUMNS: PROJECT SPECIFICATIONS + BOQ CONSULTATION */}
+          <div className="lg:col-span-4 space-y-6">
+            {/* Card 3: Project Specifications */}
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-xl space-y-4">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+                <FaBuilding className="text-accent text-sm" />
+                <h3 className="font-heading text-base font-bold text-brand-950">
+                  Project Specifications
+                </h3>
+              </div>
+
+              <dl className="space-y-3.5 text-xs">
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                  <dt className="text-slate-500 font-medium">Client:</dt>
+                  <dd className="font-bold text-brand-950 text-right truncate max-w-[200px]">{project.client}</dd>
+                </div>
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                  <dt className="text-slate-500 font-medium">Location:</dt>
+                  <dd className="font-bold text-brand-950 text-right">{project.location}</dd>
+                </div>
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                  <dt className="text-slate-500 font-medium">Sector:</dt>
+                  <dd className="font-bold text-brand-950 capitalize">{project.category}</dd>
+                </div>
+                {project.subCategory && (
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <dt className="text-slate-500 font-medium">Sub-Category:</dt>
+                    <dd className="font-extrabold text-blue-600 uppercase text-[11px]">{project.subCategory}</dd>
+                  </div>
+                )}
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                  <dt className="text-slate-500 font-medium">Completion:</dt>
+                  <dd className="font-bold text-brand-950">{project.completionDate}</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-slate-500 font-medium">Status:</dt>
+                  <dd className="font-bold text-emerald-600 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Commissioned
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            {/* Card 4: Request BOQ CTA Card */}
+            <div className="bg-gradient-to-br from-brand-950 to-slate-900 rounded-3xl p-6 sm:p-7 text-white shadow-xl space-y-4 border border-brand-800">
               <span className="text-[10px] font-extrabold uppercase tracking-widest text-accent block">
                 Turnkey Implementation
               </span>
-              <h3 className="font-heading text-lg sm:text-xl font-bold leading-snug">
+              <h3 className="font-heading text-lg font-bold leading-snug">
                 Planning a Similar Engineering Project?
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Our licensed senior MEP engineers can audit your facility blueprints, run load calculations, and prepare a full compliance BOQ within 48 hours.
               </p>
-              <div className="pt-2 flex flex-col sm:flex-row gap-3">
+              <div className="pt-2 flex flex-col gap-2.5">
                 <a
                   href={`/contact?type=quotation&project=${encodeURIComponent(project.title)}`}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent hover:bg-amber-400 text-brand-950 font-bold text-xs uppercase tracking-wider transition-all shadow-lg active:scale-95"
+                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent hover:bg-amber-400 text-brand-950 font-bold text-xs uppercase tracking-wider transition-all shadow-lg active:scale-95"
                 >
                   <FaPaperPlane className="text-xs" />
                   <span>Request Project BOQ</span>
                 </a>
                 <Link
                   href={`/services/${serviceSlug}`}
-                  className="inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs border border-white/15 transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs border border-white/15 transition-colors"
                 >
-                  <span>Explore Service</span>
+                  <span>Explore Related Service</span>
                   <FaArrowRight className="text-[10px]" />
                 </Link>
               </div>
