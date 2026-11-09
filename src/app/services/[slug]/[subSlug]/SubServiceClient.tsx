@@ -18,7 +18,11 @@ import {
   FaHourglassHalf,
   FaThumbsUp,
   FaShieldAlt,
-  FaRegClock
+  FaRegClock,
+  FaExclamationTriangle,
+  FaLightbulb,
+  FaQuestionCircle,
+  FaChevronDown
 } from "react-icons/fa";
 
 interface SubServiceClientProps {
@@ -41,6 +45,7 @@ type QuoteFormValues = z.infer<typeof quoteSchema>;
 export default function SubServiceClient({ service, sub }: SubServiceClientProps) {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(0);
 
   const {
     register,
@@ -123,14 +128,14 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
       </section>
 
       {/* 2. Main Content & Lead Form Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
-          {/* Left Column: Scope details (7/12 width) */}
+          {/* Left Column: Scope & Technical Content (7/12 width) */}
           <div className="lg:col-span-7 flex flex-col gap-8">
             
             {/* Image showcase */}
-            <div className="relative h-64 sm:h-96 w-full rounded-[32px] overflow-hidden shadow-lg border border-slate-200 bg-white">
+            <div className="relative h-72 sm:h-[420px] w-full rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-sm">
               <Image
                 src={sub.image}
                 alt={sub.title}
@@ -139,59 +144,106 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                 sizes="(max-width: 1024px) 100vw, 60vw"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-950/40 via-transparent to-transparent" />
             </div>
 
-            {/* Detailed Description */}
-            <div className="bg-white p-8 rounded-[32px] border border-slate-200/80 shadow-sm flex flex-col gap-4">
-              <h3 className="font-heading font-extrabold text-brand-950 text-xl">
-                Engineering Specifications & Overview
-              </h3>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            {/* Section 1: Overview */}
+            <div className="flex flex-col gap-3">
+              <h2 className="text-xl sm:text-2xl font-heading font-extrabold text-brand-950 tracking-tight">
+                Engineering Overview
+              </h2>
+              <div className="w-12 h-1 bg-accent rounded-full mb-1" />
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">
                 {sub.fullDesc}
               </p>
-              <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
-                Elite Standard Limited supplies full turkey services for this discipline. From load calculation, pipe/duct hydraulic sizing, electrical load sharing layouts, and AutoCAD/BIM layouts to final commissioning audits, our engineering teams ensure flawless delivery and regulatory approvals.
-              </p>
             </div>
 
-            {/* Checklist of Features */}
-            <div className="bg-white p-8 rounded-[32px] border border-slate-200/80 shadow-sm flex flex-col gap-6">
-              <h4 className="font-heading font-extrabold text-brand-950 text-base uppercase tracking-wider">
-                Key Technical Deployments
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {sub.features.map((feat, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200/60 shadow-sm hover:scale-[1.02] transition-transform"
-                  >
-                    <FaCheckCircle className="text-emerald-500 text-sm shrink-0 mt-0.5" />
-                    <span className="text-slate-700 text-xs font-semibold leading-relaxed">{feat}</span>
-                  </div>
-                ))}
+            {/* Section 2: Key Technical Deployments / Scope */}
+            {Array.isArray(sub.features) && sub.features.length > 0 && (
+              <div className="flex flex-col gap-4 pt-4 border-t border-slate-200/80">
+                <h3 className="text-base sm:text-lg font-heading font-extrabold text-brand-950 tracking-tight">
+                  Scope of Work & Technical Deployments
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {sub.features.map((feat, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start gap-3 p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-sm"
+                    >
+                      <FaCheckCircle className="text-emerald-500 text-sm shrink-0 mt-0.5" />
+                      <span className="text-slate-700 text-xs sm:text-sm font-medium leading-relaxed">{feat}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Packages Grid (if available) */}
+            {/* Section 3: Challenges & Solutions */}
+            {((Array.isArray(service.problems) && service.problems.length > 0) ||
+              (Array.isArray(service.solutions) && service.solutions.length > 0)) && (
+              <div className="flex flex-col gap-6 pt-4 border-t border-slate-200/80">
+                <h3 className="text-base sm:text-lg font-heading font-extrabold text-brand-950 tracking-tight">
+                  Challenges & Engineered Solutions
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {/* Problems */}
+                  {Array.isArray(service.problems) && service.problems.length > 0 && (
+                    <div className="flex flex-col gap-3 p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+                      <div className="flex items-center gap-2 text-rose-600 font-bold text-xs uppercase tracking-wider">
+                        <FaExclamationTriangle />
+                        <span>Client Pain Points</span>
+                      </div>
+                      <ul className="flex flex-col gap-2">
+                        {service.problems.map((prob, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-xs text-slate-600 leading-relaxed">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0" />
+                            <span>{prob}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Solutions */}
+                  {Array.isArray(service.solutions) && service.solutions.length > 0 && (
+                    <div className="flex flex-col gap-3 p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wider">
+                        <FaLightbulb />
+                        <span>Engineered Solutions</span>
+                      </div>
+                      <ul className="flex flex-col gap-2">
+                        {service.solutions.map((sol, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-xs text-slate-600 leading-relaxed">
+                            <FaCheckCircle className="text-emerald-500 text-xs mt-0.5 shrink-0" />
+                            <span>{sol}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Section 4: Packages (if any) */}
             {sub.packages && sub.packages.length > 0 && (
-              <div className="bg-white p-8 rounded-[32px] border border-slate-200/80 shadow-sm flex flex-col gap-6">
-                <h4 className="font-heading font-extrabold text-brand-950 text-base uppercase tracking-wider">
+              <div className="flex flex-col gap-4 pt-4 border-t border-slate-200/80">
+                <h3 className="text-base sm:text-lg font-heading font-extrabold text-brand-950 tracking-tight">
                   Available Packages & Capacities
-                </h4>
+                </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {sub.packages.map((pkg, idx) => (
                     <div
                       key={idx}
-                      className="flex flex-col justify-between bg-slate-50 p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                      className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col justify-between"
                     >
                       <div>
-                        <h5 className="font-extrabold text-brand-900 text-lg mb-1">{pkg.capacity}</h5>
-                        <p className="font-semibold text-slate-700 text-[13px]">{pkg.name}</p>
-                        <p className="text-slate-500 text-[11px] mt-2 leading-relaxed">{pkg.target}</p>
+                        <h5 className="font-extrabold text-brand-900 text-base mb-1">{pkg.capacity}</h5>
+                        <p className="font-semibold text-slate-700 text-xs">{pkg.name}</p>
+                        <p className="text-slate-500 text-[11px] mt-1.5 leading-relaxed">{pkg.target}</p>
                       </div>
-                      <div className="mt-4 pt-4 border-t border-slate-200/60 flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100/50 px-2.5 py-1 rounded-md border border-emerald-200/50">
+                      <div className="mt-4 pt-3 border-t border-slate-100">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">
                           {pkg.level}
                         </span>
                       </div>
@@ -201,20 +253,71 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
               </div>
             )}
 
-            {/* Compliance Banner */}
-            <div className="bg-brand-900 text-white p-6 rounded-2xl border border-brand-800 flex gap-4 items-center">
-              <FaShieldAlt className="text-3xl text-accent shrink-0" />
-              <div>
-                <h5 className="font-bold text-sm text-white">Strict Compliance Standards</h5>
-                <p className="text-slate-300 text-[11px] leading-relaxed mt-0.5">
-                  All installations are designed, planned, and validated in complete adherence to **BNBC**, **NFPA**, **ASHRAE**, and relevant international engineering safety guidelines.
-                </p>
+            {/* Section 5: FAQs */}
+            {Array.isArray(service.faqs) && service.faqs.length > 0 && (
+              <div className="flex flex-col gap-4 pt-4 border-t border-slate-200/80">
+                <h3 className="text-base sm:text-lg font-heading font-extrabold text-brand-950 tracking-tight">
+                  Frequently Asked Questions
+                </h3>
+                <div className="flex flex-col gap-2.5">
+                  {service.faqs.map((faq, idx) => {
+                    const isOpen = openFaqIdx === idx;
+                    return (
+                      <div
+                        key={idx}
+                        className="rounded-xl border border-slate-200/80 bg-white overflow-hidden shadow-sm"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setOpenFaqIdx(isOpen ? null : idx)}
+                          className="w-full p-4 text-left flex items-center justify-between gap-3 text-xs sm:text-sm font-bold text-brand-950 hover:text-brand-800 transition-colors"
+                        >
+                          <span>{faq.question}</span>
+                          <FaChevronDown
+                            className={`text-xs text-slate-400 shrink-0 transition-transform duration-200 ${
+                              isOpen ? "rotate-180 text-accent" : ""
+                            }`}
+                          />
+                        </button>
+                        <AnimatePresence initial={false}>
+                          {isOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden border-t border-slate-100"
+                            >
+                              <div className="p-4 text-slate-600 text-xs sm:text-sm leading-relaxed bg-slate-50/50">
+                                {faq.answer}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Section 6: Compliance Banner */}
+            <div className="p-5 rounded-2xl bg-slate-900 text-white flex items-center gap-4 mt-2">
+              <FaShieldAlt className="text-2xl text-accent shrink-0" />
+              <div className="text-xs leading-relaxed text-slate-300">
+                <strong className="text-white font-semibold">Strict Compliance:</strong> Designed & executed in accordance with{" "}
+                <span className="text-white font-medium">
+                  {Array.isArray(service.compliance) && service.compliance.length > 0
+                    ? service.compliance.join(", ")
+                    : "BNBC, NFPA, ASHRAE"}
+                </span>{" "}
+                and relevant international engineering safety standards.
               </div>
             </div>
           </div>
 
-          {/* Right Column: Pre-filled quotation form (5/12 width) */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
+          {/* Right Column: Clean Sticky Quote Form (5/12 width) */}
+          <div className="lg:col-span-5 flex flex-col gap-6 lg:sticky lg:top-24">
             
             {/* Quote Form Card */}
             <div className="bg-white p-6 sm:p-8 rounded-[32px] border border-slate-200/80 shadow-lg">

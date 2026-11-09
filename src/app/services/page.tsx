@@ -155,11 +155,43 @@ function ServicesOverviewContent() {
             Loading engineering services...
           </div>
         ) : filteredServices.length === 0 ? (
-          <div className="py-20 px-6 text-center rounded-2xl bg-white border border-dashed border-slate-200 max-w-xl mx-auto">
-            <p className="text-slate-600 font-bold text-base">No services found</p>
-            <p className="text-slate-400 text-xs mt-1">
-              There are currently no services published matching your criteria.
+          <div className="py-20 px-8 text-center rounded-3xl bg-white border border-dashed border-slate-300 shadow-sm max-w-2xl mx-auto flex flex-col items-center">
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 text-2xl mb-4">
+              <FaIndustry />
+            </div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 mb-3">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <span>Service Not Available</span>
+            </div>
+            <h3 className="font-heading text-2xl font-extrabold text-brand-950 mb-2">
+              No Services Available {activeCategory !== "all" ? `in ${activeCategory.toUpperCase()}` : ""}
+            </h3>
+            <p className="text-slate-500 text-sm leading-relaxed max-w-md mb-6">
+              {searchQuery
+                ? `No engineering services matched your query "${searchQuery}". Please try another search term or reset filters.`
+                : activeCategory !== "all"
+                ? `Currently, there are no engineering services published under the ${activeCategory} category. Please check back soon or consult our engineering team.`
+                : "No engineering services are currently published in this section."}
             </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {(activeCategory !== "all" || searchQuery) && (
+                <button
+                  onClick={() => {
+                    setActiveCategory("all");
+                    setSearchQuery("");
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-brand-900 hover:bg-brand-950 text-white font-bold text-xs shadow transition-colors"
+                >
+                  View All Services
+                </button>
+              )}
+              <Link
+                href="/contact"
+                className="px-5 py-2.5 rounded-xl bg-accent hover:bg-amber-400 text-brand-950 font-bold text-xs shadow transition-colors"
+              >
+                Request Custom Consultation
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

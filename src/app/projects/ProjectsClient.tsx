@@ -146,6 +146,7 @@ export default function ProjectsClient({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [galleryModalProject, setGalleryModalProject] = useState<ProjectItem | null>(null);
   const [modalPhotoIdx, setModalPhotoIdx] = useState<number>(0);
+  const [selectedProjectForModal, setSelectedProjectForModal] = useState<ProjectItem | null>(null);
 
   useEffect(() => {
     if (initialProjects && initialProjects.length > 0) {
@@ -584,6 +585,7 @@ export default function ProjectsClient({
               </div>
 
               {/* Bottom Action Bar */}
+              {/* Bottom Action Bar */}
               <div className="p-6 pt-0 flex flex-col sm:flex-row items-center gap-2">
                 <Link
                   href={`/projects/${project.slug}`}
@@ -592,12 +594,20 @@ export default function ProjectsClient({
                   <span>View Project Details</span>
                   <FaArrowRight className="text-xs group-hover/btn:translate-x-1 transition-transform" />
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => setSelectedProjectForModal(project)}
+                  title="Quick Preview"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-3 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-brand-950 text-xs font-semibold border border-slate-200 transition-colors shrink-0"
+                >
+                  <span>Quick View</span>
+                </button>
                 <a
                   href={`/contact?type=quotation&project=${encodeURIComponent(project.title)}`}
                   title="Request Similar BOQ"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-3 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-brand-950 text-xs font-semibold border border-slate-200 transition-colors shrink-0"
                 >
-                  <FaPaperPlane className="text-[10px]" />
+                  <FaPaperPlane className="text-[10px] text-emerald-600" />
                   <span className="sm:hidden">Request BOQ</span>
                 </a>
               </div>
@@ -850,6 +860,171 @@ export default function ProjectsClient({
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 6. Quick Project Details Overview Modal */}
+      <AnimatePresence>
+        {selectedProjectForModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedProjectForModal(null)}
+              className="fixed inset-0 bg-brand-950/70 backdrop-blur-sm"
+            />
+
+            {/* Modal Dialog */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden z-10 max-h-[90vh] flex flex-col"
+            >
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setSelectedProjectForModal(null)}
+                className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-brand-950 flex items-center justify-center shadow-md transition-colors"
+              >
+                <FaTimes className="text-sm" />
+              </button>
+
+              {/* Modal Header Image */}
+              <div className="relative h-64 sm:h-80 w-full overflow-hidden bg-slate-900 shrink-0">
+                <Image
+                  src={selectedProjectForModal.image}
+                  alt={selectedProjectForModal.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent" />
+                <div className="absolute bottom-5 left-6 right-6">
+                  <div className="inline-block bg-accent text-brand-950 text-xs font-extrabold uppercase px-3 py-1 rounded-md mb-2">
+                    {selectedProjectForModal.category}
+                  </div>
+                  <h3 className="font-heading text-xl sm:text-2xl lg:text-3xl font-extrabold text-white leading-tight">
+                    {selectedProjectForModal.title}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Modal Scrollable Body */}
+              <div className="p-6 sm:p-8 overflow-y-auto flex flex-col gap-6">
+                {/* Meta details bar */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200/80 text-xs text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <FaBuilding className="text-accent text-sm shrink-0" />
+                    <div>
+                      <span className="block text-[10px] uppercase font-bold text-slate-400">Client</span>
+                      <strong className="text-slate-800 font-semibold">{selectedProjectForModal.client}</strong>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <FaMapMarkerAlt className="text-accent text-sm shrink-0" />
+                    <div>
+                      <span className="block text-[10px] uppercase font-bold text-slate-400">Location</span>
+                      <strong className="text-slate-800 font-semibold">{selectedProjectForModal.location}</strong>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <FaCalendarAlt className="text-accent text-sm shrink-0" />
+                    <div>
+                      <span className="block text-[10px] uppercase font-bold text-slate-400">Completed</span>
+                      <strong className="text-slate-800 font-semibold">{selectedProjectForModal.completionDate}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <h4 className="font-heading font-extrabold text-brand-950 text-sm uppercase tracking-wider mb-2">
+                    Project Overview
+                  </h4>
+                  <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">
+                    {selectedProjectForModal.description}
+                  </p>
+                </div>
+
+                {/* Scope of Work */}
+                {selectedProjectForModal.scope && selectedProjectForModal.scope.length > 0 && (
+                  <div>
+                    <h4 className="font-heading font-extrabold text-brand-950 text-sm uppercase tracking-wider mb-3">
+                      Key Deliverables & Execution Scope
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {selectedProjectForModal.scope.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/60 text-xs text-slate-700"
+                        >
+                          <FaCheckCircle className="text-emerald-500 text-xs shrink-0 mt-0.5" />
+                          <span className="font-medium leading-relaxed">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Optional Gallery inside Modal */}
+                {selectedProjectForModal.gallery && selectedProjectForModal.gallery.length > 0 && (
+                  <div>
+                    <h4 className="font-heading font-extrabold text-brand-950 text-sm uppercase tracking-wider mb-3">
+                      Site & Installation Gallery
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {selectedProjectForModal.gallery.map((imgItem, idx) => (
+                        <div key={idx} className="relative h-28 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                          <Image
+                            src={imgItem.image}
+                            alt={imgItem.title || `Gallery image ${idx + 1}`}
+                            fill
+                            className="object-cover hover:scale-105 transition-transform"
+                            sizes="200px"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer CTA */}
+              <div className="p-5 sm:p-6 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <span className="text-xs text-slate-500 text-center sm:text-left">
+                  Need an engineered MEP solution similar to this project?
+                </span>
+                <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProjectForModal(null)}
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold transition-colors"
+                  >
+                    Close
+                  </button>
+                  <Link
+                    href={`/projects/${selectedProjectForModal.slug}`}
+                    className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-brand-950 hover:text-white text-brand-950 text-xs font-bold transition-colors inline-flex items-center gap-1.5 border border-slate-200"
+                  >
+                    <span>Full Page View</span>
+                    <FaArrowRight className="text-[10px]" />
+                  </Link>
+                  <a
+                    href={`/contact?type=quotation&project=${encodeURIComponent(selectedProjectForModal.title)}`}
+                    className="px-5 py-2.5 rounded-xl bg-brand-950 hover:bg-brand-900 text-white font-bold text-xs shadow-md transition-colors text-center inline-flex items-center justify-center gap-2"
+                  >
+                    <span>Request BOQ Quotation</span>
+                    <FaPaperPlane className="text-[10px] text-accent" />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </main>

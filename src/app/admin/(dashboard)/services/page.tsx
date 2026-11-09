@@ -1131,7 +1131,7 @@ export default function AdminServicesPage() {
                         Or specify direct image URL:
                       </label>
                       <input
-                        type="url"
+                        type="text"
                         value={formData.bannerImage}
                         onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
                         placeholder="https://images.unsplash.com/..."

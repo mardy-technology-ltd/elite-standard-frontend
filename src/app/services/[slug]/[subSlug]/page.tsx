@@ -49,7 +49,9 @@ async function getSubServiceData(parentSlug: string, subSlug: string): Promise<{
         slug: parentSlug,
         code: parentFlagship?.code || (dbSubService.category ? dbSubService.category.toUpperCase() : "MEP"),
         category: (parentFlagship?.category || dbSubService.category || "mechanical") as any,
-        compliance: parentFlagship?.compliance || dbSubService.compliance || ["BNBC", "ASHRAE", "NFPA"],
+        compliance: (dbSubService.compliance && dbSubService.compliance.length > 0)
+          ? dbSubService.compliance
+          : (parentFlagship?.compliance || ["BNBC", "ASHRAE", "NFPA"]),
         title: parentFlagship?.title || `${dbSubService.category?.toUpperCase()} Engineering`,
         subtitle: parentFlagship?.subtitle || "",
         shortDescription: parentFlagship?.description || "",
