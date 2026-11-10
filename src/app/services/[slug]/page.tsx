@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import { ServiceItem, servicesData } from "@/lib/mockData";
+import { ServiceItem, SubServiceDetail, servicesData } from "@/lib/mockData";
 import ServiceBanner from "@/components/services/ServiceBanner";
 import ServiceSlider from "@/components/services/ServiceSlider";
 import ServiceIntro from "@/components/services/ServiceIntro";
@@ -15,7 +15,8 @@ import NoServiceAvailable, { getServiceFullName } from "@/components/services/No
 import { projectsData, ProjectItem } from "@/lib/mockData";
 
 import prisma from "@/lib/prisma";
-import { FLAGSHIP_DOMAINS_OVERVIEW } from "@/lib/flagshipDomains";
+import { FLAGSHIP_DOMAINS_OVERVIEW, getFlagshipDomain } from "@/lib/flagshipDomains";
+import SubServiceClient from "./[subSlug]/SubServiceClient";
 
 export const dynamic = "force-dynamic";
 
@@ -204,11 +205,111 @@ async function getService(slug: string): Promise<ServiceItem | null> {
   return null;
 }
 
+// Helper to resolve whether a slug is an individual service or flagship domain overview
+async function getDetailPageData(slug: string): Promise<
+  | { type: "flagship"; service: ServiceItem }
+  | { type: "subservice"; service: ServiceItem; sub: SubServiceDetail }
+  | null
+> {
+  try {
+    const slugLower = slug.toLowerCase().trim();
+    const cleanKey = slugLower.replace("-systems", "");
+    const isFlagship = Boolean(FLAGSHIP_DOMAINS_OVERVIEW[cleanKey]);
+
+    // 1. If it's a Flagship Domain Landing Page (hvac, fdps, guds, pdcp, eels, iba, wsds, wts, rhs)
+    if (isFlagship) {
+      const service = await getService(slug);
+      if (service) {
+        return { type: "flagship", service };
+      }
+    }
+
+    // 2. If it's an Individual Service: check DB first
+    const dbService = await prisma.service.findFirst({
+      where: {
+        OR: [
+          { slug: slugLower },
+          { slug },
+          { code: slug.toUpperCase() },
+          { code: `ESL-MEP-${slug.toUpperCase()}` },
+        ],
+      },
+    });
+
+    if (dbService) {
+      // Determine parent flagship
+      const parentFlagshipKey = dbService.code
+        ? dbService.code.replace("ESL-MEP-", "").toLowerCase()
+        : "";
+      const parentFlagship = getFlagshipDomain(parentFlagshipKey);
+
+      const subDetail: SubServiceDetail = {
+        id: dbService.id,
+        slug: dbService.slug,
+        title: dbService.title,
+        shortDesc: dbService.shortDescription || dbService.subtitle || "",
+        fullDesc: dbService.fullDescription || dbService.shortDescription || "",
+        features: Array.isArray(dbService.scopeOfWork) ? (dbService.scopeOfWork as string[]) : [],
+        image: dbService.bannerImage || parentFlagship?.bannerImage || "/images/company-info.png",
+      };
+
+      const parentItem: ServiceItem = {
+        id: parentFlagship ? `flagship-${parentFlagship.code.toLowerCase()}` : dbService.id,
+        slug: parentFlagshipKey || (parentFlagship?.code ? parentFlagship.code.toLowerCase() : "services"),
+        code: parentFlagship?.code || (dbService.category ? dbService.category.toUpperCase() : "MEP"),
+        category: (parentFlagship?.category || dbService.category || "mechanical") as any,
+        compliance: (dbService.compliance && dbService.compliance.length > 0)
+          ? dbService.compliance
+          : (parentFlagship?.compliance || ["BNBC", "ASHRAE", "NFPA"]),
+        title: parentFlagship?.title || `${dbService.category?.toUpperCase()} Engineering`,
+        subtitle: parentFlagship?.subtitle || "",
+        shortDescription: parentFlagship?.description || "",
+        fullDescription: parentFlagship?.description || "",
+        icon: parentFlagship?.icon || dbService.icon || "FaIndustry",
+        bannerImage: parentFlagship?.bannerImage || dbService.bannerImage || "/images/company-info.png",
+        problems: dbService.problems || [],
+        solutions: dbService.solutions || [],
+        scopeOfWork: dbService.scopeOfWork || [],
+        subServices: [subDetail],
+        faqs: (dbService.faqs as any) || [],
+        sectors: (dbService.sectors as any) || undefined,
+      };
+
+      return { type: "subservice", service: parentItem, sub: subDetail };
+    }
+
+    // 3. Check mockData subServices
+    for (const s of servicesData) {
+      if (Array.isArray(s.subServices)) {
+        const found = s.subServices.find(
+          (sub) =>
+            sub.slug?.toLowerCase() === slugLower ||
+            sub.id?.toLowerCase() === slugLower ||
+            sub.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slugLower
+        );
+        if (found) {
+          return { type: "subservice", service: s, sub: found };
+        }
+      }
+    }
+
+    // 4. Fallback: if getService returns something
+    const fallbackService = await getService(slug);
+    if (fallbackService) {
+      return { type: "flagship", service: fallbackService };
+    }
+  } catch (err) {
+    console.error("Error in getDetailPageData:", err);
+  }
+
+  return null;
+}
+
 // Dynamic SEO Metadata for Each Service
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
-  const service = await getService(params.slug);
+  const pageData = await getDetailPageData(params.slug);
 
-  if (!service) {
+  if (!pageData) {
     const fullName = getServiceFullName(params.slug);
     return {
       title: `${fullName} - No Service Available | Elite Standard Limited`,
@@ -216,6 +317,27 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
     };
   }
 
+  if (pageData.type === "subservice") {
+    const { service, sub } = pageData;
+    return {
+      title: `${sub.title} | ${service.code} Engineering | Elite Standard Limited`,
+      description: `${sub.fullDesc || sub.shortDesc} Provided by Elite Standard Limited, Dhaka, Bangladesh. Built in full compliance with BNBC, NFPA, and ASHRAE codes.`,
+      keywords: [
+        sub.title,
+        `${sub.title} Bangladesh`,
+        `${sub.title} Contractor Dhaka`,
+        `${service.code} solutions`,
+        "Elite Standard Limited MEP",
+      ],
+      openGraph: {
+        title: `${sub.title} | Elite Standard Limited`,
+        description: sub.fullDesc || sub.shortDesc,
+        images: [sub.image || "/images/company-info.png"],
+      },
+    };
+  }
+
+  const { service } = pageData;
   return {
     title: `${service.title} (${service.code}) | Elite Standard Limited`,
     description: service.shortDescription,
@@ -236,12 +358,19 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 }
 
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
-  const service = await getService(params.slug);
+  const pageData = await getDetailPageData(params.slug);
 
-  if (!service) {
+  if (!pageData) {
     return <NoServiceAvailable slug={params.slug} />;
   }
 
+  // If it's an individual service, ALWAYS render the rich SubServiceClient layout (Image 2)
+  if (pageData.type === "subservice") {
+    return <SubServiceClient service={pageData.service} sub={pageData.sub} />;
+  }
+
+  // Otherwise, render the flagship domain overview landing page (with division slider & services list)
+  const service = pageData.service;
   const relatedProjects = await getRelatedProjects(service.category);
 
   return (
