@@ -30,7 +30,12 @@ import {
   FaSun,
   FaArrowLeft,
   FaSave,
+  FaColumns,
+  FaDesktop,
+  FaMobileAlt,
+  FaEye,
 } from "react-icons/fa";
+import ServiceLivePreview from "./ServiceLivePreview";
 
 interface SubService {
   id: string;
@@ -180,10 +185,15 @@ export default function AdminServicesPage() {
   // Screen View State: "list" | "create" | "edit"
   const [viewMode, setViewMode] = useState<"list" | "create" | "edit">("list");
   const [editingService, setEditingService] = useState<Service | null>(null);
-  const [activeTab, setActiveTab] = useState<"general" | "banner" | "scope" | "subservices">("general");
+  const [activeTab, setActiveTab] = useState<"general" | "banner" | "scope" | "faqs">("general");
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  // Live Split Screen Editor State
+  const [showLivePreview, setShowLivePreview] = useState(true);
+  const [previewPageMode, setPreviewPageMode] = useState<"division" | "details">("division");
+  const [previewSubIdx, setPreviewSubIdx] = useState(0);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -903,7 +913,22 @@ export default function AdminServicesPage() {
               </div>
 
               {/* Top Action Buttons */}
-              <div className="flex items-center gap-3 self-end md:self-center">
+              <div className="flex flex-wrap items-center gap-2.5 self-end md:self-center">
+                {/* Toggle Live Split Preview */}
+                <button
+                  type="button"
+                  onClick={() => setShowLivePreview(!showLivePreview)}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border ${
+                    showLivePreview
+                      ? "bg-blue-600/20 text-blue-400 border-blue-500/40 shadow-sm"
+                      : "bg-slate-800 text-slate-400 border-slate-700 hover:text-white"
+                  }`}
+                  title="Toggle Live Split-Screen View"
+                >
+                  <FaColumns className="text-xs" />
+                  <span>{showLivePreview ? "Split View: ON" : "Split View: OFF"}</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={handleBackToList}
@@ -933,37 +958,40 @@ export default function AdminServicesPage() {
             </div>
           </div>
 
-          {/* Dedicated Screen Content Card */}
-          <div className="bg-slate-900/60 rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
-            {/* Screen Tabs Bar */}
-            <div className="flex border-b border-slate-800 bg-slate-950/60 px-6 pt-3 gap-3 overflow-x-auto">
-              {[
-                { id: "general", label: "1. Basic Info & Category" },
-                { id: "banner", label: "2. Visual Banner & Media" },
-                { id: "scope", label: "3. Scope & Compliance" },
-                { id: "subservices", label: `4. Sub-Services (${formData.subServices.length}) & FAQs` },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`pb-3.5 px-4 text-xs font-bold border-b-2 transition-all whitespace-nowrap flex items-center gap-2 ${
-                    activeTab === tab.id
-                      ? "border-blue-500 text-blue-400 bg-blue-500/5 rounded-t-lg"
-                      : "border-transparent text-slate-400 hover:text-slate-200"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+          {/* Screen Content Wrapper: Normal or Live Split Screen */}
+          <div className={`grid gap-6 ${showLivePreview ? "grid-cols-1 xl:grid-cols-12" : "grid-cols-1"}`}>
+            
+            {/* LEFT COLUMN: Input Form & Tabs */}
+            <div className={`${showLivePreview ? "xl:col-span-6" : "col-span-1"} bg-slate-900/60 rounded-2xl border border-slate-800 shadow-xl overflow-hidden flex flex-col`}>
+              {/* Screen Tabs Bar */}
+              <div className="flex border-b border-slate-800 bg-slate-950/60 px-4 sm:px-6 pt-3 gap-2 overflow-x-auto">
+                {[
+                  { id: "general", label: "1. Basic Info & Code" },
+                  { id: "banner", label: "2. Media Banner" },
+                  { id: "scope", label: "3. Scope & Challenges" },
+                  { id: "faqs", label: `4. FAQs (${formData.faqs.length})` },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`pb-3 px-3 text-xs font-bold border-b-2 transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                      activeTab === tab.id
+                        ? "border-blue-500 text-blue-400 bg-blue-500/5 rounded-t-lg"
+                        : "border-transparent text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
 
-            {/* Screen Form Content */}
-            <form
-              id="service-editor-form"
-              onSubmit={handleSubmit}
-              className="p-6 sm:p-8 space-y-8"
-            >
+              {/* Screen Form Content */}
+              <form
+                id="service-editor-form"
+                onSubmit={handleSubmit}
+                className="p-5 sm:p-6 space-y-6 flex-1"
+              >
               {/* TAB 1: General Info */}
               {activeTab === "general" && (
                 <div className="space-y-6">
@@ -1259,22 +1287,112 @@ export default function AdminServicesPage() {
                 </div>
               )}
 
-              {/* TAB 3: Scope & Compliance */}
+              {/* TAB 3: Scope of Work, Challenges & Solutions */}
               {activeTab === "scope" && (
                 <div className="space-y-6">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                      Compliance Standards (comma-separated)
-                    </label>
+                  {/* Scope of Work & Technical Deployments */}
+                  <div className="p-5 bg-slate-950/70 border border-slate-800 rounded-2xl space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                          <FaCheckCircle className="text-emerald-500 text-xs" />
+                          <span>Scope of Work & Technical Deployments</span>
+                        </h4>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          Turnkey deliverables and certified scope items displayed as emerald checkmarks on both the division and details page (one per line).
+                        </p>
+                      </div>
+                      <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+                        {formData.scopeText.split("\n").filter((s) => s.trim()).length} Items
+                      </span>
+                    </div>
+
+                    <textarea
+                      rows={6}
+                      value={formData.scopeText}
+                      onChange={(e) => setFormData({ ...formData, scopeText: e.target.value })}
+                      placeholder="e.g.&#10;Heat load calculation & psychrometric analysis&#10;Ductwork design & fabrication compliant with SMACNA&#10;Chillers, AHU, FCU installation & commissioning&#10;Cleanroom positive pressure validation"
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+
+                  {/* Challenges & Engineered Solutions Side-by-Side */}
+                  <div className="p-5 bg-slate-950/70 border border-slate-800 rounded-2xl space-y-4">
+                    <div>
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <FaExclamationTriangle className="text-amber-400 text-xs" />
+                        <span>Challenges & Engineered Solutions</span>
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Client pain points contrasted with your turnkey engineering solutions (one item per line).
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Client Pain Points & Vulnerabilities */}
+                      <div className="p-4 bg-rose-950/20 border border-rose-900/40 rounded-xl space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="block text-xs font-bold text-rose-300">
+                            Client Pain Points & Vulnerabilities
+                          </label>
+                          <span className="text-[10px] font-mono text-rose-400">
+                            {formData.problemsText.split("\n").filter((p) => p.trim()).length} issues
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-400">
+                          Specific vulnerabilities faced by factories/facilities before your installation.
+                        </p>
+                        <textarea
+                          rows={6}
+                          value={formData.problemsText}
+                          onChange={(e) => setFormData({ ...formData, problemsText: e.target.value })}
+                          placeholder="e.g.&#10;High energy consumption in conventional systems&#10;Uneven temperature distribution and humidity issues&#10;Inadequate ventilation causing compliance risks"
+                          className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-rose-900/30 rounded-lg text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500 transition-colors"
+                        />
+                      </div>
+
+                      {/* Engineered Turnkey Solutions */}
+                      <div className="p-4 bg-emerald-950/20 border border-emerald-900/40 rounded-xl space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="block text-xs font-bold text-emerald-300">
+                            Engineered Turnkey Solutions
+                          </label>
+                          <span className="text-[10px] font-mono text-emerald-400">
+                            {formData.solutionsText.split("\n").filter((s) => s.trim()).length} solutions
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-400">
+                          The engineered solution deployed to solve each problem above.
+                        </p>
+                        <textarea
+                          rows={6}
+                          value={formData.solutionsText}
+                          onChange={(e) => setFormData({ ...formData, solutionsText: e.target.value })}
+                          placeholder="e.g.&#10;Custom VRF/VRV system integration with smart thermostats&#10;Precision air handling units (AHU) with HEPA filtration&#10;Automated building management system (BMS) integration"
+                          className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-emerald-900/30 rounded-lg text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500 transition-colors"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mandatory Safety & Compliance Standards */}
+                  <div className="p-5 bg-slate-950/70 border border-slate-800 rounded-2xl space-y-3">
+                    <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                      <FaShieldAlt className="text-blue-400 text-xs" />
+                      <span>Mandatory Engineering Compliance Standards</span>
+                    </h4>
+                    <p className="text-xs text-slate-400">
+                      Comma-separated list of regulatory codes and standards (e.g. BNBC, ASHRAE, NFPA, DoE, SMACNA).
+                    </p>
                     <input
                       type="text"
                       value={formData.complianceText}
                       onChange={(e) => setFormData({ ...formData, complianceText: e.target.value })}
                       placeholder="e.g. BNBC, ASHRAE, SMACNA, NFPA 20, ISO 9001, FSCD"
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
+                      className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
                     />
                     {formData.complianceText && (
-                      <div className="flex flex-wrap gap-1.5 mt-2.5">
+                      <div className="flex flex-wrap gap-1.5 pt-1">
                         {formData.complianceText
                           .split(",")
                           .map((c) => c.trim())
@@ -1290,265 +1408,37 @@ export default function AdminServicesPage() {
                       </div>
                     )}
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                        Client Pain Points / Problems (one per line)
-                      </label>
-                      <textarea
-                        rows={6}
-                        value={formData.problemsText}
-                        onChange={(e) => setFormData({ ...formData, problemsText: e.target.value })}
-                        placeholder="High energy consumption in conventional systems&#10;Uneven temperature distribution and humidity issues&#10;Inadequate ventilation causing compliance risks"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                        Engineering Solutions (one per line)
-                      </label>
-                      <textarea
-                        rows={6}
-                        value={formData.solutionsText}
-                        onChange={(e) => setFormData({ ...formData, solutionsText: e.target.value })}
-                        placeholder="Custom VRF/VRV system integration with smart thermostats&#10;Precision air handling units (AHU) with HEPA filtration&#10;Automated building management system (BMS) integration"
-                        className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                      Scope of Work Steps (one per line)
-                    </label>
-                    <textarea
-                      rows={6}
-                      value={formData.scopeText}
-                      onChange={(e) => setFormData({ ...formData, scopeText: e.target.value })}
-                      placeholder="Heat load calculation & psychrometric analysis&#10;Ductwork design & fabrication compliant with SMACNA&#10;Chillers, AHU, FCU installation & commissioning&#10;Cleanroom positive pressure validation"
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                    />
-                  </div>
                 </div>
               )}
 
-              {/* TAB 4: Sub-Services & FAQs */}
-              {activeTab === "subservices" && (
-                <div className="space-y-8">
-                  {/* Sub-Services Section */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-sm font-bold text-white">
-                          Sub-Service Modules ({formData.subServices.length})
-                        </h4>
-                        <p className="text-xs text-slate-400 mt-0.5">
-                          Add individual specialized packages and equipment solutions for this discipline.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleAddSubService}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 active:scale-95 transition-all"
-                      >
-                        <FaPlus />
-                        <span>Add Sub-Service</span>
-                      </button>
+              {/* TAB 4: Frequently Asked Questions (FAQs) */}
+              {activeTab === "faqs" && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                        <FaQuestionCircle className="text-blue-400 text-xs" />
+                        <span>Frequently Asked Questions (FAQs)</span>
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Technical questions and answers displayed in accordion format on this service&apos;s page.
+                      </p>
                     </div>
-
-                    {formData.subServices.length === 0 ? (
-                      <div className="p-8 bg-slate-950/40 rounded-2xl border border-slate-800 text-center text-xs text-slate-400">
-                        No sub-services configured yet. Click &quot;Add Sub-Service&quot; to create modular services (e.g. VRF Systems, Central Chillers, Air Handling Units).
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {formData.subServices.map((sub, idx) => (
-                          <div
-                            key={sub.id || idx}
-                            className="p-5 bg-slate-950 border border-slate-800 rounded-2xl space-y-3.5 shadow-md"
-                          >
-                            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                              <span className="text-xs font-bold text-blue-400">
-                                Sub-Service #{idx + 1}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveSubService(idx)}
-                                className="text-red-400 hover:text-red-300 text-xs font-semibold transition-colors"
-                              >
-                                Remove
-                              </button>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <div>
-                                <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                                  Title
-                                </label>
-                                <input
-                                  type="text"
-                                  value={sub.title}
-                                  onChange={(e) => handleUpdateSubService(idx, "title", e.target.value)}
-                                  placeholder="e.g. VRF Multi-Split Systems"
-                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                                  Slug
-                                </label>
-                                <input
-                                  type="text"
-                                  value={sub.slug}
-                                  onChange={(e) => handleUpdateSubService(idx, "slug", e.target.value)}
-                                  placeholder="vrf"
-                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white font-mono focus:outline-none focus:border-blue-500"
-                                />
-                              </div>
-                            </div>
-
-                            <div>
-                              <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                                Subtitle / Engineering Description
-                              </label>
-                              <input
-                                type="text"
-                                value={sub.shortDesc}
-                                onChange={(e) => handleUpdateSubService(idx, "shortDesc", e.target.value)}
-                                placeholder="Short description / subtitle of this sub-service module..."
-                                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
-                              />
-                            </div>
-
-                            <div>
-                              <label className="block text-[11px] font-bold text-slate-400 mb-1 flex items-center justify-between">
-                                <span>Technical Solution (Scope / Deliverables - Comma or Newline separated)</span>
-                                <span className="text-[10px] text-blue-400 font-normal">
-                                  {Array.isArray(sub.features) ? sub.features.length : 0} items
-                                </span>
-                              </label>
-                              <textarea
-                                rows={2}
-                                value={Array.isArray(sub.features) ? sub.features.join(", ") : ""}
-                                onChange={(e) =>
-                                  handleUpdateSubService(
-                                    idx,
-                                    "features",
-                                    e.target.value
-                                      .split(/,|\n/)
-                                      .map((s) => s.trim())
-                                      .filter(Boolean)
-                                  )
-                                }
-                                placeholder="e.g. Biological aeration, Chemical dosing, Zero Liquid Discharge (ZLD), Online monitoring"
-                                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
-                              />
-                            </div>
-
-                            <div>
-                              <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                                Banner Image (URL or Upload File)
-                              </label>
-                              <div className="flex items-center gap-2">
-                                <input
-                                  type="text"
-                                  value={sub.image}
-                                  onChange={(e) => handleUpdateSubService(idx, "image", e.target.value)}
-                                  placeholder="https://images.unsplash.com/... or /uploads/..."
-                                  className="flex-1 px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
-                                />
-                                <label className="cursor-pointer px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
-                                  Upload
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => handleSubServiceImageUpload(idx, e)}
-                                    className="hidden"
-                                  />
-                                </label>
-                              </div>
-                              {sub.image && (
-                                <div className="mt-2 relative h-20 w-36 rounded-lg overflow-hidden border border-slate-800 bg-slate-900">
-                                  <Image src={sub.image} alt="Preview" fill className="object-cover" />
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Multiple Slider Images */}
-                            <div className="pt-2 border-t border-slate-800/80">
-                              <label className="block text-[11px] font-bold text-slate-400 mb-1 flex items-center justify-between">
-                                <span>Multi-Image Slider / Gallery (Optional)</span>
-                                <span className="text-[10px] text-accent">
-                                  {(sub.sliderImages || []).length} slides
-                                </span>
-                              </label>
-                              <div className="flex items-center gap-2 mb-2">
-                                <label className="cursor-pointer px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 shrink-0">
-                                  <FaUpload className="text-[10px]" />
-                                  <span>Add Slider Photos</span>
-                                  <input
-                                    type="file"
-                                    multiple
-                                    accept="image/*"
-                                    onChange={(e) => handleSubServiceSliderUpload(idx, e)}
-                                    className="hidden"
-                                  />
-                                </label>
-                                <span className="text-[10px] text-slate-500">
-                                  Select one or multiple images for interactive carousel slider.
-                                </span>
-                              </div>
-
-                              {Array.isArray(sub.sliderImages) && sub.sliderImages.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                  {sub.sliderImages.map((sImg, sIdx) => (
-                                    <div
-                                      key={sIdx}
-                                      className="relative w-16 h-12 rounded-lg overflow-hidden border border-slate-700 bg-slate-900 group"
-                                    >
-                                      <Image src={sImg} alt={`Slider ${sIdx + 1}`} fill className="object-cover" />
-                                      <button
-                                        type="button"
-                                        onClick={() => handleRemoveSubServiceSliderImage(idx, sIdx)}
-                                        className="absolute inset-0 bg-red-950/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-                                        title="Remove photo"
-                                      >
-                                        <FaTimes className="text-xs" />
-                                      </button>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <button
+                      type="button"
+                      onClick={handleAddFaq}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20 active:scale-95 transition-all"
+                    >
+                      <FaPlus />
+                      <span>Add FAQ</span>
+                    </button>
                   </div>
 
-                  {/* FAQ Section */}
-                  <div className="space-y-4 pt-6 border-t border-slate-800">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-sm font-bold text-white">
-                          Frequently Asked Questions (FAQs)
-                        </h4>
-                        <p className="text-xs text-slate-400 mt-0.5">
-                          Questions displayed on this service&apos;s detailed engineering page.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleAddFaq}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700/60 active:scale-95 transition-all"
-                      >
-                        <FaPlus />
-                        <span>Add FAQ</span>
-                      </button>
+                  {formData.faqs.length === 0 ? (
+                    <div className="p-8 bg-slate-950/40 rounded-2xl border border-slate-800 text-center text-xs text-slate-400">
+                      No FAQs added yet. Click &quot;Add FAQ&quot; to provide technical answers for clients.
                     </div>
-
+                  ) : (
                     <div className="space-y-3">
                       {formData.faqs.map((faq, idx) => (
                         <div
@@ -1584,7 +1474,7 @@ export default function AdminServicesPage() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
 
@@ -1625,8 +1515,41 @@ export default function AdminServicesPage() {
               </div>
             </form>
           </div>
+
+          {/* RIGHT COLUMN: Live Split-Screen Website Display */}
+          {showLivePreview && (
+            <div className="xl:col-span-6 bg-slate-900/60 rounded-2xl border border-slate-800 shadow-xl overflow-hidden flex flex-col xl:sticky xl:top-6 xl:h-[calc(100vh-3rem)]">
+              {/* Live Preview Screen Header */}
+              <div className="p-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                    <FaDesktop className="text-blue-400 text-[11px]" />
+                    <span>Live Website Screen Preview</span>
+                  </span>
+                </div>
+                <span className="text-[10px] text-blue-400 font-mono">
+                  /services/{formData.slug || "service"}
+                </span>
+              </div>
+
+              {/* Scrollable Live Preview Screen */}
+              <div className="flex-1 overflow-y-auto bg-slate-100 p-2 sm:p-3 scrollbar-thin">
+                <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-300 bg-white">
+                  <ServiceLivePreview formData={formData} />
+                </div>
+              </div>
+
+              {/* Live Preview Footer */}
+              <div className="p-2.5 bg-slate-950 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-between">
+                <span>Changes typed on the left appear on this live screen instantly.</span>
+                <span className="text-emerald-400 font-semibold">Realtime WYSIWYG</span>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
+      </div>
+    )}
+  </div>
+);
 }
