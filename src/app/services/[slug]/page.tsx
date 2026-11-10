@@ -1,7 +1,8 @@
 import React from "react";
 import { Metadata } from "next";
-import { ServiceItem } from "@/lib/mockData";
+import { ServiceItem, servicesData } from "@/lib/mockData";
 import ServiceBanner from "@/components/services/ServiceBanner";
+import ServiceSlider from "@/components/services/ServiceSlider";
 import ServiceIntro from "@/components/services/ServiceIntro";
 import ServiceSectorBreakdown from "@/components/services/ServiceSectorBreakdown";
 import ServiceSubSpecialties from "@/components/services/ServiceSubSpecialties";
@@ -120,6 +121,19 @@ async function getService(slug: string): Promise<ServiceItem | null> {
         }
       });
 
+      // If no subServices found in DB, check fallback from mockData for this flagship service
+      if (combinedSubServices.length === 0) {
+        const mockFallback = servicesData.find(
+          (s) =>
+            s.slug?.toLowerCase() === slugLower ||
+            s.code?.toLowerCase() === cleanKey ||
+            s.slug?.toLowerCase().replace("-systems", "") === cleanKey
+        );
+        if (mockFallback && Array.isArray(mockFallback.subServices) && mockFallback.subServices.length > 0) {
+          combinedSubServices.push(...mockFallback.subServices);
+        }
+      }
+
       // If viewing a core flagship page, present the Domain Overview
       if (isFlagshipRequested && domainOverview) {
         return {
@@ -218,13 +232,10 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       {/* 1. Service Banner (Hero) */}
       <ServiceBanner service={service} />
 
-      {/* 2. Introduction */}
-      <ServiceIntro service={service} />
+      {/* 2. Interactive Media Showcase Slider representing the Service */}
+      <ServiceSlider service={service} />
 
-      {/* Sector-Wise Solutions Tab Component (Commented out as requested) */}
-      {/* <ServiceSectorBreakdown service={service} /> */}
-
-      {/* 3. Sub-Specialties / Services Deep Dive */}
+      {/* 3. Created Services Under this Discipline (Title, Subtitle, Technical Solution, Banner) */}
       <ServiceSubSpecialties service={service} />
 
       {/* 4. The Challenge (Problems) & Our Solutions */}

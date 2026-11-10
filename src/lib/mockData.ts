@@ -13,6 +13,7 @@ export interface SubServiceDetail {
   fullDesc: string;
   features: string[];
   image: string;
+  sliderImages?: string[];
   packages?: PackageItem[];
 }
 

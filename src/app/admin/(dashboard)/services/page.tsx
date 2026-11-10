@@ -40,6 +40,7 @@ interface SubService {
   fullDesc?: string;
   features: string[];
   image: string;
+  sliderImages?: string[];
 }
 
 interface FaqItem {
@@ -521,6 +522,75 @@ export default function AdminServicesPage() {
       ...prev,
       subServices: prev.subServices.filter((_, i) => i !== index),
     }));
+  };
+
+  const handleSubServiceImageUpload = async (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const upData = new FormData();
+      upData.append("file", file);
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: upData,
+      });
+      const data = await res.json();
+      if (data.url) {
+        handleUpdateSubService(idx, "image", data.url);
+      }
+    } catch (err) {
+      console.error("Sub-service upload error:", err);
+      alert("Failed to upload image.");
+    }
+  };
+
+  const handleSubServiceSliderUpload = async (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    try {
+      const uploadedUrls: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const upData = new FormData();
+        upData.append("file", files[i]);
+        const res = await fetch("/api/admin/upload", {
+          method: "POST",
+          body: upData,
+        });
+        const data = await res.json();
+        if (data.url) {
+          uploadedUrls.push(data.url);
+        }
+      }
+
+      if (uploadedUrls.length > 0) {
+        setFormData((prev) => {
+          const updated = [...prev.subServices];
+          const existing = updated[idx].sliderImages || [];
+          updated[idx] = {
+            ...updated[idx],
+            sliderImages: [...existing, ...uploadedUrls],
+          };
+          return { ...prev, subServices: updated };
+        });
+      }
+    } catch (err) {
+      console.error("Slider upload error:", err);
+      alert("Failed to upload slider image(s).");
+    }
+  };
+
+  const handleRemoveSubServiceSliderImage = (subIdx: number, imgIdx: number) => {
+    setFormData((prev) => {
+      const updated = [...prev.subServices];
+      const existing = updated[subIdx].sliderImages || [];
+      updated[subIdx] = {
+        ...updated[subIdx],
+        sliderImages: existing.filter((_, i) => i !== imgIdx),
+      };
+      return { ...prev, subServices: updated };
+    });
   };
 
   // FAQ Helpers
@@ -1341,28 +1411,116 @@ export default function AdminServicesPage() {
 
                             <div>
                               <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                                Short Description
+                                Subtitle / Engineering Description
                               </label>
                               <input
                                 type="text"
                                 value={sub.shortDesc}
                                 onChange={(e) => handleUpdateSubService(idx, "shortDesc", e.target.value)}
-                                placeholder="Short description of this sub-service module..."
+                                placeholder="Short description / subtitle of this sub-service module..."
+                                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[11px] font-bold text-slate-400 mb-1 flex items-center justify-between">
+                                <span>Technical Solution (Scope / Deliverables - Comma or Newline separated)</span>
+                                <span className="text-[10px] text-blue-400 font-normal">
+                                  {Array.isArray(sub.features) ? sub.features.length : 0} items
+                                </span>
+                              </label>
+                              <textarea
+                                rows={2}
+                                value={Array.isArray(sub.features) ? sub.features.join(", ") : ""}
+                                onChange={(e) =>
+                                  handleUpdateSubService(
+                                    idx,
+                                    "features",
+                                    e.target.value
+                                      .split(/,|\n/)
+                                      .map((s) => s.trim())
+                                      .filter(Boolean)
+                                  )
+                                }
+                                placeholder="e.g. Biological aeration, Chemical dosing, Zero Liquid Discharge (ZLD), Online monitoring"
                                 className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
                               />
                             </div>
 
                             <div>
                               <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                                Image URL
+                                Banner Image (URL or Upload File)
                               </label>
-                              <input
-                                type="text"
-                                value={sub.image}
-                                onChange={(e) => handleUpdateSubService(idx, "image", e.target.value)}
-                                placeholder="https://images.unsplash.com/..."
-                                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
-                              />
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="text"
+                                  value={sub.image}
+                                  onChange={(e) => handleUpdateSubService(idx, "image", e.target.value)}
+                                  placeholder="https://images.unsplash.com/... or /uploads/..."
+                                  className="flex-1 px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
+                                />
+                                <label className="cursor-pointer px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
+                                  Upload
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleSubServiceImageUpload(idx, e)}
+                                    className="hidden"
+                                  />
+                                </label>
+                              </div>
+                              {sub.image && (
+                                <div className="mt-2 relative h-20 w-36 rounded-lg overflow-hidden border border-slate-800 bg-slate-900">
+                                  <Image src={sub.image} alt="Preview" fill className="object-cover" />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Multiple Slider Images */}
+                            <div className="pt-2 border-t border-slate-800/80">
+                              <label className="block text-[11px] font-bold text-slate-400 mb-1 flex items-center justify-between">
+                                <span>Multi-Image Slider / Gallery (Optional)</span>
+                                <span className="text-[10px] text-accent">
+                                  {(sub.sliderImages || []).length} slides
+                                </span>
+                              </label>
+                              <div className="flex items-center gap-2 mb-2">
+                                <label className="cursor-pointer px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 shrink-0">
+                                  <FaUpload className="text-[10px]" />
+                                  <span>Add Slider Photos</span>
+                                  <input
+                                    type="file"
+                                    multiple
+                                    accept="image/*"
+                                    onChange={(e) => handleSubServiceSliderUpload(idx, e)}
+                                    className="hidden"
+                                  />
+                                </label>
+                                <span className="text-[10px] text-slate-500">
+                                  Select one or multiple images for interactive carousel slider.
+                                </span>
+                              </div>
+
+                              {Array.isArray(sub.sliderImages) && sub.sliderImages.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {sub.sliderImages.map((sImg, sIdx) => (
+                                    <div
+                                      key={sIdx}
+                                      className="relative w-16 h-12 rounded-lg overflow-hidden border border-slate-700 bg-slate-900 group"
+                                    >
+                                      <Image src={sImg} alt={`Slider ${sIdx + 1}`} fill className="object-cover" />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveSubServiceSliderImage(idx, sIdx)}
+                                        className="absolute inset-0 bg-red-950/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                                        title="Remove photo"
+                                      >
+                                        <FaTimes className="text-xs" />
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           </div>
                         ))}

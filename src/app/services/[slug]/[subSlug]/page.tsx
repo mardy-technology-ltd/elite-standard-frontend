@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
-import { ServiceItem, SubServiceDetail } from "@/lib/mockData";
+import { ServiceItem, SubServiceDetail, servicesData } from "@/lib/mockData";
 import prisma from "@/lib/prisma";
 import SubServiceClient from "./SubServiceClient";
 import NoServiceAvailable, { getServiceFullName } from "@/components/services/NoServiceAvailable";
@@ -102,6 +102,46 @@ async function getSubServiceData(parentSlug: string, subSlug: string): Promise<{
         };
 
         return { service: parentItem, sub: foundSub };
+      }
+    }
+
+    // 3. Fallback to mockData.ts (servicesData)
+    const cleanParentKey = parentSlug.toLowerCase().trim().replace("-systems", "");
+    const mockParent = servicesData.find(
+      (s) =>
+        s.slug?.toLowerCase() === parentSlug.toLowerCase() ||
+        s.code?.toLowerCase() === cleanParentKey ||
+        s.slug?.toLowerCase().replace("-systems", "") === cleanParentKey
+    );
+
+    if (mockParent && Array.isArray(mockParent.subServices)) {
+      const foundMockSub = mockParent.subServices.find(
+        (s) =>
+          s.slug?.toLowerCase() === subSlug.toLowerCase() ||
+          s.id?.toLowerCase() === subSlug.toLowerCase() ||
+          s.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-") === subSlug.toLowerCase()
+      );
+
+      if (foundMockSub) {
+        return {
+          service: mockParent,
+          sub: foundMockSub,
+        };
+      }
+    }
+
+    // 4. Global subService match across all servicesData
+    for (const s of servicesData) {
+      if (Array.isArray(s.subServices)) {
+        const found = s.subServices.find(
+          (sub) =>
+            sub.slug?.toLowerCase() === subSlug.toLowerCase() ||
+            sub.id?.toLowerCase() === subSlug.toLowerCase() ||
+            sub.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-") === subSlug.toLowerCase()
+        );
+        if (found) {
+          return { service: s, sub: found };
+        }
       }
     }
   } catch (e) {
