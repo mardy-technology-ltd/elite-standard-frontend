@@ -139,8 +139,8 @@ export default function ServiceSlider({ service }: ServiceSliderProps) {
     if ((service as any).gallery && Array.isArray((service as any).gallery) && (service as any).gallery.length > 0) {
       return (service as any).gallery.map((g: any, i: number) => ({
         title: g.title || `${service.title} Installation #${i + 1}`,
-        subtitle: g.description || service.shortDescription || "",
-        badge: `${service.code} Engineering`,
+        subtitle: g.subtitle || g.description || service.shortDescription || "",
+        badge: g.badge || `${service.code} Engineering`,
         image: g.image || g.url || service.bannerImage,
       }));
     }

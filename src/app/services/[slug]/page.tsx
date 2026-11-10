@@ -134,6 +134,22 @@ async function getService(slug: string): Promise<ServiceItem | null> {
         }
       }
 
+      // Check if custom category slider exists in DB
+      let customGallery: any[] | undefined = undefined;
+      try {
+        const sliderSetting = await prisma.siteSetting.findUnique({
+          where: { key: `category_slider_${cleanKey}` },
+        });
+        if (sliderSetting && sliderSetting.value) {
+          const parsed = JSON.parse(sliderSetting.value);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            customGallery = parsed;
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching category slider setting:", err);
+      }
+
       // If viewing a core flagship page, present the Domain Overview
       if (isFlagshipRequested && domainOverview) {
         return {
@@ -148,6 +164,7 @@ async function getService(slug: string): Promise<ServiceItem | null> {
           fullDescription: domainOverview.description,
           icon: primary?.icon || "FaIndustry",
           bannerImage: domainOverview.bannerImage,
+          gallery: customGallery || ((primary as any)?.gallery as any) || undefined,
           problems: primary?.problems && primary.problems.length > 0 ? primary.problems : [],
           solutions: primary?.solutions && primary.solutions.length > 0 ? primary.solutions : [],
           scopeOfWork: primary?.scopeOfWork && primary.scopeOfWork.length > 0 ? primary.scopeOfWork : [],

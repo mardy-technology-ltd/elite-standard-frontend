@@ -40,6 +40,12 @@ export interface ServiceItem {
   scopeOfWork: string[];
   subServices: SubServiceDetail[];
   faqs: { question: string; answer: string }[];
+  gallery?: Array<{
+    title?: string;
+    description?: string;
+    badge?: string;
+    image: string;
+  }>;
   sectors?: {
     residential: SectorDetail;
     commercial: SectorDetail;

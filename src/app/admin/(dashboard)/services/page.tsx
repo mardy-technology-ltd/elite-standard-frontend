@@ -34,8 +34,10 @@ import {
   FaDesktop,
   FaMobileAlt,
   FaEye,
+  FaSlidersH,
 } from "react-icons/fa";
 import ServiceLivePreview from "./ServiceLivePreview";
+import DivisionSlidersScreen from "./DivisionSlidersScreen";
 
 interface SubService {
   id: string;
@@ -182,13 +184,14 @@ export default function AdminServicesPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  // Screen View State: "list" | "create" | "edit"
-  const [viewMode, setViewMode] = useState<"list" | "create" | "edit">("list");
+  // Screen View State: "list" | "create" | "edit" | "sliders"
+  const [viewMode, setViewMode] = useState<"list" | "create" | "edit" | "sliders">("list");
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [activeTab, setActiveTab] = useState<"general" | "banner" | "scope" | "faqs">("general");
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [selectedSliderCategory, setSelectedSliderCategory] = useState("eels");
 
   // Live Split Screen Editor State
   const [showLivePreview, setShowLivePreview] = useState(true);
@@ -650,8 +653,13 @@ export default function AdminServicesPage() {
         </div>
       )}
 
-      {/* VIEW 1: SERVICES CATALOG LIST SCREEN */}
-      {viewMode === "list" ? (
+      {/* VIEW 1: CATEGORY SLIDERS STUDIO SCREEN */}
+      {viewMode === "sliders" ? (
+        <DivisionSlidersScreen
+          initialCategoryKey={selectedSliderCategory}
+          onBack={handleBackToList}
+        />
+      ) : viewMode === "list" ? (
         <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800 shadow-xl">
@@ -668,13 +676,26 @@ export default function AdminServicesPage() {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm transition-all shadow-lg shadow-blue-500/20 active:scale-95"
-        >
-          <FaPlus />
-          <span>Add New Service</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={() => {
+              setSelectedSliderCategory("eels");
+              setViewMode("sliders");
+            }}
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-white border border-blue-500/30 font-semibold text-xs sm:text-sm transition-all active:scale-95 shadow-sm"
+          >
+            <FaSlidersH className="text-xs" />
+            <span>Manage Division Sliders</span>
+          </button>
+
+          <button
+            onClick={handleOpenCreate}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+          >
+            <FaPlus />
+            <span>Add New Service</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
