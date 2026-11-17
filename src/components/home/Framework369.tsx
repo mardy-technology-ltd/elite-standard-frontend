@@ -21,29 +21,45 @@ import {
   FaProjectDiagram,
   FaThLarge,
 } from "react-icons/fa";
-import { framework369Data } from "@/lib/mockData";
+import { framework369Data, servicesData } from "@/lib/mockData";
 
 export default function Framework369({ initialServices = [] }: { initialServices?: any[] }) {
   const [activeFrameworkTab, setActiveFrameworkTab] = useState<"solutions" | "actions" | "services">("solutions");
   const [activeCategory, setActiveCategory] = useState<"mechanical" | "electrical" | "plumbing">("mechanical");
-  const [liveServices, setLiveServices] = useState<any[]>(
-    initialServices && initialServices.length > 0 ? initialServices : []
-  );
+  
+  // Flagship services are strictly the 9 core pillars (3 Mechanical, 3 Electrical, 3 Plumbing).
+  // Any specific sub-service created in DB (e.g. ESL-MEP-PDCP) belongs under its flagship domain rather than creating a 10th card here.
+  const mergeServices = (dbList: any[] = []) => {
+    return servicesData.map((flagship) => {
+      // Find matching DB service if the user updated or customized this flagship service directly
+      const matchedDb = dbList?.find(
+        (dbItem) =>
+          dbItem.slug?.toLowerCase() === flagship.slug.toLowerCase() ||
+          dbItem.code?.toUpperCase() === flagship.code.toUpperCase()
+      );
+      if (matchedDb) {
+        return { ...flagship, ...matchedDb };
+      }
+      return flagship;
+    });
+  };
+
+  const [liveServices, setLiveServices] = useState<any[]>(() => mergeServices(initialServices));
 
   React.useEffect(() => {
     if (initialServices && initialServices.length > 0) {
-      setLiveServices(initialServices);
+      setLiveServices(mergeServices(initialServices));
     } else {
       fetch("/api/services", { cache: "no-store" })
         .then((r) => r.json())
         .then((d) => {
           if (d.services && Array.isArray(d.services)) {
-            setLiveServices(d.services);
+            setLiveServices(mergeServices(d.services));
           } else {
-            setLiveServices([]);
+            setLiveServices(mergeServices([]));
           }
         })
-        .catch(() => setLiveServices([]));
+        .catch(() => setLiveServices(mergeServices([])));
     }
   }, [initialServices]);
 
