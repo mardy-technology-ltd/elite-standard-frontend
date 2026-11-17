@@ -20,6 +20,7 @@
     "framer-motion": "^11.18.2",
     "jose": "^6.2.13",
     "next": "14.2.23",
+    "nextjs-toploader": "^3.9.17",
     "pg": "^8.23.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
