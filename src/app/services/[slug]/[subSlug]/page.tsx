@@ -6,7 +6,7 @@ import SubServiceClient from "./SubServiceClient";
 import NoServiceAvailable, { getServiceFullName } from "@/components/services/NoServiceAvailable";
 import { getFlagshipDomain } from "@/lib/flagshipDomains";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 interface SubServicePageProps {
   params: {

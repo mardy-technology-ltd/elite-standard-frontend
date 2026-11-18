@@ -6,7 +6,7 @@ import ProductDetailClient, {
 } from "./ProductDetailClient";
 import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 export default async function ProductDetailPage({
   params,

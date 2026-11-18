@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import ProjectsClient from "./ProjectsClient";
 import { projectsData, ProjectItem } from "@/lib/mockData";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 export default async function ProjectsPage() {
   let projects: ProjectItem[] = projectsData;

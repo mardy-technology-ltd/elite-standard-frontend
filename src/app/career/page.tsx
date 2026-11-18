@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import CareerClient, { JobPositionItem } from "./CareerClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 export const metadata: Metadata = {
   title: "Careers & Recruitment | Elite Standard Limited",

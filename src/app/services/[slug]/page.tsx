@@ -18,7 +18,7 @@ import prisma from "@/lib/prisma";
 import { FLAGSHIP_DOMAINS_OVERVIEW, getFlagshipDomain } from "@/lib/flagshipDomains";
 import SubServiceClient from "./[subSlug]/SubServiceClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 interface ServicePageProps {
   params: {

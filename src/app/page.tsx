@@ -11,7 +11,7 @@ import TestimonialsAndPartners from "@/components/home/TestimonialsAndPartners";
 import LatestBlogs from "@/components/home/LatestBlogs";
 import ContactCTA from "@/components/home/ContactCTA";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 export default async function HomePage() {
   let partners: any[] = [];

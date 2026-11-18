@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { projectsData, ProjectItem } from "@/lib/mockData";
 import ProjectDetailsClient from "./ProjectDetailsClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 interface ProjectPageProps {
   params: {

@@ -2,7 +2,7 @@ import React from "react";
 import prisma from "@/lib/prisma";
 import ProductsClient, { CatalogProduct, allProducts } from "./ProductsClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 export default async function ProductsPage() {
   let products: CatalogProduct[] = allProducts;
