@@ -613,60 +613,49 @@ export const servicesData: ServiceItem[] = [
     ],
     subServices: [
       {
-        id: "ss-pdcp-1",
-        slug: "lt",
-        title: "Main LT Switchgear (up to 4000A)",
-        shortDesc: "Form-4 type tested Low Voltage power distribution switchboards.",
-        fullDesc: "Robust Low Voltage main switchboards fabricated from 2.0mm electro-galvanized sheet steel housing ABB/Schneider Air Circuit Breakers.",
+        id: "ss-pdcp-renewable",
+        slug: "renewable-energy",
+        title: "Renewable Energy Power Systems",
+        shortDesc: "Sustainable electricity generation and distribution through solar, wind and other renewable sources.",
+        fullDesc: "Renewable energy generation and distribution solutions engineered for residential, commercial, and industrial facilities. Complete turnkey EPC covering solar power stations, grid synchronization, and hybrid storage systems.",
         features: [
-          "Form-4 separation separating busbars, breakers & cable terminals",
-          "High-purity 99.9% ETP copper busbars with heat shrink insulation",
-          "Digital multi-function power meters with RS485 Modbus",
-          "IP54 / IP65 dust-proof and splash-proof enclosures"
+          "Solar Power Station",
+          "Hybrid Solar Power System",
+          "Off-Grid Solar System",
+          "On-Grid Solar System",
+          "Wind & Other Renewable Energy"
         ],
-        image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?q=80&w=1200&auto=format&fit=crop"
       },
       {
-        id: "ss-pdcp-2",
-        slug: "ht",
-        title: "HT Substation & VCB Panels",
-        shortDesc: "11kV / 33kV Vacuum Circuit Breaker panels & transformers.",
-        fullDesc: "Turnkey High Tension (HT) substation setups including 11kV VCB switchgear, dry-type or oil-immersed transformers, and protection relays.",
+        id: "ss-pdcp-grid",
+        slug: "grid-power-substation",
+        title: "Grid Power & Electrical Substation",
+        shortDesc: "Reliable power distribution through transformers, switchgear and protection systems.",
+        fullDesc: "Grid-connected power distribution and substation solutions. Turnkey High Tension (HT) & Low Tension (LT) substations, vacuum circuit breakers, dry-type transformers, and automatic PFI capacitor banks.",
         features: [
-          "11kV 28kV/1min dielectric withstand VCB units",
-          "Microprocessor numerical protection relays (50/51/50N/51N)",
-          "Cast resin dry-type transformers (F-Class insulation)",
-          "SF6 ring main unit (RMU) grid connection panels"
+          "Power Distribution System",
+          "AC Power Substation",
+          "HV / MV / LV Substation",
+          "Transformer & Switchgear",
+          "PFI Plant & Control Panel"
         ],
-        image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop"
       },
       {
-        id: "ss-pdcp-3",
-        slug: "pfi",
-        title: "Automatic PFI Plants (0.99 PF)",
-        shortDesc: "Microprocessor Power Factor Improvement capacitor banks.",
-        fullDesc: "Automated capacitor switching banks that maintain near-unity power factor (0.99), eliminating utility low power factor penalty surcharges.",
+        id: "ss-pdcp-thermal",
+        slug: "thermal-power-generation",
+        title: "Thermal & Industrial Power Generation",
+        shortDesc: "Reliable power generation using gas, oil, diesel and steam turbine technologies.",
+        fullDesc: "Fuel-based power generation and industrial generator solutions designed for continuous base-load and emergency standby power in heavy manufacturing and power plants.",
         features: [
-          "Heavy-duty self-healing metallic film capacitors",
-          "Detuning reactors (7% / 14%) for harmonic mitigation",
-          "Microprocessor automatic PF controller with digital display",
-          "Thyristor switching modules for fast load fluctuations"
+          "Steam Turbine Power Plant",
+          "Gas Turbine Power Plant",
+          "Industrial Generator & Control System",
+          "Gas Generator System",
+          "Oil / Diesel Power Plant"
         ],
-        image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800&auto=format&fit=crop"
-      },
-      {
-        id: "ss-pdcp-4",
-        slug: "mcc",
-        title: "Smart VFD Motor Control Center",
-        shortDesc: "Automated motor starter & VFD speed regulation panels.",
-        fullDesc: "Centralized Motor Control Centers (MCC) for industrial pumps, fans, and conveyor lines featuring direct-on-line (DOL), Star-Delta, and VFD starters.",
-        features: [
-          "Variable Frequency Drives (VFD) from Danfoss / ABB / Siemens",
-          "Thermal overload protection & electronic phase failure relays",
-          "Drawout modular compartment design for easy maintenance",
-          "HMI touch panel interface for speed monitoring"
-        ],
-        image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1200&auto=format&fit=crop"
       }
     ],
     faqs: [

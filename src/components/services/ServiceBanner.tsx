@@ -37,8 +37,19 @@ export default function ServiceBanner({ service }: ServiceBannerProps) {
           <Link href="/services" className="hover:text-accent transition-colors">
             Services
           </Link>
+          {service.category && (
+            <>
+              <FaChevronRight className="text-[10px] text-slate-500" />
+              <Link
+                href={`/services?category=${service.category}`}
+                className="hover:text-accent capitalize transition-colors"
+              >
+                {service.category}
+              </Link>
+            </>
+          )}
           <FaChevronRight className="text-[10px] text-slate-500" />
-          <span className="text-accent font-bold">{service.code} Engineering</span>
+          <span className="text-accent font-bold">{service.code || service.title}</span>
         </nav>
 
         {/* Hero Content */}

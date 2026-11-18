@@ -148,10 +148,9 @@ export const serviceCategories: ServiceCategory[] = [
     shortDesc: "Form-4 LT switchgear, PFI plants & smart MCC.",
     icon: <FaMicrochip className="text-blue-600" />,
     subServices: [
-      { title: "Main LT Switchgear (up to 4000A)", desc: "Form-4 type tested ABB ACB boards", href: "/services/electrical/pdcp/lt" },
-      { title: "HT Substation & VCB Panels", desc: "11kV / 33kV vacuum circuit breakers", href: "/services/electrical/pdcp/ht" },
-      { title: "Automatic PFI Plants (0.99 PF)", desc: "Microprocessor PF correction banks", href: "/services/electrical/pdcp/pfi" },
-      { title: "Smart VFD Motor Control Center", desc: "Modbus/Profibus automated MCC", href: "/services/electrical/pdcp/mcc" },
+      { title: "Renewable Energy Power Systems", desc: "Solar power stations, on-grid & hybrid solar systems", href: "/services/electrical/pdcp/renewable-energy" },
+      { title: "Grid Power & Electrical Substation", desc: "Transformers, switchgear, HT/LT & PFI control panels", href: "/services/electrical/pdcp/grid-power-substation" },
+      { title: "Thermal & Industrial Power Generation", desc: "Steam/gas turbine power plants & industrial generators", href: "/services/electrical/pdcp/thermal-power-generation" },
     ],
   },
   {

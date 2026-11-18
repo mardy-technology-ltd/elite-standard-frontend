@@ -79,18 +79,21 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
                   </p>
                 )}
 
-                {/* 3. Technical Solution */}
+                {/* 3. Technical Solution / Bullet Items */}
                 {Array.isArray(sub.features) && sub.features.length > 0 && (
                   <div className="pt-2 flex flex-col gap-2.5">
                     <h4 className="text-xs font-extrabold text-brand-950 uppercase tracking-wider flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-accent" />
-                      <span>Technical Solution:</span>
+                      <span>Key Technical Capabilities:</span>
                     </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-2">
                       {sub.features.map((feat, fIdx) => (
-                        <div key={fIdx} className="flex items-start gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                          <FaCheckCircle className="text-emerald-500 text-xs shrink-0 mt-0.5" />
-                          <span className="text-slate-700 text-xs font-medium leading-relaxed">{feat}</span>
+                        <div
+                          key={fIdx}
+                          className="flex items-center gap-2.5 bg-brand-950 text-white px-4 py-2.5 rounded-xl border border-brand-900 shadow-sm hover:border-accent/50 transition-colors"
+                        >
+                          <span className="text-accent text-xs font-bold">›</span>
+                          <span className="text-xs font-bold tracking-wide">{feat}</span>
                         </div>
                       ))}
                     </div>
@@ -100,10 +103,17 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
                 <div className="pt-4 flex flex-wrap items-center gap-3">
                   <Link
                     href={`/services/${service.category}/${service.slug}/${sub.slug}`}
-                    className="inline-flex items-center gap-2 bg-brand-900 hover:bg-brand-950 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-sm transition-all active:scale-95 group/btn"
+                    className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition-all active:scale-95 group/btn"
                   >
-                    <span>View Technical Specifications</span>
-                    <FaArrowRight className="text-[10px] text-accent group-hover/btn:translate-x-1 transition-transform" />
+                    <span>
+                      {sub.slug === "renewable-energy"
+                        ? "Open Solar →"
+                        : sub.slug === "grid-power-substation"
+                        ? "Open Grid Power →"
+                        : sub.slug === "thermal-power-generation"
+                        ? "Open Thermal →"
+                        : "View Technical Specifications →"}
+                    </span>
                   </Link>
                   <Link
                     href={`/contact?service=${service.slug}&sub=${sub.slug}&type=quotation`}

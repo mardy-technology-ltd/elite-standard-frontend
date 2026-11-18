@@ -93,36 +93,74 @@ async function getService(slug: string, category?: string): Promise<ServiceItem 
       const primary = dbService || relatedDbServices[0];
       const domainOverview = FLAGSHIP_DOMAINS_OVERVIEW[cleanKey];
 
-      const combinedSubServices: any[] = primary && Array.isArray(primary.subServices) ? [...primary.subServices] : [];
+      // 1. Start with the core mock subServices defined for this flagship (e.g. 3 cards for PDCP)
+      const mockFallback = servicesData.find(
+        (s) =>
+          s.slug?.toLowerCase() === slugLower ||
+          s.code?.toLowerCase() === cleanKey ||
+          s.slug?.toLowerCase().replace("-systems", "") === cleanKey
+      );
 
+      const combinedSubServices: any[] = [];
+      if (mockFallback && Array.isArray(mockFallback.subServices)) {
+        combinedSubServices.push(...mockFallback.subServices);
+      }
+
+      // If primary service in DB has explicit subServices, merge them
+      if (primary && Array.isArray(primary.subServices)) {
+        primary.subServices.forEach((sub: any) => {
+          const idx = combinedSubServices.findIndex(
+            (c) => c.slug === sub.slug || c.title?.toLowerCase() === sub.title?.toLowerCase()
+          );
+          if (idx >= 0) {
+            combinedSubServices[idx] = { ...combinedSubServices[idx], ...sub };
+          } else {
+            combinedSubServices.push(sub);
+          }
+        });
+      }
+
+      // 2. Attach any standalone DB services belonging to this flagship code
       relatedDbServices.forEach((rel) => {
-        const alreadyExists = combinedSubServices.some(
-          (sub) => sub.title?.toLowerCase() === rel.title?.toLowerCase() || sub.slug === rel.slug
+        // If it matches one of our defined subServices, enhance it
+        const matchedIdx = combinedSubServices.findIndex(
+          (sub) =>
+            sub.slug === rel.slug ||
+            (rel.slug && sub.slug && rel.slug.includes(sub.slug)) ||
+            (rel.title && sub.title && rel.title.toLowerCase().includes(sub.title.toLowerCase()))
         );
-        if (!alreadyExists && (!domainOverview || rel.title !== domainOverview.title)) {
-          combinedSubServices.push({
-            id: rel.id,
-            slug: rel.slug,
-            title: rel.title,
-            shortDesc: rel.shortDescription || rel.subtitle || "",
-            fullDesc: rel.fullDescription || rel.shortDescription || "",
-            features: Array.isArray(rel.scopeOfWork) ? rel.scopeOfWork : [],
-            image: rel.bannerImage || "/images/company-info.png",
-          });
+
+        if (matchedIdx >= 0) {
+          combinedSubServices[matchedIdx] = {
+            ...combinedSubServices[matchedIdx],
+            id: rel.id || combinedSubServices[matchedIdx].id,
+            title: combinedSubServices[matchedIdx].title,
+            shortDesc: rel.shortDescription || combinedSubServices[matchedIdx].shortDesc,
+            fullDesc: rel.fullDescription || combinedSubServices[matchedIdx].fullDesc,
+            features:
+              Array.isArray(rel.scopeOfWork) && rel.scopeOfWork.length > 0
+                ? rel.scopeOfWork
+                : combinedSubServices[matchedIdx].features,
+            image: rel.bannerImage || combinedSubServices[matchedIdx].image,
+          };
+        } else if (rel.title !== domainOverview?.title && rel.code !== domainOverview?.code) {
+          // If it's a new custom sub-service in DB (e.g. "Elite Solar Energy Solution - EPC"), attach it
+          const alreadyExists = combinedSubServices.some(
+            (sub) => sub.title?.toLowerCase() === rel.title?.toLowerCase() || sub.slug === rel.slug
+          );
+          if (!alreadyExists) {
+            combinedSubServices.push({
+              id: rel.id,
+              slug: rel.slug,
+              title: rel.title,
+              shortDesc: rel.shortDescription || rel.subtitle || "",
+              fullDesc: rel.fullDescription || rel.shortDescription || "",
+              features: Array.isArray(rel.scopeOfWork) && rel.scopeOfWork.length > 0 ? rel.scopeOfWork : ["Full Turnkey Engineering EPC", "BNBC & IEC Compliance", "Site Inspection & Testing"],
+              image: rel.bannerImage || "/images/company-info.png",
+            });
+          }
         }
       });
-
-      if (combinedSubServices.length === 0) {
-        const mockFallback = servicesData.find(
-          (s) =>
-            s.slug?.toLowerCase() === slugLower ||
-            s.code?.toLowerCase() === cleanKey ||
-            s.slug?.toLowerCase().replace("-systems", "") === cleanKey
-        );
-        if (mockFallback && Array.isArray(mockFallback.subServices) && mockFallback.subServices.length > 0) {
-          combinedSubServices.push(...mockFallback.subServices);
-        }
-      }
 
       let customGallery: any[] | undefined = undefined;
       try {
