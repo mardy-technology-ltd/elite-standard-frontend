@@ -417,7 +417,7 @@ export default function Framework369({ initialServices = [] }: { initialServices
                     {filteredServices.map((service, idx) => (
                     <Link
                       key={service.id}
-                      href={`/services/${service.slug}`}
+                      href={`/services/${service.category}/${service.slug}`}
                       className="block h-full group"
                     >
                       <ThreeDCard maxTilt={6} className="h-full">

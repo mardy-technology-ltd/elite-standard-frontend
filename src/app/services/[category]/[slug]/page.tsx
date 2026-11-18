@@ -3,8 +3,6 @@ import { Metadata } from "next";
 import { ServiceItem, SubServiceDetail, servicesData } from "@/lib/mockData";
 import ServiceBanner from "@/components/services/ServiceBanner";
 import ServiceSlider from "@/components/services/ServiceSlider";
-import ServiceIntro from "@/components/services/ServiceIntro";
-import ServiceSectorBreakdown from "@/components/services/ServiceSectorBreakdown";
 import ServiceSubSpecialties from "@/components/services/ServiceSubSpecialties";
 import ServiceChallenges from "@/components/services/ServiceChallenges";
 import ServiceScope from "@/components/services/ServiceScope";
@@ -13,15 +11,15 @@ import ServiceCTA from "@/components/services/ServiceCTA";
 import ServiceRelatedProjects from "@/components/services/ServiceRelatedProjects";
 import NoServiceAvailable, { getServiceFullName } from "@/components/services/NoServiceAvailable";
 import { projectsData, ProjectItem } from "@/lib/mockData";
-
 import prisma from "@/lib/prisma";
 import { FLAGSHIP_DOMAINS_OVERVIEW, getFlagshipDomain } from "@/lib/flagshipDomains";
-import SubServiceClient from "./[subSlug]/SubServiceClient";
+import SubServiceClient from "@/components/services/SubServiceClient";
 
 export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 interface ServicePageProps {
   params: {
+    category: string;
     slug: string;
   };
 }
@@ -59,24 +57,18 @@ async function getRelatedProjects(serviceCategory: string): Promise<ProjectItem[
     console.error("Error fetching related projects from DB:", err);
   }
 
-  // Fallback to mock projects matching category or first 3 projects
   const matched = projectsData.filter(
     (p) => p.category?.toLowerCase() === serviceCategory.toLowerCase()
   );
   return matched.length > 0 ? matched : projectsData.slice(0, 3);
 }
 
-async function getService(slug: string): Promise<ServiceItem | null> {
+async function getService(slug: string, category?: string): Promise<ServiceItem | null> {
   try {
     const slugLower = slug.toLowerCase().trim();
     const cleanKey = slugLower.replace("-systems", "");
-    const slugAliases = [
-      slugLower,
-      cleanKey,
-      `${cleanKey}-systems`,
-    ];
+    const slugAliases = [slugLower, cleanKey, `${cleanKey}-systems`];
 
-    // Find any direct service or flagship matching slug
     const dbService = await prisma.service.findFirst({
       where: {
         OR: [
@@ -87,7 +79,6 @@ async function getService(slug: string): Promise<ServiceItem | null> {
       },
     });
 
-    // Also find any services created in DB belonging to this flagship code (e.g. code includes "HVAC")
     const codeMatch = cleanKey.toUpperCase();
     const relatedDbServices = await prisma.service.findMany({
       where: {
@@ -102,7 +93,6 @@ async function getService(slug: string): Promise<ServiceItem | null> {
       const primary = dbService || relatedDbServices[0];
       const domainOverview = FLAGSHIP_DOMAINS_OVERVIEW[cleanKey];
 
-      // Build subServices list by combining explicit subServices with services created under this flagship
       const combinedSubServices: any[] = primary && Array.isArray(primary.subServices) ? [...primary.subServices] : [];
 
       relatedDbServices.forEach((rel) => {
@@ -122,7 +112,6 @@ async function getService(slug: string): Promise<ServiceItem | null> {
         }
       });
 
-      // If no subServices found in DB, check fallback from mockData for this flagship service
       if (combinedSubServices.length === 0) {
         const mockFallback = servicesData.find(
           (s) =>
@@ -135,7 +124,6 @@ async function getService(slug: string): Promise<ServiceItem | null> {
         }
       }
 
-      // Check if custom category slider exists in DB
       let customGallery: any[] | undefined = undefined;
       try {
         const sliderSetting = await prisma.siteSetting.findUnique({
@@ -151,13 +139,14 @@ async function getService(slug: string): Promise<ServiceItem | null> {
         console.error("Error fetching category slider setting:", err);
       }
 
-      // If viewing a core flagship page, present the Domain Overview
       if (isFlagshipRequested && domainOverview) {
+        const determinedCategory = domainOverview.category || category || (["hvac", "fdps", "guds"].includes(cleanKey) ? "mechanical" : ["pdcp", "eels", "iba"].includes(cleanKey) ? "electrical" : "plumbing");
+
         return {
           id: primary?.id || `flagship-${cleanKey}`,
           slug: slugLower,
           code: codeMatch,
-          category: (primary?.category as any) || (["hvac", "fdps", "guds"].includes(cleanKey) ? "mechanical" : ["pdcp", "eels", "iba"].includes(cleanKey) ? "electrical" : "plumbing"),
+          category: determinedCategory as any,
           compliance: domainOverview.compliance,
           title: domainOverview.title,
           subtitle: domainOverview.subtitle,
@@ -175,13 +164,12 @@ async function getService(slug: string): Promise<ServiceItem | null> {
         };
       }
 
-      // If viewing a specific service directly (e.g. /services/vrf-vrv-multi-split-systems)
       if (primary) {
         return {
           id: primary.id,
           slug: primary.slug,
           code: primary.code,
-          category: primary.category as any,
+          category: (primary.category || category || "mechanical") as any,
           compliance: primary.compliance && primary.compliance.length > 0 ? primary.compliance : ["BNBC", "ASHRAE", "NFPA"],
           title: primary.title,
           subtitle: primary.subtitle || `Specialized ${primary.code} Engineering Solutions`,
@@ -205,8 +193,7 @@ async function getService(slug: string): Promise<ServiceItem | null> {
   return null;
 }
 
-// Helper to resolve whether a slug is an individual service or flagship domain overview
-async function getDetailPageData(slug: string): Promise<
+async function getDetailPageData(slug: string, category?: string): Promise<
   | { type: "flagship"; service: ServiceItem }
   | { type: "subservice"; service: ServiceItem; sub: SubServiceDetail }
   | null
@@ -216,15 +203,13 @@ async function getDetailPageData(slug: string): Promise<
     const cleanKey = slugLower.replace("-systems", "");
     const isFlagship = Boolean(FLAGSHIP_DOMAINS_OVERVIEW[cleanKey]);
 
-    // 1. If it's a Flagship Domain Landing Page (hvac, fdps, guds, pdcp, eels, iba, wsds, wts, rhs)
     if (isFlagship) {
-      const service = await getService(slug);
+      const service = await getService(slug, category);
       if (service) {
         return { type: "flagship", service };
       }
     }
 
-    // 2. If it's an Individual Service: check DB first
     const dbService = await prisma.service.findFirst({
       where: {
         OR: [
@@ -237,7 +222,6 @@ async function getDetailPageData(slug: string): Promise<
     });
 
     if (dbService) {
-      // Determine parent flagship
       const parentFlagshipKey = dbService.code
         ? dbService.code.replace("ESL-MEP-", "").toLowerCase()
         : "";
@@ -257,7 +241,7 @@ async function getDetailPageData(slug: string): Promise<
         id: parentFlagship ? `flagship-${parentFlagship.code.toLowerCase()}` : dbService.id,
         slug: parentFlagshipKey || (parentFlagship?.code ? parentFlagship.code.toLowerCase() : "services"),
         code: parentFlagship?.code || (dbService.category ? dbService.category.toUpperCase() : "MEP"),
-        category: (parentFlagship?.category || dbService.category || "mechanical") as any,
+        category: (parentFlagship?.category || dbService.category || category || "mechanical") as any,
         compliance: (dbService.compliance && dbService.compliance.length > 0)
           ? dbService.compliance
           : (parentFlagship?.compliance || ["BNBC", "ASHRAE", "NFPA"]),
@@ -278,7 +262,6 @@ async function getDetailPageData(slug: string): Promise<
       return { type: "subservice", service: parentItem, sub: subDetail };
     }
 
-    // 3. Check mockData subServices
     for (const s of servicesData) {
       if (Array.isArray(s.subServices)) {
         const found = s.subServices.find(
@@ -293,8 +276,7 @@ async function getDetailPageData(slug: string): Promise<
       }
     }
 
-    // 4. Fallback: if getService returns something
-    const fallbackService = await getService(slug);
+    const fallbackService = await getService(slug, category);
     if (fallbackService) {
       return { type: "flagship", service: fallbackService };
     }
@@ -305,9 +287,8 @@ async function getDetailPageData(slug: string): Promise<
   return null;
 }
 
-// Dynamic SEO Metadata for Each Service
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
-  const pageData = await getDetailPageData(params.slug);
+  const pageData = await getDetailPageData(params.slug, params.category);
 
   if (!pageData) {
     const fullName = getServiceFullName(params.slug);
@@ -358,18 +339,16 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 }
 
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
-  const pageData = await getDetailPageData(params.slug);
+  const pageData = await getDetailPageData(params.slug, params.category);
 
   if (!pageData) {
     return <NoServiceAvailable slug={params.slug} />;
   }
 
-  // If it's an individual service, ALWAYS render the rich SubServiceClient layout (Image 2)
   if (pageData.type === "subservice") {
     return <SubServiceClient service={pageData.service} sub={pageData.sub} />;
   }
 
-  // Otherwise, render the flagship domain overview landing page (with division slider & services list)
   const service = pageData.service;
   const relatedProjects = await getRelatedProjects(service.category);
 
@@ -390,7 +369,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       {/* 5. Scope of Work */}
       <ServiceScope service={service} />
 
-      {/* 6. Related Engineering Projects (Excluded for WSDS as requested) */}
+      {/* 6. Related Engineering Projects */}
       {service.slug !== "wsds" && service.code?.toUpperCase() !== "WSDS" && (
         <ServiceRelatedProjects
           projects={relatedProjects}

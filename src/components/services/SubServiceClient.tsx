@@ -248,7 +248,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
           {/* Breadcrumbs & Back Link */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <Link
-              href={`/services/${service.slug}`}
+              href={`/services/${service.category}/${service.slug}`}
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white text-xs font-semibold backdrop-blur-md border border-white/10 transition-all active:scale-95"
             >
               <FaArrowLeft className="text-[10px]" />
@@ -264,7 +264,11 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                 Services
               </Link>
               <span>/</span>
-              <Link href={`/services/${service.slug}`} className="hover:text-white transition-colors">
+              <Link href={`/services?category=${service.category}`} className="hover:text-white capitalize transition-colors">
+                {service.category}
+              </Link>
+              <span>/</span>
+              <Link href={`/services/${service.category}/${service.slug}`} className="hover:text-white transition-colors">
                 {service.code || service.title}
               </Link>
               <span>/</span>
@@ -1030,7 +1034,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                   {siblingSubServices.map((sibling) => (
                     <Link
                       key={sibling.slug}
-                      href={`/services/${service.slug}/${sibling.slug}`}
+                      href={`/services/${service.category}/${service.slug}/${sibling.slug}`}
                       className="p-3 rounded-2xl bg-slate-50 hover:bg-accent/10 border border-slate-200/80 hover:border-accent transition-all group flex items-center justify-between gap-3"
                     >
                       <div className="min-w-0 flex-1">
@@ -1047,7 +1051,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                 </div>
 
                 <Link
-                  href={`/services/${service.slug}`}
+                  href={`/services/${service.category}/${service.slug}`}
                   className="block text-center text-xs font-bold text-accent hover:text-brand-950 pt-2 transition-colors"
                 >
                   View All {service.title} Services →

@@ -255,7 +255,7 @@ function ServicesOverviewContent() {
                 </div>
               </div>
 
-              <Link href={`/services/${service.slug}`} className="absolute inset-0 z-10" aria-label={service.title} />
+              <Link href={`/services/${service.category}/${service.slug}`} className="absolute inset-0 z-10" aria-label={service.title} />
             </motion.div>
           ))}
           </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import { ServiceItem, SubServiceDetail, servicesData } from "@/lib/mockData";
 import prisma from "@/lib/prisma";
-import SubServiceClient from "./SubServiceClient";
+import SubServiceClient from "@/components/services/SubServiceClient";
 import NoServiceAvailable, { getServiceFullName } from "@/components/services/NoServiceAvailable";
 import { getFlagshipDomain } from "@/lib/flagshipDomains";
 
@@ -10,12 +10,13 @@ export const revalidate = 60; // Revalidate every 60 seconds (ISR)
 
 interface SubServicePageProps {
   params: {
+    category: string;
     slug: string;
     subSlug: string;
   };
 }
 
-async function getSubServiceData(parentSlug: string, subSlug: string): Promise<{
+async function getSubServiceData(parentSlug: string, subSlug: string, category?: string): Promise<{
   service: ServiceItem;
   sub: SubServiceDetail;
 } | null> {
@@ -48,7 +49,7 @@ async function getSubServiceData(parentSlug: string, subSlug: string): Promise<{
         id: parentFlagship ? `flagship-${parentFlagship.code.toLowerCase()}` : dbSubService.id,
         slug: parentSlug,
         code: parentFlagship?.code || (dbSubService.category ? dbSubService.category.toUpperCase() : "MEP"),
-        category: (parentFlagship?.category || dbSubService.category || "mechanical") as any,
+        category: (parentFlagship?.category || dbSubService.category || category || "mechanical") as any,
         compliance: (dbSubService.compliance && dbSubService.compliance.length > 0)
           ? dbSubService.compliance
           : (parentFlagship?.compliance || ["BNBC", "ASHRAE", "NFPA"]),
@@ -85,7 +86,7 @@ async function getSubServiceData(parentSlug: string, subSlug: string): Promise<{
           id: dbParent.id,
           slug: dbParent.slug,
           code: dbParent.code,
-          category: dbParent.category as any,
+          category: (dbParent.category || category || "mechanical") as any,
           compliance: dbParent.compliance,
           title: parentFlagship?.title || dbParent.title,
           subtitle: parentFlagship?.subtitle || dbParent.subtitle || "",
@@ -151,9 +152,8 @@ async function getSubServiceData(parentSlug: string, subSlug: string): Promise<{
   return null;
 }
 
-// Dynamic SEO Metadata specific to each individual engineering specialty
 export async function generateMetadata({ params }: SubServicePageProps): Promise<Metadata> {
-  const data = await getSubServiceData(params.slug, params.subSlug);
+  const data = await getSubServiceData(params.slug, params.subSlug, params.category);
 
   if (!data) {
     const fullParent = getServiceFullName(params.slug);
@@ -184,13 +184,13 @@ export async function generateMetadata({ params }: SubServicePageProps): Promise
 }
 
 export default async function SubServicePage({ params }: SubServicePageProps) {
-  const data = await getSubServiceData(params.slug, params.subSlug);
+  const data = await getSubServiceData(params.slug, params.subSlug, params.category);
 
   if (!data) {
     return (
       <NoServiceAvailable
         title={params.subSlug}
-        slug={`${params.slug}/${params.subSlug}`}
+        slug={`${params.category}/${params.slug}/${params.subSlug}`}
         message="The requested specialized sub-discipline specifications have not been published yet in the system."
       />
     );

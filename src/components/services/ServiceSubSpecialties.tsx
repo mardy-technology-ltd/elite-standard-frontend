@@ -99,7 +99,7 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
 
                 <div className="pt-4 flex flex-wrap items-center gap-3">
                   <Link
-                    href={`/services/${service.slug}/${sub.slug}`}
+                    href={`/services/${service.category}/${service.slug}/${sub.slug}`}
                     className="inline-flex items-center gap-2 bg-brand-900 hover:bg-brand-950 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-sm transition-all active:scale-95 group/btn"
                   >
                     <span>View Technical Specifications</span>
@@ -118,7 +118,7 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
               {/* Right Column: Image Showcase / Banner */}
               <div className="lg:col-span-5">
                 <Link
-                  href={`/services/${service.slug}/${sub.slug}`}
+                  href={`/services/${service.category}/${service.slug}/${sub.slug}`}
                   className="relative block h-64 sm:h-80 w-full rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-slate-100 group/img cursor-pointer"
                 >
                   <Image
