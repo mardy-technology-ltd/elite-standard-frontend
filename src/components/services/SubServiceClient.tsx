@@ -668,19 +668,19 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {sixKeyActions.map((action, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-start"
+                className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-200 transition-all flex flex-col justify-start"
               >
-                <span className="text-blue-600 font-extrabold text-xs mb-2">
+                <span className="text-blue-600 font-extrabold text-sm mb-2.5 tracking-wider">
                   {action.step}
                 </span>
-                <h3 className="font-heading font-extrabold text-brand-950 text-base mb-2">
+                <h3 className="font-heading font-extrabold text-brand-950 text-lg mb-2">
                   {action.title}
                 </h3>
-                <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
+                <p className="text-slate-500 text-sm leading-relaxed">
                   {action.desc}
                 </p>
               </div>
