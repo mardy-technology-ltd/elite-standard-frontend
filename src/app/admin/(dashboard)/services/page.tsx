@@ -814,7 +814,7 @@ export default function AdminServicesPage() {
                             {s.code}
                           </span>
                           <span className="font-mono text-[10px] text-slate-500">
-                            /services/{s.slug}
+                            /services/{s.category}/{s.slug}
                           </span>
                         </div>
                       </td>
@@ -854,7 +854,7 @@ export default function AdminServicesPage() {
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex items-center gap-1.5">
                           <Link
-                            href={`/services/${s.slug}`}
+                            href={`/services/${s.category}/${s.slug}`}
                             target="_blank"
                             title="View on Live Website"
                             className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"

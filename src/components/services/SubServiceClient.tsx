@@ -120,6 +120,58 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
+  // Solutions we cover - dynamic or fallback based on sub.features
+  const solutionOptions = React.useMemo(() => {
+    if (Array.isArray(sub.features) && sub.features.length > 0) {
+      return sub.features;
+    }
+    return [
+      "Solar Power Station",
+      "On-Grid Solar System",
+      "Off-Grid Solar System",
+      "Hybrid Solar Power System",
+      "Wind & Other Renewable Energy",
+    ];
+  }, [sub.features]);
+
+  const [selectedSolution, setSelectedSolution] = useState<string>(
+    solutionOptions[1] || solutionOptions[0] || "On-Grid Solar System"
+  );
+
+  // 6 Key Actions (Framework actions)
+  const sixKeyActions = [
+    {
+      step: "01",
+      title: "Designing",
+      desc: "Site, roof and load assessment.",
+    },
+    {
+      step: "02",
+      title: "Supplying",
+      desc: "System sizing, single line diagram and drawings.",
+    },
+    {
+      step: "03",
+      title: "Installing",
+      desc: "Inverters, panels, batteries and control panels.",
+    },
+    {
+      step: "04",
+      title: "Commissioning",
+      desc: "Mounting, wiring and panel installation.",
+    },
+    {
+      step: "05",
+      title: "Maintaining",
+      desc: "Testing, grid synchronisation and handover.",
+    },
+    {
+      step: "06",
+      title: "Servicing",
+      desc: "Maintenance, monitoring and support.",
+    },
+  ];
+
   // Build slides list: custom sliderImages > fallback defaults > single image
   const slides: SubServiceSlide[] = React.useMemo(() => {
     if (Array.isArray(sub.sliderImages) && sub.sliderImages.length > 0) {
@@ -299,12 +351,51 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
           </div>
 
           {/* Title & Short Description */}
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl drop-shadow-md">
-            {sub.title}
-          </h1>
-          <p className="text-slate-300 text-sm sm:text-base mt-4 max-w-3xl leading-relaxed">
-            {sub.shortDesc}
-          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7">
+              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl drop-shadow-md">
+                {sub.title}
+              </h1>
+              <p className="text-amber-300 font-medium text-sm sm:text-base mt-2">
+                Renewable energy generation and distribution solutions.
+              </p>
+              <p className="text-slate-300 text-sm sm:text-base mt-3 max-w-2xl leading-relaxed">
+                {sub.shortDesc}
+              </p>
+
+              <div className="mt-6 flex flex-wrap items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const formElement = document.getElementById("quote-section");
+                    if (formElement) {
+                      formElement.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                  className="px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-brand-950 font-extrabold text-sm shadow-lg shadow-amber-500/20 active:scale-95 transition-all inline-flex items-center gap-2"
+                >
+                  <span>Get Quote</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right Preview Card matching mockup */}
+            <div className="lg:col-span-5 hidden lg:block">
+              <div className="relative h-64 w-full rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-slate-900 group">
+                <Image
+                  src={currentSlide.image || sub.image || "/images/company-info.png"}
+                  alt={sub.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-white/90">
+                  <span className="font-bold truncate">{currentSlide.title || sub.title}</span>
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-amber-500/80 text-brand-950 font-bold">Verified</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Key Facts Summary Strip */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8 pt-6 border-t border-white/15 max-w-5xl">
@@ -517,6 +608,76 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ============================================================== */}
+      {/* 2.5 SOLUTIONS WE COVER & 6 KEY ACTIONS (User Requested Mockup) */}
+      {/* ============================================================== */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+        {/* SECTION A: Solutions we cover */}
+        <div className="mb-14">
+          <div className="mb-6">
+            <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-brand-950">
+              Solutions we cover
+            </h2>
+            <p className="text-slate-500 text-sm mt-1">
+              Select a type to see its products.
+            </p>
+          </div>
+
+          {/* Interactive Filter Pills */}
+          <div className="flex flex-wrap gap-3 sm:gap-4">
+            {solutionOptions.map((sol, idx) => {
+              const isSelected = selectedSolution === sol;
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSelectedSolution(sol)}
+                  className={`px-5 py-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+                    isSelected
+                      ? "bg-[#0c1f38] text-white border-2 border-amber-400 shadow-md shadow-amber-500/10 scale-[1.02]"
+                      : "bg-[#0e213d] text-slate-200 hover:text-white hover:bg-[#132c52] border border-slate-700/60"
+                  }`}
+                >
+                  <span className={isSelected ? "text-amber-400 font-bold" : "text-slate-400"}>›</span>
+                  <span>{sol}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* SECTION B: Our 6 key actions */}
+        <div className="mb-6">
+          <div className="mb-6">
+            <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-brand-950">
+              Our 6 key actions
+            </h2>
+            <p className="text-slate-500 text-sm mt-1">
+              From first survey to long-term service.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+            {sixKeyActions.map((action, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-start"
+              >
+                <span className="text-blue-600 font-extrabold text-xs mb-2">
+                  {action.step}
+                </span>
+                <h3 className="font-heading font-extrabold text-brand-950 text-base mb-2">
+                  {action.title}
+                </h3>
+                <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
+                  {action.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -827,7 +988,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
             
             {/* CARD A: Compact, High-Conversion Consultation Form */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-xl relative overflow-hidden">
+            <div id="quote-section" className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-xl relative overflow-hidden">
               <div className="mb-5 pb-3 border-b border-slate-100 flex flex-col gap-1">
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100 self-start">
                   Quick Quotation
