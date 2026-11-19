@@ -230,6 +230,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<QuoteFormValues>({
@@ -239,10 +240,17 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
       email: "",
       phone: "",
       company: "",
-      projectScale: "",
+      projectScale: selectedSolution || "",
       message: `We would like to request an engineering consultation / BOQ estimate for "${sub.title}". Please advise on technical specifications and deployment timeline.`,
     },
   });
+
+  // Keep projectScale in sync when selectedSolution changes
+  useEffect(() => {
+    if (selectedSolution) {
+      setValue("projectScale", selectedSolution);
+    }
+  }, [selectedSolution, setValue]);
 
   const onSubmit = async (data: QuoteFormValues) => {
     setIsSubmitting(true);
@@ -1113,19 +1121,25 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                     </div>
                   </div>
 
-                  {/* Project Scale */}
+                  {/* Project Scale / Solutions We Cover Selection */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="font-bold text-slate-700 text-xs">Estimated Project Scope / Scale *</label>
+                    <label className="font-bold text-slate-700 text-xs">
+                      Target Solution / System Scope *
+                    </label>
                     <select
                       {...register("projectScale")}
-                      className="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                      value={selectedSolution}
+                      onChange={(e) => {
+                        setSelectedSolution(e.target.value);
+                      }}
+                      className="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all font-medium text-slate-800"
                     >
-                      <option value="">Select Project Scope</option>
-                      <option value="residential-complex">Residential High-Rise Complex</option>
-                      <option value="commercial-office">Commercial Tower / Corporate Office</option>
-                      <option value="industrial-plant">Industrial Plant / Manufacturing Facility</option>
-                      <option value="pharmaceutical-cleanroom">Pharma / Sterile Cleanroom Facility</option>
-                      <option value="infrastructure">Heavy Infrastructure / Grid Utility Project</option>
+                      <option value="">Select a Solution</option>
+                      {solutionOptions.map((opt, idx) => (
+                        <option key={idx} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
                     </select>
                     {errors.projectScale && (
                       <span className="text-red-500 text-[11px] font-semibold">{errors.projectScale.message}</span>
