@@ -761,42 +761,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
               </div>
             </div>
 
-            {/* Card 2: Scope of Work & Technical Deployments */}
-            {Array.isArray(sub.features) && sub.features.length > 0 && (
-              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-5">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">
-                    <FaCheckCircle />
-                    <span>Technical Deliverables</span>
-                  </div>
-                  <span className="text-xs font-semibold text-slate-500">
-                    {sub.features.length} Certified Scope Items
-                  </span>
-                </div>
-
-                <h3 className="font-heading text-lg sm:text-xl font-bold text-brand-950">
-                  Scope of Work & Technical Deployments
-                </h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 pt-2">
-                  {sub.features.map((feat, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-2xl bg-slate-50 hover:bg-emerald-50/40 border border-slate-200/80 hover:border-emerald-300 transition-colors flex items-start gap-3.5 group"
-                    >
-                      <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xs shrink-0 mt-0.5 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                        <FaCheckCircle />
-                      </div>
-                      <span className="text-xs sm:text-sm font-semibold text-slate-800 leading-snug">
-                        {feat}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Card 3: Challenges & Engineered Solutions */}
+            {/* Card 2: Challenges & Engineered Solutions */}
             {((Array.isArray(service.problems) && service.problems.length > 0) ||
               (Array.isArray(service.solutions) && service.solutions.length > 0)) && (
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-6">
