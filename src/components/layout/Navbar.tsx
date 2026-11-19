@@ -511,169 +511,142 @@ export default function Navbar() {
                       />
                     </Link>
 
-                    {/* Multi-Level Mega Menu Dropdown */}
+                    {/* Accordion In-Line Dropdown */}
                     <AnimatePresence>
                       {servicesDropdownOpen && (
                         <motion.div
-                          initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                          initial={{ opacity: 0, y: 10, scale: 0.98 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.98 }}
                           transition={{ duration: 0.2 }}
-                          className={`absolute top-full left-0 mt-1 bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 transition-all duration-300 flex ${
-                            activePillar ? "w-[840px]" : "w-[360px]"
-                          }`}
+                          className="absolute top-full left-0 mt-1.5 w-[380px] bg-white rounded-2xl shadow-2xl border border-slate-200/90 overflow-hidden z-50 p-3"
                         >
-                          {/* Left Panel: 3 Core MEP Pillars */}
-                          <div className="w-[360px] shrink-0 bg-white p-3 border-r border-slate-200/80 flex flex-col justify-between">
-                            <div>
-                              <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-900 flex items-center justify-between border-b border-slate-200 mb-2">
-                                <span>3 Integrated Solutions</span>
-                                <span className="text-accent text-[10px] font-mono font-bold">3-6-9 FRAMEWORK</span>
-                              </div>
-
-                              <div className="flex flex-col gap-1">
-                                {pillars.map((pillar) => {
-                                  const isSelected = activePillar?.id === pillar.id;
-
-                                  return (
-                                    <div
-                                      key={pillar.id}
-                                      onMouseEnter={() => setActivePillar(pillar)}
-                                      className={`group/item flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 border ${
-                                        isSelected
-                                          ? "bg-slate-100/90 border-slate-200/90 shadow-sm"
-                                          : "bg-white border-transparent hover:bg-slate-50 hover:border-slate-200/50"
-                                      }`}
-                                    >
-                                      <div className="flex items-center gap-3 flex-grow">
-                                        <div
-                                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-base transition-colors ${
-                                            isSelected
-                                              ? "bg-white text-brand-900 shadow-sm"
-                                              : "bg-slate-100 text-brand-800 group-hover/item:bg-slate-200/70"
-                                          }`}
-                                        >
-                                          {pillar.icon}
-                                        </div>
-                                        <div className="flex flex-col">
-                                          <span className="text-xs font-bold text-slate-900 group-hover/item:text-brand-950 transition-colors">
-                                            {pillar.title}
-                                          </span>
-                                          <span className="text-[10px] text-slate-400 line-clamp-1 group-hover/item:text-slate-500 transition-colors">
-                                            {pillar.subtitle}
-                                          </span>
-                                        </div>
-                                      </div>
-
-                                      <div className="pl-2 shrink-0">
-                                        <span
-                                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wider transition-colors ${
-                                            isSelected
-                                              ? "bg-slate-200 text-slate-800"
-                                              : "bg-slate-100 text-slate-500 group-hover/item:bg-slate-200 group-hover/item:text-slate-700"
-                                          }`}
-                                        >
-                                          {pillar.code}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-
-                            <div className="pt-2 mt-2 border-t border-slate-200">
-                              <Link
-                                href="/services"
-                                className="w-full inline-flex items-center justify-center gap-2 bg-brand-900 hover:bg-brand-800 text-white text-xs font-bold py-2.5 rounded-xl transition-colors shadow-sm"
-                              >
-                                <span>Explore All Services</span>
-                                <FaArrowRight className="text-[10px] text-accent" />
-                              </Link>
-                            </div>
+                          {/* Header */}
+                          <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-brand-900 flex items-center justify-between border-b border-slate-100 mb-2">
+                            <span>3 Integrated Solutions</span>
+                            <span className="text-accent text-[10px] font-mono font-bold">3-6-9 FRAMEWORK</span>
                           </div>
 
-                          {/* Right Panel: Flyout 3 Flagship Services of Selected Pillar */}
-                          <AnimatePresence>
-                            {activePillar && (
-                              <motion.div
-                                initial={{ opacity: 0, width: 0 }}
-                                animate={{ opacity: 1, width: 480 }}
-                                exit={{ opacity: 0, width: 0 }}
-                                transition={{ duration: 0.22 }}
-                                className="overflow-hidden bg-white"
-                              >
-                                <div className="w-[480px] p-4 flex flex-col justify-between h-full bg-slate-50/50">
-                                  <div>
-                                    <div className="flex items-center justify-between pb-2.5 border-b border-slate-200/80 mb-3">
-                                      <div className="flex items-center gap-2">
-                                        <span className="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center text-xs text-brand-800">
-                                          {activePillar.icon}
-                                        </span>
-                                        <div>
-                                          <h4 className="font-heading font-extrabold text-xs text-brand-950">
-                                            {activePillar.title}
-                                          </h4>
-                                          <p className="text-[9px] text-slate-500 font-mono">
-                                            Codes: {activePillar.compliance.join(", ")}
-                                          </p>
-                                        </div>
-                                      </div>
+                          {/* Accordion Pillars List */}
+                          <div className="flex flex-col gap-2">
+                            {pillars.map((pillar) => {
+                              const isHovered = activePillar?.id === pillar.id;
 
-                                      <Link
-                                        href={`/services?category=${activePillar.id}`}
-                                        className="text-[10px] font-bold text-brand-800 hover:text-accent flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-slate-200 hover:border-accent transition-colors"
+                              return (
+                                <div
+                                  key={pillar.id}
+                                  onMouseEnter={() => setActivePillar(pillar)}
+                                  className={`flex flex-col rounded-2xl transition-all duration-200 overflow-hidden border ${
+                                    isHovered
+                                      ? "border-accent/40 shadow-md bg-white ring-1 ring-accent/20"
+                                      : "border-slate-200/80 bg-slate-50/50 hover:border-slate-300 hover:bg-slate-50"
+                                  }`}
+                                >
+                                  {/* Pillar Card Header (Distinct, Prominent Category Styling) */}
+                                  <div
+                                    className={`flex items-center justify-between p-3.5 cursor-pointer transition-all duration-200 ${
+                                      isHovered
+                                        ? "bg-brand-950 text-white"
+                                        : "bg-white text-brand-950 hover:bg-slate-50"
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-3 flex-grow">
+                                      <div
+                                        className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-base transition-all ${
+                                          isHovered
+                                            ? "bg-accent text-brand-950 shadow-md scale-105"
+                                            : "bg-brand-50 text-brand-800 border border-brand-100/60"
+                                        }`}
                                       >
-                                        <span>View Category</span>
-                                        <FaChevronRight className="text-[8px]" />
-                                      </Link>
+                                        {pillar.icon}
+                                      </div>
+                                      <div className="flex flex-col">
+                                        <div className="flex items-center gap-2">
+                                          <span
+                                            className={`text-xs sm:text-sm font-extrabold tracking-tight transition-colors ${
+                                              isHovered ? "text-white" : "text-brand-950"
+                                            }`}
+                                          >
+                                            {pillar.title}
+                                          </span>
+                                        </div>
+                                        <span
+                                          className={`text-[11px] line-clamp-1 transition-colors ${
+                                            isHovered ? "text-slate-300" : "text-slate-500 font-medium"
+                                          }`}
+                                        >
+                                          {pillar.subtitle}
+                                        </span>
+                                      </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-2">
-                                      {activePillar.categories.length === 0 ? (
-                                        <div className="p-6 text-center bg-white rounded-2xl border border-dashed border-slate-200">
-                                          <p className="text-xs font-semibold text-slate-500">No services published yet</p>
-                                          <p className="text-[10px] text-slate-400 mt-1">Services created in Admin Panel will appear here.</p>
+                                    <div className="flex items-center gap-2.5 shrink-0 pl-2">
+                                      <span
+                                        className={`px-2.5 py-1 rounded-lg text-[10px] font-black font-mono tracking-wider uppercase transition-colors ${
+                                          isHovered
+                                            ? "bg-accent text-brand-950 shadow-sm"
+                                            : "bg-slate-100 text-brand-900 border border-slate-200/80"
+                                        }`}
+                                      >
+                                        {pillar.code}
+                                      </span>
+                                      <FaChevronDown
+                                        className={`text-[10px] transition-transform duration-200 ${
+                                          isHovered ? "rotate-180 text-accent" : "text-slate-400"
+                                        }`}
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {/* In-Line Expanded Sub-Services Container (Indented & Distinct from Main Pillar) */}
+                                  <AnimatePresence>
+                                    {isHovered && (
+                                      <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        transition={{ duration: 0.22, ease: "easeInOut" }}
+                                        className="overflow-hidden bg-slate-100/70 p-2.5 flex flex-col gap-1.5 border-t border-slate-200/80"
+                                      >
+                                        <div className="px-1.5 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+                                          <span>Core Flagship Disciplines</span>
+                                          <span className="text-[9px] text-accent font-mono font-bold">3 SPECIALTIES</span>
                                         </div>
-                                      ) : (
-                                        activePillar.categories.map((cat) => (
+
+                                        {pillar.categories.map((cat) => (
                                           <Link
                                             key={cat.id}
-                                            href={`/services/${activePillar.id}/${cat.slug}`}
-                                            className="group/sub flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all duration-150 bg-white border border-slate-200/80 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm"
+                                            href={`/services/${pillar.id}/${cat.slug}`}
+                                            className="group/sub flex items-center justify-between p-2.5 rounded-xl transition-all duration-150 bg-white hover:bg-white hover:shadow-md border border-slate-200/90 hover:border-accent ml-1"
                                           >
-                                            <div className="flex items-center gap-3 flex-grow">
-                                              <div className="w-10 h-10 rounded-xl bg-slate-100 group-hover/sub:bg-brand-950 group-hover/sub:text-accent flex items-center justify-center shrink-0 text-base text-slate-700 transition-colors">
+                                            <div className="flex items-center gap-2.5 flex-grow min-w-0">
+                                              <div className="w-8 h-8 rounded-lg bg-slate-50 group-hover/sub:bg-brand-950 group-hover/sub:text-accent flex items-center justify-center shrink-0 text-xs text-brand-800 transition-colors border border-slate-100">
                                                 {cat.icon}
                                               </div>
-                                              <div className="flex flex-col">
-                                                <span className="text-xs font-bold text-slate-900 group-hover/sub:text-brand-900 transition-colors">
+                                              <div className="flex flex-col min-w-0">
+                                                <span className="text-xs font-bold text-slate-800 group-hover/sub:text-brand-950 truncate transition-colors">
                                                   {cat.title}
                                                 </span>
-                                                <span className="text-[10px] text-slate-400 line-clamp-1">
+                                                <span className="text-[10px] text-slate-400 truncate">
                                                   {cat.shortDesc}
                                                 </span>
                                               </div>
                                             </div>
+
                                             <div className="pl-2 shrink-0">
-                                              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-500 group-hover/sub:bg-accent group-hover/sub:text-brand-950 transition-colors">
+                                              <span className="px-2 py-0.5 rounded-md text-[9px] font-mono font-bold bg-slate-100 text-slate-600 group-hover/sub:bg-accent group-hover/sub:text-brand-950 transition-colors">
                                                 {cat.code}
                                               </span>
                                             </div>
                                           </Link>
-                                        ))
-                                      )}
-                                    </div>
-                                  </div>
-
-                                  <div className="pt-2.5 border-t border-slate-200/80 flex items-center justify-between text-[10px] text-slate-500 font-medium">
-                                    <span>Sectors: Residential • Commercial • Industrial</span>
-                                    <span className="text-brand-900 font-bold">{activePillar.categories.length} Core Services</span>
-                                  </div>
+                                        ))}
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
                                 </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                              );
+                            })}
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
