@@ -682,15 +682,10 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
       </section>
 
       {/* ============================================================== */}
-      {/* 3. CONTENT CARDS DISPLAYED BELOW IMAGE (8 Cols Left / 4 Cols Right) */}
+      {/* 3. TECHNICAL SPECIFICATIONS & ENGINEERING DETAILS (Full Width) */}
       {/* ============================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 sm:mt-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* ========================================================== */}
-          {/* LEFT 8 COLUMNS: TECHNICAL CARDS */}
-          {/* ========================================================== */}
-          <div className="lg:col-span-8 space-y-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+        <div className="space-y-8">
             
             {/* Card 1: Engineering Overview */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-5">
@@ -775,7 +770,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                   Scope of Work & Technical Deployments
                 </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 pt-2">
                   {sub.features.map((feat, idx) => (
                     <div
                       key={idx}
@@ -963,12 +958,12 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
             )}
 
             {/* Compliance Banner */}
-            <div className="p-6 rounded-3xl bg-slate-900 text-white flex flex-col sm:flex-row items-center gap-4 sm:gap-5 shadow-lg border border-slate-800">
-              <div className="w-12 h-12 rounded-2xl bg-accent/20 text-accent flex items-center justify-center text-2xl shrink-0">
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 text-white flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shadow-xl border border-slate-800">
+              <div className="w-14 h-14 rounded-2xl bg-accent/20 text-accent flex items-center justify-center text-3xl shrink-0">
                 <FaShieldAlt />
               </div>
-              <div className="text-xs leading-relaxed text-slate-300 text-center sm:text-left">
-                <strong className="text-white font-bold block sm:inline text-sm sm:text-xs">
+              <div className="text-xs sm:text-sm leading-relaxed text-slate-300 text-center sm:text-left flex-1">
+                <strong className="text-white font-bold block sm:inline text-sm sm:text-base">
                   Mandatory Engineering Compliance:
                 </strong>{" "}
                 Designed and executed strictly following{" "}
@@ -980,246 +975,291 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                 and Bangladesh utility codes. Every commissioning includes third-party calibration certificates.
               </div>
             </div>
-          </div>
 
-          {/* ========================================================== */}
-          {/* RIGHT 4 COLUMNS: SLEEK SIDEBAR CARDS */}
-          {/* ========================================================== */}
-          <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
-            
-            {/* CARD A: Compact, High-Conversion Consultation Form */}
-            <div id="quote-section" className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-xl relative overflow-hidden">
-              <div className="mb-5 pb-3 border-b border-slate-100 flex flex-col gap-1">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100 self-start">
-                  Quick Quotation
-                </span>
-                <h3 className="font-heading font-extrabold text-brand-950 text-base sm:text-lg">
-                  Request Technical BOQ
-                </h3>
-                <p className="text-slate-500 text-xs">
-                  Fill in your project scale to get an engineered proposal.
-                </p>
-              </div>
-
-              <AnimatePresence mode="wait">
-                {!formSubmitted ? (
-                  <motion.form
-                    key="sub-quote-form"
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="flex flex-col gap-3.5 text-xs sm:text-sm"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    {/* Full Name */}
-                    <div className="flex flex-col gap-1">
-                      <label className="font-bold text-slate-700 text-xs">Full Name</label>
-                      <input
-                        type="text"
-                        {...register("fullName")}
-                        placeholder="e.g. Engr. Tanvir Ahmed"
-                        className="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
-                      />
-                      {errors.fullName && (
-                        <span className="text-red-500 text-[10px] font-semibold">{errors.fullName.message}</span>
-                      )}
-                    </div>
-
-                    {/* Email Address */}
-                    <div className="flex flex-col gap-1">
-                      <label className="font-bold text-slate-700 text-xs">Corporate Email</label>
-                      <input
-                        type="email"
-                        {...register("email")}
-                        placeholder="tanvir@company.com"
-                        className="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
-                      />
-                      {errors.email && (
-                        <span className="text-red-500 text-[10px] font-semibold">{errors.email.message}</span>
-                      )}
-                    </div>
-
-                    {/* Phone Number */}
-                    <div className="flex flex-col gap-1">
-                      <label className="font-bold text-slate-700 text-xs">Contact Number</label>
-                      <input
-                        type="tel"
-                        {...register("phone")}
-                        placeholder="+880 17XXXXXXXX"
-                        className="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
-                      />
-                      {errors.phone && (
-                        <span className="text-red-500 text-[10px] font-semibold">{errors.phone.message}</span>
-                      )}
-                    </div>
-
-                    {/* Company */}
-                    <div className="flex flex-col gap-1">
-                      <label className="font-bold text-slate-700 text-xs">Company / Factory</label>
-                      <input
-                        type="text"
-                        {...register("company")}
-                        placeholder="Elite Apparels & Textiles Ltd."
-                        className="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
-                      />
-                      {errors.company && (
-                        <span className="text-red-500 text-[10px] font-semibold">{errors.company.message}</span>
-                      )}
-                    </div>
-
-                    {/* Project Scale */}
-                    <div className="flex flex-col gap-1">
-                      <label className="font-bold text-slate-700 text-xs">Estimated Scale</label>
-                      <select
-                        {...register("projectScale")}
-                        className="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
-                      >
-                        <option value="">Select Scale</option>
-                        <option value="residential-complex">Residential High-Rise Complex</option>
-                        <option value="commercial-office">Commercial Tower / Mall</option>
-                        <option value="industrial-plant">Industrial Plant / Textile Mill</option>
-                        <option value="pharmaceutical-cleanroom">Pharma / Sterile Cleanroom</option>
-                        <option value="infrastructure">Heavy Infrastructure / Metro</option>
-                      </select>
-                      {errors.projectScale && (
-                        <span className="text-red-500 text-[10px] font-semibold">{errors.projectScale.message}</span>
-                      )}
-                    </div>
-
-                    {/* Message */}
-                    <div className="flex flex-col gap-1">
-                      <label className="font-bold text-slate-700 text-xs">Specific Requirements</label>
-                      <textarea
-                        rows={3}
-                        {...register("message")}
-                        className="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all resize-none"
-                      />
-                      {errors.message && (
-                        <span className="text-red-500 text-[10px] font-semibold">{errors.message.message}</span>
-                      )}
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full bg-brand-950 hover:bg-accent hover:text-brand-950 text-white font-bold py-3 rounded-xl transition-all flex justify-center items-center gap-2 shadow-md active:scale-95 text-xs sm:text-sm mt-1"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <FaHourglassHalf className="animate-spin text-xs" />
-                          <span>Generating Estimate...</span>
-                        </>
-                      ) : (
-                        <span>Request Engineered BOQ Proposal</span>
-                      )}
-                    </button>
-                  </motion.form>
-                ) : (
-                  <motion.div
-                    key="success-message"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex flex-col items-center text-center p-6 bg-emerald-50 rounded-2xl border border-emerald-200"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center mb-3 shadow-md text-lg">
-                      <FaThumbsUp />
-                    </div>
-                    <h4 className="font-heading font-extrabold text-emerald-950 text-sm mb-1">
-                      Inquiry Received!
-                    </h4>
-                    <p className="text-[11px] text-emerald-800 leading-relaxed mb-4">
-                      Thank you for contacting us regarding <strong>{sub.title}</strong>. Our lead project engineer will get in touch with your initial specification audit within 24 hours.
-                    </p>
-                    <button
-                      onClick={() => setFormSubmitted(false)}
-                      className="text-xs bg-white text-emerald-900 border border-emerald-200 font-bold px-4 py-2 rounded-lg hover:bg-emerald-100 transition-colors"
-                    >
-                      Submit Another Inquire
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* CARD B: 24/7 Corporate Helpline & Profile Download */}
-            <div className="bg-brand-950 text-white p-6 sm:p-7 rounded-3xl border border-brand-900 flex flex-col gap-4 relative overflow-hidden shadow-xl">
-              <div className="absolute -right-8 -bottom-8 w-28 h-28 bg-accent/15 rounded-full blur-2xl" />
-              <div className="flex items-center gap-2 text-accent text-xs font-bold uppercase tracking-wider">
-                <FaRegClock />
-                <span>24/7 Corporate Helpline</span>
-              </div>
-              <p className="text-slate-300 text-xs leading-relaxed">
-                Need immediate engineering clarification or emergency project consultation? Connect directly with our chief technical officer.
-              </p>
-              <div className="flex flex-col gap-2 pt-2 border-t border-white/10 text-xs">
-                <a
-                  href="tel:+8801313663311"
-                  className="flex items-center gap-2.5 font-bold text-white hover:text-accent transition-colors py-1"
-                >
-                  <FaPhoneAlt className="text-accent text-sm" />
-                  <span>+880 1313-663311</span>
-                </a>
-                <a
-                  href="mailto:elitestandardlimited@gmail.com"
-                  className="flex items-center gap-2.5 text-slate-300 hover:text-white transition-colors py-1 truncate"
-                >
-                  <FaEnvelope className="text-accent text-sm shrink-0" />
-                  <span className="truncate">elitestandardlimited@gmail.com</span>
-                </a>
-              </div>
-              <a
-                href="/elite-standard-profile.pdf"
-                download
-                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white font-bold text-xs py-2.5 rounded-xl transition-all mt-1"
-              >
-                <FaFilePdf className="text-accent" />
-                <span>Download Corporate Profile (PDF)</span>
-              </a>
-            </div>
-
-            {/* CARD C: Division Navigator (Sibling Services) */}
+            {/* Sibling Services Carousel / Navigation Row */}
             {siblingSubServices.length > 0 && (
-              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xl space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <h4 className="font-heading font-bold text-brand-950 text-sm">
-                    Related {service.code || "Division"} Solutions
-                  </h4>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">
-                    {siblingSubServices.length} Options
-                  </span>
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div>
+                    <h4 className="font-heading font-bold text-brand-950 text-base sm:text-lg">
+                      Explore Other {service.title} Solutions
+                    </h4>
+                    <p className="text-slate-500 text-xs mt-0.5">
+                      Complementary engineering disciplines in this division
+                    </p>
+                  </div>
+                  <Link
+                    href={`/services/${service.category}/${service.slug}`}
+                    className="text-xs font-bold text-blue-600 hover:text-accent transition-colors hidden sm:inline-block"
+                  >
+                    View All {service.title} →
+                  </Link>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
                   {siblingSubServices.map((sibling) => (
                     <Link
                       key={sibling.slug}
                       href={`/services/${service.category}/${service.slug}/${sibling.slug}`}
-                      className="p-3 rounded-2xl bg-slate-50 hover:bg-accent/10 border border-slate-200/80 hover:border-accent transition-all group flex items-center justify-between gap-3"
+                      className="p-4 rounded-2xl bg-slate-50 hover:bg-accent/10 border border-slate-200/80 hover:border-accent transition-all group flex flex-col justify-between"
                     >
-                      <div className="min-w-0 flex-1">
-                        <span className="font-bold text-brand-950 group-hover:text-brand-900 text-xs block truncate">
+                      <div>
+                        <span className="font-bold text-brand-950 group-hover:text-brand-900 text-sm block mb-1">
                           {sibling.title}
                         </span>
-                        <span className="text-[10px] text-slate-500 line-clamp-1 block">
+                        <span className="text-xs text-slate-500 line-clamp-2 block leading-relaxed">
                           {sibling.shortDesc}
                         </span>
                       </div>
-                      <FaArrowRight className="text-slate-400 group-hover:text-accent group-hover:translate-x-1 text-xs shrink-0 transition-transform" />
+                      <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs font-bold text-brand-950 group-hover:text-accent">
+                        <span>View Details</span>
+                        <FaArrowRight className="text-[10px] group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </Link>
                   ))}
                 </div>
-
-                <Link
-                  href={`/services/${service.category}/${service.slug}`}
-                  className="block text-center text-xs font-bold text-accent hover:text-brand-950 pt-2 transition-colors"
-                >
-                  View All {service.title} Services →
-                </Link>
               </div>
             )}
+        </div>
+      </section>
+
+      {/* ============================================================== */}
+      {/* 4. BOTTOM DEDICATED CONVERSION SECTION (BOQ Form + 24/7 Helpline) */}
+      {/* ============================================================== */}
+      <section id="quote-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 sm:mt-20 scroll-mt-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* LEFT 7 COLS: High-Conversion BOQ Form */}
+          <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-9 border border-slate-200 shadow-2xl relative overflow-hidden">
+            <div className="mb-6 pb-4 border-b border-slate-100 flex flex-col gap-1.5">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-md border border-emerald-100 self-start">
+                Quick Quotation
+              </span>
+              <h3 className="font-heading font-extrabold text-brand-950 text-xl sm:text-2xl">
+                Request Technical BOQ & Proposal
+              </h3>
+              <p className="text-slate-500 text-xs sm:text-sm">
+                Submit your project specifications to receive an engineered bill of quantities (BOQ) and price estimate for <strong>{sub.title}</strong>.
+              </p>
+            </div>
+
+            <AnimatePresence mode="wait">
+              {!formSubmitted ? (
+                <motion.form
+                  key="sub-quote-form"
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="flex flex-col gap-4 text-xs sm:text-sm"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Full Name */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-bold text-slate-700 text-xs">Full Name *</label>
+                      <input
+                        type="text"
+                        {...register("fullName")}
+                        placeholder="e.g. Engr. Tanvir Ahmed"
+                        className="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                      />
+                      {errors.fullName && (
+                        <span className="text-red-500 text-[11px] font-semibold">{errors.fullName.message}</span>
+                      )}
+                    </div>
+
+                    {/* Email Address */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-bold text-slate-700 text-xs">Corporate Email *</label>
+                      <input
+                        type="email"
+                        {...register("email")}
+                        placeholder="tanvir@company.com"
+                        className="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                      />
+                      {errors.email && (
+                        <span className="text-red-500 text-[11px] font-semibold">{errors.email.message}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Phone Number */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-bold text-slate-700 text-xs">Contact Number *</label>
+                      <input
+                        type="tel"
+                        {...register("phone")}
+                        placeholder="+880 17XXXXXXXX"
+                        className="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                      />
+                      {errors.phone && (
+                        <span className="text-red-500 text-[11px] font-semibold">{errors.phone.message}</span>
+                      )}
+                    </div>
+
+                    {/* Company */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-bold text-slate-700 text-xs">Company / Facility *</label>
+                      <input
+                        type="text"
+                        {...register("company")}
+                        placeholder="Elite Apparels & Textiles Ltd."
+                        className="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                      />
+                      {errors.company && (
+                        <span className="text-red-500 text-[11px] font-semibold">{errors.company.message}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Project Scale */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-bold text-slate-700 text-xs">Estimated Project Scope / Scale *</label>
+                    <select
+                      {...register("projectScale")}
+                      className="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all"
+                    >
+                      <option value="">Select Project Scope</option>
+                      <option value="residential-complex">Residential High-Rise Complex</option>
+                      <option value="commercial-office">Commercial Tower / Corporate Office</option>
+                      <option value="industrial-plant">Industrial Plant / Manufacturing Facility</option>
+                      <option value="pharmaceutical-cleanroom">Pharma / Sterile Cleanroom Facility</option>
+                      <option value="infrastructure">Heavy Infrastructure / Grid Utility Project</option>
+                    </select>
+                    {errors.projectScale && (
+                      <span className="text-red-500 text-[11px] font-semibold">{errors.projectScale.message}</span>
+                    )}
+                  </div>
+
+                  {/* Message */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-bold text-slate-700 text-xs">Technical Details & Specifications *</label>
+                    <textarea
+                      rows={3}
+                      {...register("message")}
+                      className="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-all resize-none"
+                    />
+                    {errors.message && (
+                      <span className="text-red-500 text-[11px] font-semibold">{errors.message.message}</span>
+                    )}
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-brand-950 hover:bg-accent hover:text-brand-950 text-white font-extrabold py-3.5 rounded-xl transition-all flex justify-center items-center gap-2 shadow-lg active:scale-95 text-sm mt-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <FaHourglassHalf className="animate-spin text-sm" />
+                        <span>Generating Proposal...</span>
+                      </>
+                    ) : (
+                      <span>Request Engineered BOQ Proposal</span>
+                    )}
+                  </button>
+                </motion.form>
+              ) : (
+                <motion.div
+                  key="success-message"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center text-center p-8 bg-emerald-50 rounded-2xl border border-emerald-200"
+                >
+                  <div className="w-14 h-14 rounded-full bg-emerald-500 text-white flex items-center justify-center mb-3 shadow-md text-xl">
+                    <FaThumbsUp />
+                  </div>
+                  <h4 className="font-heading font-extrabold text-emerald-950 text-base sm:text-lg mb-1">
+                    Inquiry Received Successfully!
+                  </h4>
+                  <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed mb-5 max-w-md">
+                    Thank you for reaching out regarding <strong>{sub.title}</strong>. Our senior engineering estimator will analyze your requirement and contact you within 24 hours.
+                  </p>
+                  <button
+                    onClick={() => setFormSubmitted(false)}
+                    className="text-xs sm:text-sm bg-white text-emerald-900 border border-emerald-300 font-bold px-5 py-2.5 rounded-xl hover:bg-emerald-100 transition-colors shadow-sm"
+                  >
+                    Submit Another Inquiry
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+
+          {/* RIGHT 5 COLS: 24/7 Corporate Helpline & Profile Download */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <div className="bg-brand-950 text-white p-7 sm:p-9 rounded-3xl border border-brand-900 flex flex-col gap-5 relative overflow-hidden shadow-2xl">
+              <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
+              
+              <div className="flex items-center gap-2 text-accent text-xs font-bold uppercase tracking-wider">
+                <FaRegClock />
+                <span>24/7 Corporate Helpline</span>
+              </div>
+
+              <div>
+                <h4 className="font-heading text-xl sm:text-2xl font-extrabold text-white">
+                  Direct Engineering Support
+                </h4>
+                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mt-2">
+                  Need immediate technical clarification or on-site engineering survey? Connect directly with our chief MEP operations team.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 pt-3 border-t border-white/10 text-xs sm:text-sm">
+                <a
+                  href="tel:+8801313663311"
+                  className="flex items-center gap-3 font-extrabold text-white hover:text-accent transition-colors p-3 rounded-2xl bg-white/5 border border-white/10"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-accent/20 text-accent flex items-center justify-center shrink-0">
+                    <FaPhoneAlt />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-normal uppercase">Hotline Number</span>
+                    <span>+880 1313-663311</span>
+                  </div>
+                </a>
+
+                <a
+                  href="mailto:elitestandardlimited@gmail.com"
+                  className="flex items-center gap-3 font-semibold text-slate-200 hover:text-white transition-colors p-3 rounded-2xl bg-white/5 border border-white/10"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-accent/20 text-accent flex items-center justify-center shrink-0">
+                    <FaEnvelope />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] text-slate-400 block font-normal uppercase">Official Correspondence</span>
+                    <span className="truncate block">elitestandardlimited@gmail.com</span>
+                  </div>
+                </a>
+              </div>
+
+              <a
+                href="/elite-standard-profile.pdf"
+                download
+                className="inline-flex items-center justify-center gap-2.5 bg-accent hover:bg-amber-400 text-brand-950 font-extrabold text-xs sm:text-sm py-3.5 rounded-xl transition-all shadow-md mt-2"
+              >
+                <FaFilePdf className="text-sm" />
+                <span>Download Corporate Profile (PDF)</span>
+              </a>
+            </div>
+
+            {/* Quick Assurance Box */}
+            <div className="p-6 rounded-3xl bg-slate-100 border border-slate-200/80 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl shrink-0">
+                <FaShieldAlt />
+              </div>
+              <div className="text-xs text-slate-600 leading-relaxed">
+                <strong className="text-brand-950 block font-bold text-sm mb-0.5">
+                  100% Confidentiality & Data Security
+                </strong>
+                All engineering drawings and BOQ estimates are guarded under strict non-disclosure terms.
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
