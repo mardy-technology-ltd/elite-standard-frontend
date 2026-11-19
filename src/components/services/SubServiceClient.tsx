@@ -930,25 +930,6 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
               </div>
             )}
 
-            {/* Compliance Banner */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 text-white flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shadow-xl border border-slate-800">
-              <div className="w-14 h-14 rounded-2xl bg-accent/20 text-accent flex items-center justify-center text-3xl shrink-0">
-                <FaShieldAlt />
-              </div>
-              <div className="text-xs sm:text-sm leading-relaxed text-slate-300 text-center sm:text-left flex-1">
-                <strong className="text-white font-bold block sm:inline text-sm sm:text-base">
-                  Mandatory Engineering Compliance:
-                </strong>{" "}
-                Designed and executed strictly following{" "}
-                <span className="text-accent font-semibold">
-                  {Array.isArray(service.compliance) && service.compliance.length > 0
-                    ? service.compliance.join(", ")
-                    : "BNBC, NFPA, ASHRAE, ASME"}
-                </span>{" "}
-                and Bangladesh utility codes. Every commissioning includes third-party calibration certificates.
-              </div>
-            </div>
-
             {/* Sibling Services Carousel / Navigation Row */}
             {siblingSubServices.length > 0 && (
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xl space-y-4">
@@ -1239,6 +1220,27 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
             </div>
           </div>
 
+        </div>
+
+        {/* ============================================================== */}
+        {/* MANDATORY ENGINEERING COMPLIANCE BANNER (Bottom Full-Width) */}
+        {/* ============================================================== */}
+        <div className="mt-12 p-6 sm:p-7 rounded-3xl bg-[#0b1728] text-white flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shadow-2xl border border-slate-800">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-2xl shrink-0 border border-amber-500/25">
+            <FaShieldAlt />
+          </div>
+          <div className="text-xs sm:text-sm leading-relaxed text-slate-300 text-center sm:text-left flex-1">
+            <strong className="text-white font-extrabold block sm:inline text-sm sm:text-base">
+              Mandatory Engineering Compliance:
+            </strong>{" "}
+            Designed and executed strictly following{" "}
+            <span className="text-amber-400 font-bold">
+              {Array.isArray(service.compliance) && service.compliance.length > 0
+                ? service.compliance.join(", ")
+                : "BNBC, IEC, IEEE, NEC, NFPA"}
+            </span>{" "}
+            and Bangladesh utility codes. Every commissioning includes third-party calibration certificates.
+          </div>
         </div>
       </section>
 
