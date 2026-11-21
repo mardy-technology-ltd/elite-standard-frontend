@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -29,7 +29,7 @@ import {
   FaWater,
 } from "react-icons/fa";
 
-export default function AdminDashboardLayout({
+function AdminDashboardLayoutContent({
   children,
 }: {
   children: React.ReactNode;
@@ -500,5 +500,23 @@ export default function AdminDashboardLayout({
         </main>
       </div>
     </div>
+  );
+}
+
+export default function AdminDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 text-sm">
+          Loading Admin Panel...
+        </div>
+      }
+    >
+      <AdminDashboardLayoutContent>{children}</AdminDashboardLayoutContent>
+    </Suspense>
   );
 }
