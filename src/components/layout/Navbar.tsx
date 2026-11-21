@@ -452,7 +452,7 @@ export default function Navbar() {
           : "bg-white py-2 sm:py-2.5 border-b border-slate-100"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12">
         <div className="flex items-center justify-between gap-4 lg:gap-6">
           {/* Official Client Logo Badge + Company Name */}
           <Link href="/" className="flex items-center gap-3 sm:gap-3.5 group shrink-0">
@@ -794,7 +794,7 @@ export default function Navbar() {
               transition={{ duration: 0.2 }}
               className="absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-xl z-50 xl:hidden max-h-[85vh] overflow-y-auto custom-scrollbar"
             >
-              <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-4">
+              <div className="max-w-[1536px] mx-auto px-6 lg:px-10 2xl:px-12 py-6 flex flex-col gap-4">
                 <nav className="flex flex-col gap-1">
                   {navItems.map((item) => {
                     const isActive =

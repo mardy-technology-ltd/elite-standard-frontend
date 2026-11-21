@@ -19,7 +19,7 @@ export default function ServiceChallenges({ service }: ServiceChallengesProps) {
 
   return (
     <section className="py-20 sm:py-24 bg-slate-50 text-slate-800 relative border-y border-slate-200/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col items-center gap-3">
           <div className="flex items-center gap-2">

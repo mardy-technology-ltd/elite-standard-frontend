@@ -18,25 +18,25 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
 
   return (
     <section className="py-20 sm:py-24 bg-slate-50 text-slate-800 relative border-b border-slate-200/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div className="flex flex-col gap-3 max-w-2xl">
+          <div className="flex flex-col gap-3 max-w-3xl">
             <div className="flex items-center gap-2">
               <span className="w-8 h-0.5 bg-accent" />
               <span className="text-xs font-extrabold text-brand-800 uppercase tracking-widest">
                 Engineered Solutions
               </span>
             </div>
-            <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-brand-950 tracking-tight leading-tight">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-950 tracking-tight leading-tight">
               {service.title} <span className="text-gradient">Solutions & Services</span>
             </h2>
-            <p className="text-slate-600 text-base leading-relaxed">
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
               Explore our turnkey engineered solutions, technical scope, and equipment setups for this discipline.
             </p>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 text-xs font-bold text-slate-500 bg-white px-4 py-2.5 rounded-lg border border-slate-200 shadow-sm">
+          <div className="hidden md:flex items-center gap-2 text-xs font-bold text-slate-500 bg-white px-4 py-2.5 rounded-xl border border-slate-200 shadow-sm">
             <FaCog className="text-accent text-sm" />
             <span>{service.subServices.length} Engineered Solutions</span>
           </div>
@@ -52,7 +52,7 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="scroll-mt-28 bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+              className="scroll-mt-28 bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center"
             >
               {/* Left Column: Details & Features */}
               <div className="lg:col-span-7 flex flex-col gap-5">

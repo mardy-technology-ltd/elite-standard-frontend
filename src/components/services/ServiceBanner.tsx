@@ -27,7 +27,7 @@ export default function ServiceBanner({ service }: ServiceBannerProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-transparent to-transparent" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+      <div className="relative z-10 max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 py-16 w-full">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-6 flex-wrap">
           <Link href="/" className="hover:text-accent transition-colors">

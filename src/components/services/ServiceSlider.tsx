@@ -194,7 +194,7 @@ export default function ServiceSlider({ service }: ServiceSliderProps) {
 
   return (
     <section className="py-10 sm:py-14 bg-gradient-to-b from-slate-50 to-white text-slate-800 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12">
         {/* Section Top Header Pill */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
           <div>

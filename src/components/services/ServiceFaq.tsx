@@ -22,7 +22,7 @@ export default function ServiceFaq({ service }: ServiceFaqProps) {
 
   return (
     <section className="py-20 sm:py-24 bg-slate-50 text-slate-800 relative border-t border-slate-200/60">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10">
         {/* Section Header */}
         <div className="text-center mb-14 flex flex-col items-center gap-3">
           <div className="flex items-center gap-2">

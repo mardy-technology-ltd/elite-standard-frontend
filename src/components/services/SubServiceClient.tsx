@@ -304,7 +304,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-50 via-brand-950/85 to-brand-950 pointer-events-none" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12">
           {/* Breadcrumbs & Back Link */}
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <Link
@@ -455,7 +455,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
       {/* ============================================================== */}
       {/* 2. DYNAMIC SLIDER IMAGE SHOWCASE (Full Width Container) */}
       {/* ============================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-14 sm:-mt-18 relative z-20">
+      <section className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 -mt-14 sm:-mt-18 relative z-20">
         <div
           className="bg-white rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200/90 shadow-2xl"
           onMouseEnter={() => setIsPaused(true)}
@@ -605,7 +605,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
       {/* ============================================================== */}
       {/* 2.5 SOLUTIONS WE COVER & 6 KEY ACTIONS (User Requested Mockup) */}
       {/* ============================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+      <section className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 mt-12 sm:mt-16">
         {/* SECTION A: Solutions we cover */}
         <div className="mb-14">
           <div className="mb-6">
@@ -675,7 +675,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
       {/* ============================================================== */}
       {/* 3. TECHNICAL SPECIFICATIONS & ENGINEERING DETAILS (Full Width) */}
       {/* ============================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+      <section className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 mt-12 sm:mt-16">
         <div className="space-y-8">
             
             {/* Card 1: Engineering Overview */}
@@ -976,7 +976,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
       {/* ============================================================== */}
       {/* 4. BOTTOM DEDICATED CONVERSION SECTION (BOQ Form + 24/7 Helpline) */}
       {/* ============================================================== */}
-      <section id="quote-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 sm:mt-20 scroll-mt-24">
+      <section id="quote-section" className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 mt-16 sm:mt-20 scroll-mt-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* LEFT 7 COLS: High-Conversion BOQ Form */}
