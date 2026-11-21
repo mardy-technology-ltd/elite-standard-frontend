@@ -36,6 +36,9 @@ export async function GET(
         sliderImages,
         features: Array.isArray(service.scopeOfWork) ? service.scopeOfWork : [],
         faqs: Array.isArray(service.faqs) ? service.faqs : [],
+        problems: Array.isArray(service.problems) ? service.problems : [],
+        solutions: Array.isArray(service.solutions) ? service.solutions : [],
+        sectors: service.sectors ?? null,
       };
 
       return NextResponse.json({ success: true, service: synthesized, isEmbedded: false });
@@ -75,6 +78,9 @@ export async function GET(
             features: Array.isArray(found.features) ? found.features : [],
             scopeOfWork: Array.isArray(found.features) ? found.features : [],
             faqs: Array.isArray(found.faqs) ? found.faqs : (Array.isArray(flagship.faqs) ? flagship.faqs : []),
+            problems: Array.isArray(found.problems) ? found.problems : (Array.isArray(flagship.problems) ? flagship.problems : []),
+            solutions: Array.isArray(found.solutions) ? found.solutions : (Array.isArray(flagship.solutions) ? flagship.solutions : []),
+            sectors: found.sectors ?? flagship.sectors ?? null,
             compliance: flagship.compliance || [],
             parentFlagshipId: flagship.id,
             parentFlagshipSlug: flagship.slug,
@@ -159,6 +165,9 @@ export async function PUT(
           scopeOfWork: Array.isArray(body.features) ? body.features : existingDedicated.scopeOfWork,
           subServices: updatedSubServices,
           faqs: Array.isArray(body.faqs) ? body.faqs : existingDedicated.faqs,
+          problems: Array.isArray(body.problems) ? body.problems : existingDedicated.problems,
+          solutions: Array.isArray(body.solutions) ? body.solutions : existingDedicated.solutions,
+          sectors: body.sectors !== undefined ? body.sectors : existingDedicated.sectors,
         },
       });
 
@@ -178,6 +187,9 @@ export async function PUT(
                 sliderImages,
                 features: Array.isArray(body.features) ? body.features : sub.features,
                 faqs: Array.isArray(body.faqs) ? body.faqs : sub.faqs,
+                problems: Array.isArray(body.problems) ? body.problems : sub.problems,
+                solutions: Array.isArray(body.solutions) ? body.solutions : sub.solutions,
+                sectors: body.sectors !== undefined ? body.sectors : sub.sectors,
               };
             }
             return sub;
@@ -229,6 +241,9 @@ export async function PUT(
             sliderImages: sliderImages.length > 0 ? sliderImages : (sub.image ? [sub.image] : []),
             features: Array.isArray(body.features) ? body.features : sub.features,
             faqs: Array.isArray(body.faqs) ? body.faqs : sub.faqs,
+            problems: Array.isArray(body.problems) ? body.problems : sub.problems,
+            solutions: Array.isArray(body.solutions) ? body.solutions : sub.solutions,
+            sectors: body.sectors !== undefined ? body.sectors : sub.sectors,
           };
         }
         return sub;

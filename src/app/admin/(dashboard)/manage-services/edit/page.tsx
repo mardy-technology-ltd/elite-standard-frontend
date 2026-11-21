@@ -42,6 +42,14 @@ function EditSubServiceContent() {
     sliderImages: [] as string[],
     features: [] as string[],
     faqs: [] as { question: string; answer: string }[],
+    problems: [] as string[],
+    solutions: [] as string[],
+    assurance: {
+      enabled: true,
+      standards: "BNBC & NFPA Compliant",
+      warranty: "OEM Verified Guarantee",
+      support: "24/7 Rapid Response",
+    },
     parentFlagshipId: "",
     parentFlagshipSlug: "",
     parentFlagshipCode: "",
@@ -52,6 +60,8 @@ function EditSubServiceContent() {
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newFaqQuestion, setNewFaqQuestion] = useState("");
   const [newFaqAnswer, setNewFaqAnswer] = useState("");
+  const [newProblemText, setNewProblemText] = useState("");
+  const [newSolutionText, setNewSolutionText] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -82,6 +92,14 @@ function EditSubServiceContent() {
             sliderImages,
             features: Array.isArray(s.features) ? s.features : (Array.isArray(s.scopeOfWork) ? s.scopeOfWork : []),
             faqs: Array.isArray(s.faqs) ? s.faqs : [],
+            problems: Array.isArray(s.problems) ? s.problems : [],
+            solutions: Array.isArray(s.solutions) ? s.solutions : [],
+            assurance: (s.sectors as any)?.assurance ?? {
+              enabled: true,
+              standards: "BNBC & NFPA Compliant",
+              warranty: "OEM Verified Guarantee",
+              support: "24/7 Rapid Response",
+            },
             parentFlagshipId: data.parentFlagshipId || s.parentFlagshipId || "",
             parentFlagshipSlug: s.parentFlagshipSlug || parentParam || "",
             parentFlagshipCode: s.parentFlagshipCode || "",
@@ -227,6 +245,54 @@ function EditSubServiceContent() {
     });
   };
 
+  const handleAddProblem = () => {
+    if (!newProblemText.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      problems: [...prev.problems, newProblemText.trim()],
+    }));
+    setNewProblemText("");
+  };
+
+  const handleRemoveProblem = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      problems: prev.problems.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleProblemChange = (index: number, val: string) => {
+    setFormData((prev) => {
+      const updated = [...prev.problems];
+      updated[index] = val;
+      return { ...prev, problems: updated };
+    });
+  };
+
+  const handleAddSolution = () => {
+    if (!newSolutionText.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      solutions: [...prev.solutions, newSolutionText.trim()],
+    }));
+    setNewSolutionText("");
+  };
+
+  const handleRemoveSolution = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      solutions: prev.solutions.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleSolutionChange = (index: number, val: string) => {
+    setFormData((prev) => {
+      const updated = [...prev.solutions];
+      updated[index] = val;
+      return { ...prev, solutions: updated };
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) {
@@ -249,10 +315,26 @@ function EditSubServiceContent() {
       finalFeatures.push(newFeatureText.trim());
     }
 
+    // Same for problems and solutions
+    let finalProblems = [...formData.problems];
+    if (newProblemText.trim()) {
+      finalProblems.push(newProblemText.trim());
+    }
+
+    let finalSolutions = [...formData.solutions];
+    if (newSolutionText.trim()) {
+      finalSolutions.push(newSolutionText.trim());
+    }
+
     const payload = {
       ...formData,
       faqs: finalFaqs,
       features: finalFeatures,
+      problems: finalProblems,
+      solutions: finalSolutions,
+      sectors: {
+        assurance: formData.assurance,
+      },
     };
 
     setSaving(true);
@@ -413,9 +495,137 @@ function EditSubServiceContent() {
                 rows={3}
                 value={formData.shortDescription}
                 onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
-                placeholder="Summary description displayed under the title on the big card..."
+                placeholder="Summary description displayed under the title on the big card and page header..."
                 className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
               />
+            </div>
+          </div>
+
+          {/* Card: Engineering Overview (Technical Blueprint) */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-md space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                <h3 className="text-sm font-bold text-white">
+                  Engineering Overview
+                </h3>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                Technical Blueprint
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed">
+              This text is displayed inside the dedicated white card with the gold vertical accent line under the "Engineering Overview" section on the Sub-Service details page.
+            </p>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                Technical Blueprint Narrative / Description
+              </label>
+              <textarea
+                rows={4}
+                value={formData.fullDescription}
+                onChange={(e) => setFormData({ ...formData, fullDescription: e.target.value })}
+                placeholder="Detailed technical overview narrative (e.g. Renewable energy generation and distribution solutions engineered for residential, commercial, and industrial facilities. Complete turnkey EPC covering solar power stations, grid synchronization, and hybrid storage systems.)..."
+                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-400 transition-colors leading-relaxed"
+              />
+            </div>
+
+            {/* Assurance Badges (Standards, Warranty, Support) */}
+            <div className="pt-4 border-t border-slate-800 space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                  <span>Assurance Badges Strip (3 Columns)</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-slate-400">
+                    {formData.assurance.enabled ? "Enabled" : "Disabled"}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        assurance: {
+                          ...formData.assurance,
+                          enabled: !formData.assurance.enabled,
+                        },
+                      })
+                    }
+                    className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                      formData.assurance.enabled ? "bg-cyan-500" : "bg-slate-700"
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                        formData.assurance.enabled ? "translate-x-5" : "translate-x-0"
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+
+              {formData.assurance.enabled && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  {/* Badge 1: Standards */}
+                  <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5">
+                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">
+                      Standards (1st Badge)
+                    </span>
+                    <input
+                      type="text"
+                      value={formData.assurance.standards}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          assurance: { ...formData.assurance, standards: e.target.value },
+                        })
+                      }
+                      placeholder="e.g. BNBC & NFPA Compliant"
+                      className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-400"
+                    />
+                  </div>
+
+                  {/* Badge 2: Warranty */}
+                  <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5">
+                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
+                      Warranty (2nd Badge)
+                    </span>
+                    <input
+                      type="text"
+                      value={formData.assurance.warranty}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          assurance: { ...formData.assurance, warranty: e.target.value },
+                        })
+                      }
+                      placeholder="e.g. OEM Verified Guarantee"
+                      className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+
+                  {/* Badge 3: Support */}
+                  <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5">
+                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block">
+                      Support (3rd Badge)
+                    </span>
+                    <input
+                      type="text"
+                      value={formData.assurance.support}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          assurance: { ...formData.assurance, support: e.target.value },
+                        })
+                      }
+                      placeholder="e.g. 24/7 Rapid Response"
+                      className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-400"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -579,6 +789,143 @@ function EditSubServiceContent() {
                 <FaPlus className="text-[10px]" />
                 <span>Add FAQ</span>
               </button>
+            </div>
+          </div>
+
+          {/* Card: Challenges & Engineered Solutions */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-md space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <h3 className="text-sm font-bold text-white">
+                  Challenges & Engineered Solutions
+                </h3>
+              </div>
+              <span className="text-[11px] font-mono text-slate-400">
+                {formData.problems.length} Problems / {formData.solutions.length} Solutions
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed">
+              These appear in the 2-column card ("Challenges & Engineered Solutions") on the Sub-Service page.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
+              {/* Left Column: Client Pain Points & Vulnerabilities */}
+              <div className="p-4 rounded-xl bg-rose-500/5 border border-rose-500/20 space-y-3">
+                <div className="flex items-center justify-between border-b border-rose-500/20 pb-2">
+                  <span className="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                    <span>Client Pain Points</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-rose-400/80">
+                    {formData.problems.length} items
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  {formData.problems.map((prob, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0 ml-1" />
+                      <input
+                        type="text"
+                        value={prob}
+                        onChange={(e) => handleProblemChange(idx, e.target.value)}
+                        className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-rose-400 transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveProblem(idx)}
+                        className="w-7 h-7 rounded-lg bg-slate-800 hover:bg-rose-600/20 text-slate-400 hover:text-rose-400 flex items-center justify-center transition-colors shrink-0"
+                        title="Remove problem"
+                      >
+                        <FaTrash className="text-[9px]" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="pt-2 flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={newProblemText}
+                    onChange={(e) => setNewProblemText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddProblem();
+                      }
+                    }}
+                    placeholder="New client pain point..."
+                    className="flex-1 px-3 py-1.5 bg-slate-950 border border-dashed border-rose-500/40 rounded-lg text-xs text-white focus:outline-none focus:border-rose-400 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddProblem}
+                    className="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white text-xs font-bold border border-rose-500/30 transition-all shrink-0"
+                  >
+                    + Add
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column: Engineered Turnkey Solutions */}
+              <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 space-y-3">
+                <div className="flex items-center justify-between border-b border-emerald-500/20 pb-2">
+                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>Engineered Solutions</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-emerald-400/80">
+                    {formData.solutions.length} items
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  {formData.solutions.map((sol, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 ml-1" />
+                      <input
+                        type="text"
+                        value={sol}
+                        onChange={(e) => handleSolutionChange(idx, e.target.value)}
+                        className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-400 transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSolution(idx)}
+                        className="w-7 h-7 rounded-lg bg-slate-800 hover:bg-rose-600/20 text-slate-400 hover:text-rose-400 flex items-center justify-center transition-colors shrink-0"
+                        title="Remove solution"
+                      >
+                        <FaTrash className="text-[9px]" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="pt-2 flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={newSolutionText}
+                    onChange={(e) => setNewSolutionText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddSolution();
+                      }
+                    }}
+                    placeholder="New turnkey engineered solution..."
+                    className="flex-1 px-3 py-1.5 bg-slate-950 border border-dashed border-emerald-500/40 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-400 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddSolution}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-white text-xs font-bold border border-emerald-500/30 transition-all shrink-0"
+                  >
+                    + Add
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -699,49 +699,62 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
               </p>
 
               {/* Engineering Assurance Badges */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-slate-100">
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm shrink-0">
-                    <FaCheckCircle />
-                  </div>
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">
-                      Standards
-                    </span>
-                    <span className="text-xs font-bold text-brand-950">
-                      BNBC & NFPA Compliant
-                    </span>
-                  </div>
-                </div>
+              {(() => {
+                const assurance = (service.sectors as any)?.assurance ?? (sub as any)?.sectors?.assurance ?? {
+                  enabled: true,
+                  standards: "BNBC & NFPA Compliant",
+                  warranty: "OEM Verified Guarantee",
+                  support: "24/7 Rapid Response",
+                };
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-accent/20 text-brand-950 flex items-center justify-center text-sm shrink-0">
-                    <FaAward />
-                  </div>
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">
-                      Warranty
-                    </span>
-                    <span className="text-xs font-bold text-brand-950">
-                      OEM Verified Guarantee
-                    </span>
-                  </div>
-                </div>
+                if (assurance.enabled === false) return null;
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-sm shrink-0">
-                    <FaRegClock />
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-slate-100">
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm shrink-0">
+                        <FaCheckCircle />
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                          Standards
+                        </span>
+                        <span className="text-xs font-bold text-brand-950 truncate block">
+                          {assurance.standards || "BNBC & NFPA Compliant"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-accent/20 text-brand-950 flex items-center justify-center text-sm shrink-0">
+                        <FaAward />
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                          Warranty
+                        </span>
+                        <span className="text-xs font-bold text-brand-950 truncate block">
+                          {assurance.warranty || "OEM Verified Guarantee"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-sm shrink-0">
+                        <FaRegClock />
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                          Support
+                        </span>
+                        <span className="text-xs font-bold text-brand-950 truncate block">
+                          {assurance.support || "24/7 Rapid Response"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">
-                      Support
-                    </span>
-                    <span className="text-xs font-bold text-brand-950">
-                      24/7 Rapid Response
-                    </span>
-                  </div>
-                </div>
-              </div>
+                );
+              })()}
             </div>
 
             {/* Card 2: Challenges & Engineered Solutions */}

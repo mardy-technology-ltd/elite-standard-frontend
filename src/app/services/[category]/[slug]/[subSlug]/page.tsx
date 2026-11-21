@@ -112,6 +112,22 @@ async function getSubServiceData(parentSlug: string, subSlug: string, category?:
           ? foundSub.faqs
           : (Array.isArray(dbParent.faqs) ? dbParent.faqs : []);
 
+        const effectiveProblems = (standaloneSub && Array.isArray(standaloneSub.problems) && standaloneSub.problems.length > 0)
+          ? standaloneSub.problems
+          : (Array.isArray(foundSub.problems) && foundSub.problems.length > 0)
+          ? foundSub.problems
+          : (Array.isArray(dbParent.problems) ? dbParent.problems : []);
+
+        const effectiveSolutions = (standaloneSub && Array.isArray(standaloneSub.solutions) && standaloneSub.solutions.length > 0)
+          ? standaloneSub.solutions
+          : (Array.isArray(foundSub.solutions) && foundSub.solutions.length > 0)
+          ? foundSub.solutions
+          : (Array.isArray(dbParent.solutions) ? dbParent.solutions : []);
+
+        const effectiveSectors = standaloneSub?.sectors !== undefined
+          ? standaloneSub.sectors
+          : (foundSub.sectors !== undefined ? foundSub.sectors : dbParent.sectors);
+
         const parentItem: ServiceItem = {
           id: dbParent.id,
           slug: dbParent.slug,
@@ -124,12 +140,12 @@ async function getSubServiceData(parentSlug: string, subSlug: string, category?:
           fullDescription: parentFlagship?.description || dbParent.fullDescription,
           icon: parentFlagship?.icon || dbParent.icon,
           bannerImage: parentFlagship?.bannerImage || dbParent.bannerImage,
-          problems: dbParent.problems,
-          solutions: dbParent.solutions,
+          problems: effectiveProblems,
+          solutions: effectiveSolutions,
           scopeOfWork: dbParent.scopeOfWork,
           subServices: dbParent.subServices as any,
           faqs: (effectiveFaqs as any) || [],
-          sectors: (dbParent.sectors as any) || undefined,
+          sectors: (effectiveSectors as any) || undefined,
         };
 
         const effectiveFeatures = (standaloneSub && Array.isArray(standaloneSub.scopeOfWork) && standaloneSub.scopeOfWork.length > 0)
@@ -145,6 +161,8 @@ async function getSubServiceData(parentSlug: string, subSlug: string, category?:
           features: effectiveFeatures,
           sliderImages: effectiveSlider,
           image: standaloneSub?.bannerImage || foundSub.image,
+          shortDesc: standaloneSub?.shortDescription || foundSub.shortDesc,
+          fullDesc: standaloneSub?.fullDescription || foundSub.fullDesc,
         };
 
         return { service: parentItem, sub: enhancedSub };
