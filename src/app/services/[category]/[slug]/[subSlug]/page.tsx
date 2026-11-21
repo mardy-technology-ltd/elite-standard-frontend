@@ -35,6 +35,17 @@ async function getSubServiceData(parentSlug: string, subSlug: string, category?:
     });
 
     if (dbSubService) {
+      let sliderImages: string[] = [];
+      if (Array.isArray(dbSubService.subServices) && (dbSubService.subServices as any[]).length > 0) {
+        const first = (dbSubService.subServices as any[])[0];
+        if (Array.isArray(first?.sliderImages)) {
+          sliderImages = first.sliderImages;
+        }
+      }
+      if (sliderImages.length === 0 && dbSubService.bannerImage) {
+        sliderImages = [dbSubService.bannerImage];
+      }
+
       const subDetail: SubServiceDetail = {
         id: dbSubService.id,
         slug: dbSubService.slug,
@@ -43,6 +54,7 @@ async function getSubServiceData(parentSlug: string, subSlug: string, category?:
         fullDesc: dbSubService.fullDescription || dbSubService.shortDescription || "",
         features: Array.isArray(dbSubService.scopeOfWork) ? (dbSubService.scopeOfWork as string[]) : [],
         image: dbSubService.bannerImage || parentFlagship?.bannerImage || "/images/company-info.png",
+        sliderImages,
       };
 
       const parentItem: ServiceItem = {

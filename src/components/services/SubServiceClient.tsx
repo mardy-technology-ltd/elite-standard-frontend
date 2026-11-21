@@ -359,8 +359,8 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
           </div>
 
           {/* Title & Short Description */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7">
+          <div className="max-w-4xl">
+            <div>
               <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl drop-shadow-md">
                 {sub.title}
               </h1>
@@ -384,23 +384,6 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                 >
                   <span>Get Quote</span>
                 </button>
-              </div>
-            </div>
-
-            {/* Right Preview Card matching mockup */}
-            <div className="lg:col-span-5 hidden lg:block">
-              <div className="relative h-64 w-full rounded-2xl overflow-hidden border border-white/15 shadow-2xl bg-slate-900 group">
-                <Image
-                  src={currentSlide.image || sub.image || "/images/company-info.png"}
-                  alt={sub.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-white/90">
-                  <span className="font-bold truncate">{currentSlide.title || sub.title}</span>
-                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-amber-500/80 text-brand-950 font-bold">Verified</span>
-                </div>
               </div>
             </div>
           </div>

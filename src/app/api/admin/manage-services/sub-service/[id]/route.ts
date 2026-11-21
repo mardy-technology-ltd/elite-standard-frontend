@@ -19,7 +19,25 @@ export async function GET(
     });
 
     if (service) {
-      return NextResponse.json({ success: true, service, isEmbedded: false });
+      let sliderImages: string[] = [];
+      if (Array.isArray(service.subServices) && (service.subServices as any[]).length > 0) {
+        // check if subServices stores gallery/sliderImages
+        const first = (service.subServices as any[])[0];
+        if (Array.isArray(first?.sliderImages)) {
+          sliderImages = first.sliderImages;
+        }
+      }
+      if (sliderImages.length === 0 && service.bannerImage) {
+        sliderImages = [service.bannerImage];
+      }
+
+      const synthesized = {
+        ...service,
+        sliderImages,
+        features: Array.isArray(service.scopeOfWork) ? service.scopeOfWork : [],
+      };
+
+      return NextResponse.json({ success: true, service: synthesized, isEmbedded: false });
     }
 
     // 2. Check if it's an embedded subService in any root flagship service
@@ -36,6 +54,12 @@ export async function GET(
         );
 
         if (found) {
+          const sliderImages = Array.isArray(found.sliderImages)
+            ? found.sliderImages
+            : found.image
+            ? [found.image]
+            : [];
+
           const synthesizedService = {
             id: found.id || id,
             slug: found.slug || id,
@@ -46,6 +70,7 @@ export async function GET(
             shortDescription: found.shortDesc || found.fullDesc || '',
             fullDescription: found.fullDesc || found.shortDesc || '',
             bannerImage: found.image || flagship.bannerImage || '',
+            sliderImages,
             features: Array.isArray(found.features) ? found.features : [],
             scopeOfWork: Array.isArray(found.features) ? found.features : [],
             compliance: flagship.compliance || [],
@@ -93,6 +118,34 @@ export async function PUT(
     });
 
     if (existingDedicated) {
+      const bannerImage = body.bannerImage || (Array.isArray(body.sliderImages) && body.sliderImages.length > 0 ? body.sliderImages[0] : existingDedicated.bannerImage);
+      const sliderImages = Array.isArray(body.sliderImages) ? body.sliderImages : (bannerImage ? [bannerImage] : []);
+
+      // If dedicated record has subServices, update or create a wrapper holding sliderImages
+      const existingSubServices = Array.isArray(existingDedicated.subServices) ? existingDedicated.subServices : [];
+      let updatedSubServices = existingSubServices;
+      if (updatedSubServices.length > 0) {
+        updatedSubServices = [
+          {
+            ...(updatedSubServices[0] as any),
+            sliderImages,
+            image: bannerImage,
+          },
+          ...updatedSubServices.slice(1),
+        ];
+      } else {
+        updatedSubServices = [
+          {
+            id: `ss-${existingDedicated.slug}`,
+            slug: existingDedicated.slug,
+            image: bannerImage,
+            sliderImages,
+            title: body.title?.trim() || existingDedicated.title,
+            features: Array.isArray(body.features) ? body.features : existingDedicated.scopeOfWork,
+          },
+        ];
+      }
+
       const updated = await prisma.service.update({
         where: { id: existingDedicated.id },
         data: {
@@ -100,11 +153,37 @@ export async function PUT(
           subtitle: body.subtitle ?? existingDedicated.subtitle,
           shortDescription: body.shortDescription ?? existingDedicated.shortDescription,
           fullDescription: body.fullDescription ?? existingDedicated.fullDescription,
-          bannerImage: body.bannerImage ?? existingDedicated.bannerImage,
+          bannerImage,
           scopeOfWork: Array.isArray(body.features) ? body.features : existingDedicated.scopeOfWork,
-          subServices: body.subServices ?? existingDedicated.subServices,
+          subServices: updatedSubServices,
         },
       });
+
+      // Also ensure parent flagship's subServices array is synchronized
+      const parentSlug = body.parentFlagshipSlug;
+      if (parentSlug) {
+        const parent = await prisma.service.findFirst({
+          where: { OR: [{ slug: parentSlug }, { code: parentSlug.toUpperCase() }] },
+        });
+        if (parent && Array.isArray(parent.subServices)) {
+          const syncSub = (parent.subServices as any[]).map((sub) => {
+            if (sub.slug === existingDedicated.slug || sub.id === existingDedicated.id || sub.id === `ss-${existingDedicated.slug}`) {
+              return {
+                ...sub,
+                title: body.title?.trim() || existingDedicated.title,
+                image: bannerImage,
+                sliderImages,
+                features: Array.isArray(body.features) ? body.features : sub.features,
+              };
+            }
+            return sub;
+          });
+          await prisma.service.update({
+            where: { id: parent.id },
+            data: { subServices: syncSub },
+          });
+        }
+      }
 
       return NextResponse.json({ success: true, service: updated });
     }
@@ -131,6 +210,9 @@ export async function PUT(
     }
 
     if (parent && Array.isArray(parent.subServices)) {
+      const bannerImage = body.bannerImage || (Array.isArray(body.sliderImages) && body.sliderImages.length > 0 ? body.sliderImages[0] : '');
+      const sliderImages = Array.isArray(body.sliderImages) ? body.sliderImages : (bannerImage ? [bannerImage] : []);
+
       const updatedSubServices = (parent.subServices as any[]).map((sub) => {
         if (sub.id === id || sub.slug === id) {
           return {
@@ -139,7 +221,8 @@ export async function PUT(
             subtitle: body.subtitle ?? sub.subtitle,
             shortDesc: body.shortDescription ?? sub.shortDesc,
             fullDesc: body.fullDescription ?? sub.fullDesc,
-            image: body.bannerImage ?? sub.image,
+            image: bannerImage || sub.image,
+            sliderImages: sliderImages.length > 0 ? sliderImages : (sub.image ? [sub.image] : []),
             features: Array.isArray(body.features) ? body.features : sub.features,
           };
         }

@@ -25,6 +25,8 @@ import {
   FaPlus,
   FaEdit,
   FaTrashAlt,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 
 interface ServiceItem {
@@ -40,6 +42,7 @@ interface ServiceItem {
   scopeOfWork?: string[];
   subServices?: any[];
   bannerImage?: string;
+  sliderImages?: string[];
   isEmbeddedSubService?: boolean;
   parentFlagshipSlug?: string;
 }
@@ -184,6 +187,113 @@ const SERVICE_PILLARS: ServicePillar[] = [
   },
 ];
 
+function SubServiceCardMedia({
+  srv,
+  subCatCode,
+}: {
+  srv: ServiceItem;
+  subCatCode: string;
+}) {
+  const images =
+    Array.isArray(srv.sliderImages) && srv.sliderImages.length > 0
+      ? srv.sliderImages
+      : srv.bannerImage
+      ? [srv.bannerImage]
+      : [];
+
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % images.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [images.length]);
+
+  return (
+    <div className="lg:col-span-5 relative h-64 sm:h-72 lg:h-80 w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-inner group">
+      {images.length > 0 ? (
+        <>
+          {images.map((img, i) => (
+            <div
+              key={i}
+              className={`absolute inset-0 transition-opacity duration-700 ${
+                i === currentIdx ? "opacity-100 z-0" : "opacity-0 pointer-events-none"
+              }`}
+            >
+              <Image
+                src={img}
+                alt={`${srv.title} slide ${i + 1}`}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
+              />
+            </div>
+          ))}
+
+          {/* Slider Controls (if multiple images) */}
+          {images.length > 1 && (
+            <>
+              {/* Prev / Next Buttons */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentIdx((prev) => (prev - 1 + images.length) % images.length);
+                }}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm border border-slate-700 shadow-md"
+                title="Previous image"
+              >
+                <FaChevronLeft className="text-[10px]" />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentIdx((prev) => (prev + 1) % images.length);
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm border border-slate-700 shadow-md"
+                title="Next image"
+              >
+                <FaChevronRight className="text-[10px]" />
+              </button>
+
+              {/* Slide Indicator Dots */}
+              <div className="absolute top-3.5 right-3.5 z-20 flex items-center gap-1.5 bg-slate-950/70 px-2 py-1 rounded-full border border-slate-800 backdrop-blur-sm">
+                {images.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentIdx(dotIdx);
+                    }}
+                    className={`h-1.5 rounded-full transition-all ${
+                      dotIdx === currentIdx ? "w-4 bg-amber-400" : "w-1.5 bg-white/40 hover:bg-white/70"
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-slate-950 text-slate-600 text-xs font-semibold">
+          No Image Available
+        </div>
+      )}
+
+      {/* Bottom Gradient Overlay & Badge */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent pointer-events-none" />
+      <div className="absolute bottom-4 left-4 z-10">
+        <span className="px-3.5 py-1.5 rounded-xl bg-slate-950/90 text-amber-400 font-mono font-bold text-xs border border-slate-800 shadow-xl backdrop-blur-md">
+          {subCatCode} / {srv.title}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function ManageServicesContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category"); // mechanical, electrical, plumbing
@@ -249,10 +359,24 @@ function ManageServicesContent() {
 
         return isMatch;
       })
-      .map((s) => ({
-        ...s,
-        isEmbeddedSubService: false,
-      }));
+      .map((s) => {
+        let sliderImages: string[] = [];
+        if (Array.isArray(s.subServices) && s.subServices.length > 0) {
+          const first = s.subServices[0];
+          if (Array.isArray(first?.sliderImages) && first.sliderImages.length > 0) {
+            sliderImages = first.sliderImages;
+          }
+        }
+        if (sliderImages.length === 0 && s.bannerImage) {
+          sliderImages = [s.bannerImage];
+        }
+
+        return {
+          ...s,
+          sliderImages,
+          isEmbeddedSubService: false,
+        };
+      });
 
     // 2. Also check if the root flagship service has embedded `subServices` items in JSON
     const rootFlagship = dbServices.find(
@@ -267,6 +391,12 @@ function ManageServicesContent() {
           (sa) => sa.slug.toLowerCase() === (sub.slug || "").toLowerCase()
         );
         if (!existsInStandalone) {
+          const sliderImages = Array.isArray(sub.sliderImages) && sub.sliderImages.length > 0
+            ? sub.sliderImages
+            : sub.image
+            ? [sub.image]
+            : [];
+
           embeddedServices.push({
             id: sub.id || `${subCatCode.toLowerCase()}-sub-${idx}`,
             slug: sub.slug || `${subCatSlug}-${idx}`,
@@ -277,6 +407,7 @@ function ManageServicesContent() {
             shortDescription: sub.shortDesc || sub.fullDesc || "",
             features: Array.isArray(sub.features) ? sub.features : [],
             bannerImage: sub.image || "",
+            sliderImages,
             isEmbeddedSubService: true,
             parentFlagshipSlug: subCatSlug,
           });
@@ -542,12 +673,12 @@ function ManageServicesContent() {
                                         </p>
                                       )}
 
-                                      {/* Key Technical Capabilities */}
+                                      {/* Solutions we cover */}
                                       {featuresList.length > 0 && (
                                         <div className="pt-2 flex flex-col gap-2.5">
                                           <h4 className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
                                             <span className="w-2 h-2 rounded-full bg-amber-400" />
-                                            <span>Key Technical Capabilities:</span>
+                                            <span>Solutions we cover:</span>
                                           </h4>
                                           <div className="flex flex-col gap-2">
                                             {featuresList.map((feat, fIdx) => (
@@ -564,27 +695,8 @@ function ManageServicesContent() {
                                       )}
                                     </div>
 
-                                    {/* Right Column: Image with gradient overlay and bottom-left badge */}
-                                    <div className="lg:col-span-5 relative h-64 sm:h-72 lg:h-80 w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-inner group">
-                                      {srv.bannerImage ? (
-                                        <Image
-                                          src={srv.bannerImage}
-                                          alt={srv.title}
-                                          fill
-                                          className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-slate-950 text-slate-600 text-xs font-semibold">
-                                          No Image Available
-                                        </div>
-                                      )}
-                                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none" />
-                                      <div className="absolute bottom-4 left-4 z-10">
-                                        <span className="px-3.5 py-1.5 rounded-xl bg-slate-950/90 text-amber-400 font-mono font-bold text-xs border border-slate-800 shadow-xl backdrop-blur-md">
-                                          {subCat.code} / {srv.title}
-                                        </span>
-                                      </div>
-                                    </div>
+                                    {/* Right Column: Dynamic Slider Media */}
+                                    <SubServiceCardMedia srv={srv} subCatCode={subCat.code} />
                                   </div>
                                 );
                               })}

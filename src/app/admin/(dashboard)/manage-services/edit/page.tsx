@@ -39,6 +39,7 @@ function EditSubServiceContent() {
     shortDescription: "",
     fullDescription: "",
     bannerImage: "",
+    sliderImages: [] as string[],
     features: [] as string[],
     parentFlagshipId: "",
     parentFlagshipSlug: "",
@@ -47,6 +48,7 @@ function EditSubServiceContent() {
   });
 
   const [newFeatureText, setNewFeatureText] = useState("");
+  const [newImageUrl, setNewImageUrl] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -58,6 +60,12 @@ function EditSubServiceContent() {
 
         if (res.ok && data.service) {
           const s = data.service;
+          const sliderImages = Array.isArray(s.sliderImages) && s.sliderImages.length > 0
+            ? s.sliderImages
+            : s.bannerImage
+            ? [s.bannerImage]
+            : [];
+
           setFormData({
             id: s.id || id,
             slug: s.slug || "",
@@ -67,7 +75,8 @@ function EditSubServiceContent() {
             category: s.category || "",
             shortDescription: s.shortDescription || "",
             fullDescription: s.fullDescription || "",
-            bannerImage: s.bannerImage || "",
+            bannerImage: s.bannerImage || (sliderImages[0] || ""),
+            sliderImages,
             features: Array.isArray(s.features) ? s.features : (Array.isArray(s.scopeOfWork) ? s.scopeOfWork : []),
             parentFlagshipId: data.parentFlagshipId || s.parentFlagshipId || "",
             parentFlagshipSlug: s.parentFlagshipSlug || parentParam || "",
@@ -88,33 +97,78 @@ function EditSubServiceContent() {
     fetchSubService();
   }, [id, parentParam]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleMultipleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setUploading(true);
     try {
-      const body = new FormData();
-      body.append("file", file);
+      const uploadedUrls: string[] = [];
 
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        body,
-      });
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const body = new FormData();
+        body.append("file", file);
 
-      const data = await res.json();
-      if (data.url) {
-        setFormData((prev) => ({ ...prev, bannerImage: data.url }));
-      } else {
-        alert(data.error || "Failed to upload image");
+        const res = await fetch("/api/admin/upload", {
+          method: "POST",
+          body,
+        });
+
+        const data = await res.json();
+        if (data.url) {
+          uploadedUrls.push(data.url);
+        }
+      }
+
+      if (uploadedUrls.length > 0) {
+        setFormData((prev) => {
+          const combined = [...prev.sliderImages, ...uploadedUrls];
+          return {
+            ...prev,
+            sliderImages: combined,
+            bannerImage: prev.bannerImage || combined[0],
+          };
+        });
       }
     } catch (err) {
       console.error("Upload error:", err);
-      alert("Failed to upload image. Please try again.");
+      alert("Failed to upload some images. Please try again.");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
+  };
+
+  const handleAddImageUrl = () => {
+    if (!newImageUrl.trim()) return;
+    setFormData((prev) => {
+      const updated = [...prev.sliderImages, newImageUrl.trim()];
+      return {
+        ...prev,
+        sliderImages: updated,
+        bannerImage: prev.bannerImage || updated[0],
+      };
+    });
+    setNewImageUrl("");
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData((prev) => {
+      const updated = prev.sliderImages.filter((_, i) => i !== index);
+      return {
+        ...prev,
+        sliderImages: updated,
+        bannerImage: prev.bannerImage === prev.sliderImages[index] ? (updated[0] || "") : prev.bannerImage,
+      };
+    });
+  };
+
+  const handleSetPrimaryImage = (url: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      bannerImage: url,
+    }));
   };
 
   const handleAddFeature = () => {
@@ -312,12 +366,12 @@ function EditSubServiceContent() {
             </div>
           </div>
 
-          {/* Card: Key Technical Capabilities (Service Groups) */}
+          {/* Card: Solutions we cover */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-md space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
-                <span>Key Technical Capabilities / Service Groups</span>
+                <span>Solutions we cover</span>
               </h3>
               <span className="text-[11px] font-mono text-slate-400">
                 {formData.features.length} items
@@ -380,61 +434,163 @@ function EditSubServiceContent() {
 
         {/* Right Column: Media, Banner Image & Live Preview */}
         <div className="lg:col-span-5 space-y-6">
-          {/* Card: Media & Image */}
+          {/* Card: Media & Images (Multiple Image Support) */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-md space-y-4">
-            <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>Media & Banner Image</span>
-            </h3>
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span>Media & Image Gallery</span>
+              </h3>
+              <span className="text-[11px] font-mono text-slate-400">
+                {formData.sliderImages.length} images
+              </span>
+            </div>
 
+            {/* Upload Buttons */}
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">Image URL</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={formData.bannerImage}
-                  onChange={(e) => setFormData({ ...formData, bannerImage: e.target.value })}
-                  placeholder="https://images.unsplash.com/... or upload"
-                  className="flex-1 px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
-                />
+              <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                Upload New Images
+              </label>
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all disabled:opacity-50 shrink-0"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 disabled:opacity-50"
                 >
                   <FaUpload />
-                  <span>{uploading ? "..." : "Upload"}</span>
+                  <span>{uploading ? "Uploading Images..." : "+ Add Images From PC"}</span>
                 </button>
+                {formData.sliderImages.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm("Clear all images from gallery?")) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          sliderImages: [],
+                          bannerImage: "",
+                        }));
+                      }
+                    }}
+                    className="px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold border border-rose-500/20 transition-all"
+                  >
+                    Clear All Images
+                  </button>
+                )}
                 <input
                   type="file"
                   ref={fileInputRef}
-                  onChange={handleImageUpload}
+                  onChange={handleMultipleImageUpload}
                   accept="image/*"
+                  multiple
                   className="hidden"
                 />
               </div>
             </div>
 
-            {/* Visual Image Box Preview */}
-            <div className="relative h-64 w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-inner group">
-              {formData.bannerImage ? (
-                <Image
-                  src={formData.bannerImage}
-                  alt={formData.title || "Preview"}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+            {/* Or add Image URL manually */}
+            <div>
+              <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                Or Add Image via URL
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddImageUrl();
+                    }
+                  }}
+                  placeholder="https://images.unsplash.com/..."
+                  className="flex-1 px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
                 />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs text-slate-500 font-semibold">
-                  No image preview available
+                <button
+                  type="button"
+                  onClick={handleAddImageUrl}
+                  className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-all shrink-0"
+                >
+                  Add URL
+                </button>
+              </div>
+            </div>
+
+            {/* Thumbnail Gallery Grid */}
+            {formData.sliderImages.length > 0 && (
+              <div className="space-y-2 pt-2">
+                <label className="block text-[11px] font-bold text-slate-400">
+                  Uploaded Gallery Images (Click to set primary banner):
+                </label>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
+                  {formData.sliderImages.map((imgUrl, idx) => {
+                    const isPrimary = formData.bannerImage === imgUrl;
+                    return (
+                      <div
+                        key={idx}
+                        className={`group relative h-20 rounded-xl overflow-hidden border transition-all cursor-pointer ${
+                          isPrimary
+                            ? "border-blue-500 ring-2 ring-blue-500/40 shadow-lg"
+                            : "border-slate-800 hover:border-slate-600"
+                        }`}
+                        onClick={() => handleSetPrimaryImage(imgUrl)}
+                        title={isPrimary ? "Primary Banner Image" : "Click to set as primary banner"}
+                      >
+                        <Image
+                          src={imgUrl}
+                          alt={`Thumbnail ${idx + 1}`}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {isPrimary && (
+                          <span className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-blue-600 text-white shadow">
+                            Primary
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveImage(idx);
+                          }}
+                          className="absolute top-1 right-1 z-10 w-5 h-5 rounded-md bg-black/80 hover:bg-rose-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Delete image"
+                        >
+                          <FaTrash className="text-[8px]" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none" />
-              <div className="absolute bottom-4 left-4 z-10">
-                <span className="px-3 py-1 rounded-xl bg-slate-950/90 text-amber-400 font-mono font-bold text-xs border border-slate-800 shadow-xl backdrop-blur-md">
-                  {formData.code || "SUB"} / {formData.title || "Untitled"}
-                </span>
+              </div>
+            )}
+
+            {/* Visual Image Box Preview */}
+            <div className="space-y-1 pt-2">
+              <label className="block text-[11px] font-bold text-slate-400">
+                Primary Banner Live Preview:
+              </label>
+              <div className="relative h-60 w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-inner group">
+                {formData.bannerImage ? (
+                  <Image
+                    src={formData.bannerImage}
+                    alt={formData.title || "Preview"}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-xs text-slate-500 font-semibold">
+                    No image preview available
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none" />
+                <div className="absolute bottom-4 left-4 z-10">
+                  <span className="px-3 py-1 rounded-xl bg-slate-950/90 text-amber-400 font-mono font-bold text-xs border border-slate-800 shadow-xl backdrop-blur-md">
+                    {formData.code || "SUB"} / {formData.title || "Untitled"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

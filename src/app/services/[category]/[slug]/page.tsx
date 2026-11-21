@@ -131,6 +131,17 @@ async function getService(slug: string, category?: string): Promise<ServiceItem 
         );
 
         if (matchedIdx >= 0) {
+          let relSliderImages: string[] = [];
+          if (Array.isArray(rel.subServices) && (rel.subServices as any[]).length > 0) {
+            const first = (rel.subServices as any[])[0];
+            if (Array.isArray(first?.sliderImages)) {
+              relSliderImages = first.sliderImages;
+            }
+          }
+          if (relSliderImages.length === 0 && rel.bannerImage) {
+            relSliderImages = [rel.bannerImage];
+          }
+
           combinedSubServices[matchedIdx] = {
             ...combinedSubServices[matchedIdx],
             id: rel.id || combinedSubServices[matchedIdx].id,
@@ -142,6 +153,7 @@ async function getService(slug: string, category?: string): Promise<ServiceItem 
                 ? rel.scopeOfWork
                 : combinedSubServices[matchedIdx].features,
             image: rel.bannerImage || combinedSubServices[matchedIdx].image,
+            sliderImages: relSliderImages.length > 0 ? relSliderImages : combinedSubServices[matchedIdx].sliderImages,
           };
         } else if (rel.title !== domainOverview?.title && rel.code !== domainOverview?.code) {
           // If it's a new custom sub-service in DB (e.g. "Elite Solar Energy Solution - EPC"), attach it
@@ -149,6 +161,17 @@ async function getService(slug: string, category?: string): Promise<ServiceItem 
             (sub) => sub.title?.toLowerCase() === rel.title?.toLowerCase() || sub.slug === rel.slug
           );
           if (!alreadyExists) {
+            let relSliderImages: string[] = [];
+            if (Array.isArray(rel.subServices) && (rel.subServices as any[]).length > 0) {
+              const first = (rel.subServices as any[])[0];
+              if (Array.isArray(first?.sliderImages)) {
+                relSliderImages = first.sliderImages;
+              }
+            }
+            if (relSliderImages.length === 0 && rel.bannerImage) {
+              relSliderImages = [rel.bannerImage];
+            }
+
             combinedSubServices.push({
               id: rel.id,
               slug: rel.slug,
@@ -157,6 +180,7 @@ async function getService(slug: string, category?: string): Promise<ServiceItem 
               fullDesc: rel.fullDescription || rel.shortDescription || "",
               features: Array.isArray(rel.scopeOfWork) && rel.scopeOfWork.length > 0 ? rel.scopeOfWork : ["Full Turnkey Engineering EPC", "BNBC & IEC Compliance", "Site Inspection & Testing"],
               image: rel.bannerImage || "/images/company-info.png",
+              sliderImages: relSliderImages,
             });
           }
         }
