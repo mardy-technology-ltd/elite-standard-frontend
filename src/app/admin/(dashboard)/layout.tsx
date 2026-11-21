@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   FaTachometerAlt,
   FaBoxes,
@@ -23,6 +23,10 @@ import {
   FaMailBulk,
   FaHandshake,
   FaIndustry,
+  FaChevronDown,
+  FaSnowflake,
+  FaBolt,
+  FaWater,
 } from "react-icons/fa";
 
 export default function AdminDashboardLayout({
@@ -31,6 +35,8 @@ export default function AdminDashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentCategory = searchParams.get("category");
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminUser, setAdminUser] = useState<any>(null);
@@ -82,6 +88,35 @@ export default function AdminDashboardLayout({
     }
   };
 
+  const [manageServicesOpen, setManageServicesOpen] = useState<boolean>(true);
+
+  const manageServicesChildren = [
+    {
+      label: "Mechanical Services",
+      href: "/admin/manage-services?category=mechanical",
+      categoryKey: "mechanical",
+      icon: FaSnowflake,
+      iconColor: "text-sky-400",
+      code: "M",
+    },
+    {
+      label: "Electrical Services",
+      href: "/admin/manage-services?category=electrical",
+      categoryKey: "electrical",
+      icon: FaBolt,
+      iconColor: "text-amber-400",
+      code: "E",
+    },
+    {
+      label: "Plumbing Services",
+      href: "/admin/manage-services?category=plumbing",
+      categoryKey: "plumbing",
+      icon: FaWater,
+      iconColor: "text-cyan-400",
+      code: "P",
+    },
+  ];
+
   const navItems = [
     {
       label: "Overview",
@@ -90,10 +125,19 @@ export default function AdminDashboardLayout({
       exact: true,
     },
     {
+      label: "Manage Services",
+      href: "/admin/manage-services",
+      icon: FaCogs,
+      badge: "3",
+      isDropdown: true,
+      children: manageServicesChildren,
+    },
+    {
       label: "Services & Solutions",
       href: "/admin/services",
-      icon: FaCogs,
-      badge: "Core MEP",
+      icon: FaIndustry,
+      badge: "Disabled",
+      disabled: true,
     },
     {
       label: "Products Catalog",
@@ -220,6 +264,96 @@ export default function AdminDashboardLayout({
               : pathname.startsWith(item.href);
 
             const Icon = item.icon;
+
+            if (item.isDropdown) {
+              const isManageServicesActive = pathname.startsWith("/admin/manage-services");
+
+              return (
+                <div key={item.href} className="space-y-1">
+                  <div
+                    onClick={() => setManageServicesOpen((prev) => !prev)}
+                    className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer select-none ${
+                      isManageServicesActive
+                        ? "bg-slate-800 text-white border border-slate-700/80 shadow-sm"
+                        : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon className={`text-base ${isManageServicesActive ? "text-blue-400" : "text-slate-400"}`} />
+                      <span>{item.label}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
+                        3
+                      </span>
+                      <FaChevronDown
+                        className={`text-[10px] text-slate-400 transition-transform duration-200 ${
+                          manageServicesOpen ? "rotate-180 text-blue-400" : ""
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Dropdown Items (Mechanical, Electrical, Plumbing) */}
+                  {manageServicesOpen && (
+                    <div className="pl-3 pr-1 py-1 space-y-1 border-l-2 border-slate-800 ml-4 my-1">
+                      {item.children?.map((sub) => {
+                        const SubIcon = sub.icon;
+                        const isSubActive =
+                          pathname === "/admin/manage-services" &&
+                          currentCategory === sub.categoryKey;
+
+                        return (
+                          <Link
+                            key={sub.href}
+                            href={sub.href}
+                            onClick={() => setSidebarOpen(false)}
+                            className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all group ${
+                              isSubActive
+                                ? "bg-blue-600 text-white shadow-md shadow-blue-600/30 font-bold"
+                                : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/50"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <SubIcon className={`text-sm ${isSubActive ? "text-white" : sub.iconColor}`} />
+                              <span>{sub.label}</span>
+                            </div>
+                            <span
+                              className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                                isSubActive
+                                  ? "bg-white/20 text-white border-white/30"
+                                  : "bg-slate-800/90 text-slate-400 group-hover:text-slate-200 border-slate-700/50"
+                              }`}
+                            >
+                              {sub.code}
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (item.disabled) {
+              return (
+                <div
+                  key={item.href}
+                  className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold opacity-40 cursor-not-allowed text-slate-500 bg-slate-950/40 border border-dashed border-slate-800 select-none"
+                  title="Services & Solutions is temporarily disabled"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="text-base text-slate-600" />
+                    <span>{item.label}</span>
+                  </div>
+                  <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-500 border border-slate-700/50">
+                    Disabled
+                  </span>
+                </div>
+              );
+            }
 
             return (
               <Link
@@ -361,7 +495,7 @@ export default function AdminDashboardLayout({
         </header>
 
         {/* Page Body */}
-        <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
           {children}
         </main>
       </div>
