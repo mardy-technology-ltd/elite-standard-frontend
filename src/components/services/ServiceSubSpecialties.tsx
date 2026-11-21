@@ -1,14 +1,132 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ServiceItem, SubServiceDetail } from "@/lib/mockData";
-import { FaCheckCircle, FaPaperPlane, FaCog, FaArrowRight } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaPaperPlane,
+  FaCog,
+  FaArrowRight,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 
 interface ServiceSubSpecialtiesProps {
   service: ServiceItem;
+}
+
+function SubServiceSliderMedia({
+  sub,
+  service,
+}: {
+  sub: SubServiceDetail;
+  service: ServiceItem;
+}) {
+  const images: string[] =
+    Array.isArray(sub.sliderImages) && sub.sliderImages.length > 0
+      ? sub.sliderImages
+      : sub.image
+      ? [sub.image]
+      : ["/images/placeholder.jpg"];
+
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [images.length]);
+
+  return (
+    <div className="relative h-72 sm:h-88 lg:h-96 w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-slate-200 bg-slate-950 group">
+      {images.map((img, i) => (
+        <div
+          key={i}
+          className={`absolute inset-0 transition-opacity duration-700 ${
+            i === currentIdx ? "opacity-100 z-0" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <Image
+            src={img}
+            alt={`${sub.title} image ${i + 1}`}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-95 group-hover:opacity-100"
+            sizes="(max-width: 1024px) 100vw, 45vw"
+          />
+        </div>
+      ))}
+
+      {/* Ambient gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-transparent to-transparent pointer-events-none" />
+
+      {/* Interactive Controls if multiple images */}
+      {images.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setCurrentIdx((prev) => (prev - 1 + images.length) % images.length);
+            }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm border border-white/20 shadow-lg"
+            title="Previous slide"
+          >
+            <FaChevronLeft className="text-[10px]" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setCurrentIdx((prev) => (prev + 1) % images.length);
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm border border-white/20 shadow-lg"
+            title="Next slide"
+          >
+            <FaChevronRight className="text-[10px]" />
+          </button>
+
+          {/* Dots Indicator */}
+          <div className="absolute top-3.5 right-3.5 z-20 flex items-center gap-1.5 bg-black/60 px-2.5 py-1 rounded-full border border-white/20 backdrop-blur-sm">
+            {images.map((_, dotIdx) => (
+              <button
+                key={dotIdx}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setCurrentIdx(dotIdx);
+                }}
+                className={`h-1.5 rounded-full transition-all ${
+                  dotIdx === currentIdx ? "w-4 bg-accent" : "w-1.5 bg-white/50 hover:bg-white"
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Bottom Title Pill */}
+      <Link
+        href={`/services/${service.category}/${service.slug}/${sub.slug}`}
+        className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between"
+      >
+        <span className="bg-brand-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-xl text-xs font-bold text-accent border border-accent/30 shadow-md truncate max-w-[75%]">
+          {service.code} / {sub.title}
+        </span>
+        <span className="text-[11px] font-bold text-white bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shrink-0">
+          <span>Details</span>
+          <FaArrowRight className="text-[9px]" />
+        </span>
+      </Link>
+    </div>
+  );
 }
 
 export default function ServiceSubSpecialties({ service }: ServiceSubSpecialtiesProps) {
@@ -52,10 +170,10 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="scroll-mt-28 bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center"
+              className="scroll-mt-28 bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col lg:flex-row gap-8 lg:gap-10 items-center"
             >
-              {/* Left Column: Details & Features */}
-              <div className="lg:col-span-7 flex flex-col gap-5">
+              {/* Left Column: Details & Features (55% width on desktop) */}
+              <div className="w-full lg:w-[55%] flex flex-col gap-5">
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 rounded-lg bg-brand-900 text-accent font-extrabold text-xs flex items-center justify-center shrink-0">
                     0{idx + 1}
@@ -66,8 +184,8 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
                 </div>
 
                 {/* 1. Title */}
-                <Link href={`/services/${service.slug}/${sub.slug}`}>
-                  <h3 className="font-heading text-2xl sm:text-3xl font-bold text-brand-950 hover:text-accent transition-colors tracking-tight leading-snug">
+                <Link href={`/services/${service.category}/${service.slug}/${sub.slug}`}>
+                  <h3 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-950 hover:text-accent transition-colors tracking-tight leading-snug">
                     {sub.title}
                   </h3>
                 </Link>
@@ -84,16 +202,16 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
                   <div className="pt-2 flex flex-col gap-2.5">
                     <h4 className="text-xs font-extrabold text-brand-950 uppercase tracking-wider flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-accent" />
-                      <span>Key Technical Capabilities:</span>
+                      <span>Solutions we cover:</span>
                     </h4>
                     <div className="flex flex-col gap-2">
                       {sub.features.map((feat, fIdx) => (
                         <div
                           key={fIdx}
-                          className="flex items-center gap-2.5 bg-brand-950 text-white px-4 py-2.5 rounded-xl border border-brand-900 shadow-sm hover:border-accent/50 transition-colors"
+                          className="flex items-center gap-2.5 bg-brand-950 text-white px-4 py-3 rounded-xl border border-brand-900 shadow-sm hover:border-accent/50 transition-colors"
                         >
                           <span className="text-accent text-xs font-bold">›</span>
-                          <span className="text-xs font-bold tracking-wide">{feat}</span>
+                          <span className="text-xs sm:text-sm font-semibold tracking-wide">{feat}</span>
                         </div>
                       ))}
                     </div>
@@ -103,21 +221,13 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
                 <div className="pt-4 flex flex-wrap items-center gap-3">
                   <Link
                     href={`/services/${service.category}/${service.slug}/${sub.slug}`}
-                    className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition-all active:scale-95 group/btn"
+                    className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md transition-all active:scale-95 group/btn"
                   >
-                    <span>
-                      {sub.slug === "renewable-energy"
-                        ? "Open Solar →"
-                        : sub.slug === "grid-power-substation"
-                        ? "Open Grid Power →"
-                        : sub.slug === "thermal-power-generation"
-                        ? "Open Thermal →"
-                        : "View Technical Specifications →"}
-                    </span>
+                    <span>View Technical Specifications →</span>
                   </Link>
                   <Link
                     href={`/contact?service=${service.slug}&sub=${sub.slug}&type=quotation`}
-                    className="inline-flex items-center gap-2 bg-slate-100 hover:bg-accent text-brand-950 font-bold text-xs px-5 py-3 rounded-xl shadow-sm transition-colors border border-slate-200"
+                    className="inline-flex items-center gap-2 bg-slate-100 hover:bg-accent text-brand-950 font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-sm transition-colors border border-slate-200"
                   >
                     <span>Request Quote</span>
                     <FaPaperPlane className="text-[10px]" />
@@ -125,29 +235,9 @@ export default function ServiceSubSpecialties({ service }: ServiceSubSpecialties
                 </div>
               </div>
 
-              {/* Right Column: Image Showcase / Banner */}
-              <div className="lg:col-span-5">
-                <Link
-                  href={`/services/${service.category}/${service.slug}/${sub.slug}`}
-                  className="relative block h-64 sm:h-80 w-full rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-slate-100 group/img cursor-pointer"
-                >
-                  <Image
-                    src={sub.image || "/images/placeholder.jpg"}
-                    alt={sub.title}
-                    fill
-                    className="object-cover group-hover/img:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 1024px) 100vw, 40vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-950/70 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                    <span className="bg-brand-900/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs font-bold text-accent border border-accent/30">
-                      {service.code} / {sub.title}
-                    </span>
-                    <span className="text-[11px] font-bold text-white bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-md opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center gap-1">
-                      Details <FaArrowRight className="text-[9px]" />
-                    </span>
-                  </div>
-                </Link>
+              {/* Right Column: Image Showcase / Multi-image Slider (45% width on desktop) */}
+              <div className="w-full lg:w-[45%]">
+                <SubServiceSliderMedia sub={sub} service={service} />
               </div>
             </motion.div>
           ))}

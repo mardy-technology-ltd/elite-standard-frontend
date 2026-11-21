@@ -455,55 +455,25 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
       {/* ============================================================== */}
       {/* 2. DYNAMIC SLIDER IMAGE SHOWCASE (Full Width Container) */}
       {/* ============================================================== */}
-      <section className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 -mt-14 sm:-mt-18 relative z-20">
+      <section className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-10 2xl:px-12 -mt-14 sm:-mt-20 relative z-20">
         <div
-          className="bg-white rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200/90 shadow-2xl"
+          className="relative bg-slate-950 rounded-3xl p-3 sm:p-4 lg:p-5 border border-slate-800/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {/* Showcase Top Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center text-sm border border-accent/30">
-                <FaProjectDiagram />
-              </div>
-              <div>
-                <h2 className="font-heading text-sm sm:text-base font-bold text-brand-950">
-                  Engineering Deployment & System Architecture
-                </h2>
-                <p className="text-[11px] text-slate-500">
-                  Interactive multi-slide field documentation for {sub.title}
-                </p>
-              </div>
-            </div>
+          {/* Subtle Glow Aura behind showcase */}
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="flex items-center gap-3">
-              {slides.length > 1 && (
-                <span className="px-3 py-1 rounded-full bg-slate-100 text-brand-950 font-mono text-xs font-bold border border-slate-200">
-                  Slide {activeSlideIdx + 1} of {slides.length}
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={() => setIsLightboxOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-950 hover:bg-accent text-white hover:text-brand-950 text-xs font-bold transition-all shadow-sm active:scale-95"
-                title="Fullscreen Zoom"
-              >
-                <FaExpand className="text-[10px]" />
-                <span>Fullscreen</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Active Big Photo Display (Cinematic & Large Slider) */}
-          <div className="relative h-80 sm:h-[460px] md:h-[520px] w-full rounded-2xl overflow-hidden bg-slate-950 group shadow-inner">
+          {/* Active Big Photo Display (Cinematic Edge-to-Edge Visual) */}
+          <div className="relative h-80 sm:h-[480px] md:h-[560px] lg:h-[620px] w-full rounded-2xl overflow-hidden bg-slate-900 group">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeSlideIdx}
-                initial={{ opacity: 0, scale: 1.02 }}
+                initial={{ opacity: 0, scale: 1.03 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
                 className="relative w-full h-full"
               >
                 <Image
@@ -513,36 +483,79 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                   className="object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-700"
                   onClick={() => setIsLightboxOpen(true)}
                   priority
-                  sizes="(max-width: 1280px) 100vw, 1280px"
+                  sizes="(max-width: 1536px) 100vw, 1536px"
                 />
               </motion.div>
             </AnimatePresence>
 
-            {/* Gradient overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent pointer-events-none" />
+            {/* Cinematic Gradient Overlays: Top and Bottom */}
+            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-slate-950/80 via-slate-950/30 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-44 sm:h-52 bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-transparent pointer-events-none" />
 
-            {/* Photo Caption Overlay */}
-            <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3 pointer-events-none">
-              <div className="max-w-2xl bg-brand-950/80 backdrop-blur-md px-4 py-3 rounded-xl border border-white/10">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-accent block">
-                  Verified Engineering Blueprint • {service.title}
+            {/* Top Bar Floating Badge & Fullscreen Button */}
+            <div className="absolute top-4 sm:top-6 left-4 sm:left-6 right-4 sm:right-6 flex items-center justify-between z-10">
+              <div className="flex items-center gap-2.5 bg-slate-950/75 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-lg">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="text-xs font-bold text-white tracking-wide">
+                  {service.code || "MEP"} • Engineering Architecture
                 </span>
-                <p className="text-sm sm:text-base font-bold text-white drop-shadow leading-snug">
-                  {currentSlide.title}
-                </p>
-                <p className="text-xs text-slate-300 mt-1 line-clamp-2">
-                  {currentSlide.caption}
+                {slides.length > 1 && (
+                  <span className="text-[10px] font-mono font-bold text-amber-400 pl-2 border-l border-white/15">
+                    {activeSlideIdx + 1}/{slides.length}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsLightboxOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-950/75 hover:bg-amber-400 text-slate-200 hover:text-slate-950 text-xs font-bold backdrop-blur-md border border-white/15 transition-all shadow-md active:scale-95"
+                  title="Expand Fullscreen"
+                >
+                  <FaExpand className="text-[10px]" />
+                  <span className="hidden sm:inline">Fullscreen</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Bottom Caption Overlay */}
+            <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-10 pointer-events-none">
+              <div className="max-w-3xl bg-slate-950/85 backdrop-blur-md px-5 py-3.5 rounded-2xl border border-white/10 shadow-2xl">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-amber-400 text-slate-950">
+                    Verified Blueprint
+                  </span>
+                  <span className="text-[11px] font-medium text-slate-400">
+                    {service.title}
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-xl font-bold text-white tracking-tight leading-snug">
+                  {currentSlide.title || sub.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 mt-1 line-clamp-2 leading-relaxed">
+                  {currentSlide.caption || sub.shortDesc}
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsLightboxOpen(true)}
-                className="pointer-events-auto self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 hover:bg-accent text-white hover:text-brand-950 text-xs font-semibold backdrop-blur-md border border-white/20 transition-all"
-              >
-                <FaExpand className="text-[10px]" />
-                <span>Click image to zoom</span>
-              </button>
+              {/* Slide Dots (Bottom Right) */}
+              {slides.length > 1 && (
+                <div className="pointer-events-auto self-start sm:self-end flex items-center gap-2 bg-slate-950/80 backdrop-blur-md px-3 py-2 rounded-full border border-white/10 shadow-lg">
+                  {slides.map((_, dotIdx) => (
+                    <button
+                      key={dotIdx}
+                      type="button"
+                      onClick={() => setActiveSlideIdx(dotIdx)}
+                      className={`h-2 rounded-full transition-all ${
+                        dotIdx === activeSlideIdx
+                          ? "w-6 bg-amber-400 shadow-md shadow-amber-400/50"
+                          : "w-2 bg-white/40 hover:bg-white/80"
+                      }`}
+                      title={`Go to slide ${dotIdx + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Slider Navigation Arrows (Left / Right) */}
@@ -551,7 +564,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                 <button
                   type="button"
                   onClick={prevSlide}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-brand-950/80 hover:bg-accent text-white hover:text-brand-950 backdrop-blur-md border border-white/20 transition-all flex items-center justify-center shadow-lg active:scale-95 z-10"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-950/70 hover:bg-amber-400 text-white hover:text-slate-950 backdrop-blur-md border border-white/15 transition-all flex items-center justify-center shadow-2xl active:scale-95 z-20 opacity-0 group-hover:opacity-100"
                   aria-label="Previous Slide"
                 >
                   <FaChevronLeft className="text-sm" />
@@ -559,7 +572,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                 <button
                   type="button"
                   onClick={nextSlide}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-brand-950/80 hover:bg-accent text-white hover:text-brand-950 backdrop-blur-md border border-white/20 transition-all flex items-center justify-center shadow-lg active:scale-95 z-10"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-950/70 hover:bg-amber-400 text-white hover:text-slate-950 backdrop-blur-md border border-white/15 transition-all flex items-center justify-center shadow-2xl active:scale-95 z-20 opacity-0 group-hover:opacity-100"
                   aria-label="Next Slide"
                 >
                   <FaChevronRight className="text-sm" />
@@ -568,32 +581,31 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
             )}
           </div>
 
-          {/* Thumbnail Navigation Strip */}
+          {/* Minimalist Thumbnail Filmstrip */}
           {slides.length > 1 && (
-            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0 hidden sm:inline-block">
-                Slider Frames:
+            <div className="mt-3.5 pt-3 border-t border-slate-800/80 flex items-center gap-3 overflow-x-auto pb-1 scrollbar-thin">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 hidden sm:inline-block pl-2">
+                Views:
               </span>
               {slides.map((item, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => setActiveSlideIdx(idx)}
-                  className={`group relative w-24 sm:w-28 h-16 sm:h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
+                  className={`group relative w-24 sm:w-28 h-16 sm:h-18 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
                     activeSlideIdx === idx
-                      ? "border-accent scale-105 shadow-md shadow-accent/20 ring-2 ring-accent/40"
-                      : "border-slate-200 opacity-70 hover:opacity-100 hover:border-slate-400"
+                      ? "border-amber-400 scale-[1.03] shadow-lg shadow-amber-400/20 ring-2 ring-amber-400/40"
+                      : "border-slate-800 opacity-60 hover:opacity-100 hover:border-slate-600"
                   }`}
                 >
                   <Image
                     src={item.image}
                     alt={item.title || `Thumb ${idx + 1}`}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute inset-0 bg-brand-950/20 group-hover:bg-transparent transition-colors" />
-                  <span className="absolute bottom-1 right-1.5 px-1 py-0.2 bg-brand-950/85 text-[9px] font-mono font-bold text-white rounded">
-                    {idx + 1}
+                  <span className="absolute bottom-1 right-1.5 px-1.5 py-0.5 bg-slate-950/90 text-[9px] font-mono font-bold text-white rounded">
+                    0{idx + 1}
                   </span>
                 </button>
               ))}
