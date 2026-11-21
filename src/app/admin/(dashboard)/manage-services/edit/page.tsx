@@ -41,6 +41,7 @@ function EditSubServiceContent() {
     bannerImage: "",
     sliderImages: [] as string[],
     features: [] as string[],
+    faqs: [] as { question: string; answer: string }[],
     parentFlagshipId: "",
     parentFlagshipSlug: "",
     parentFlagshipCode: "",
@@ -49,6 +50,8 @@ function EditSubServiceContent() {
 
   const [newFeatureText, setNewFeatureText] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [newFaqQuestion, setNewFaqQuestion] = useState("");
+  const [newFaqAnswer, setNewFaqAnswer] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -78,6 +81,7 @@ function EditSubServiceContent() {
             bannerImage: s.bannerImage || (sliderImages[0] || ""),
             sliderImages,
             features: Array.isArray(s.features) ? s.features : (Array.isArray(s.scopeOfWork) ? s.scopeOfWork : []),
+            faqs: Array.isArray(s.faqs) ? s.faqs : [],
             parentFlagshipId: data.parentFlagshipId || s.parentFlagshipId || "",
             parentFlagshipSlug: s.parentFlagshipSlug || parentParam || "",
             parentFlagshipCode: s.parentFlagshipCode || "",
@@ -195,12 +199,61 @@ function EditSubServiceContent() {
     });
   };
 
+  const handleAddFaq = () => {
+    if (!newFaqQuestion.trim() || !newFaqAnswer.trim()) {
+      alert("Please provide both question and answer");
+      return;
+    }
+    setFormData((prev) => ({
+      ...prev,
+      faqs: [...prev.faqs, { question: newFaqQuestion.trim(), answer: newFaqAnswer.trim() }],
+    }));
+    setNewFaqQuestion("");
+    setNewFaqAnswer("");
+  };
+
+  const handleRemoveFaq = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      faqs: prev.faqs.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleFaqChange = (index: number, field: "question" | "answer", val: string) => {
+    setFormData((prev) => {
+      const updated = [...prev.faqs];
+      updated[index] = { ...updated[index], [field]: val };
+      return { ...prev, faqs: updated };
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) {
       alert("Title is required");
       return;
     }
+
+    // If user filled in the "Add FAQ" inputs but forgot to click "+ Add FAQ", automatically include it
+    let finalFaqs = [...formData.faqs];
+    if (newFaqQuestion.trim() && newFaqAnswer.trim()) {
+      finalFaqs.push({
+        question: newFaqQuestion.trim(),
+        answer: newFaqAnswer.trim(),
+      });
+    }
+
+    // Same for "Solutions we cover" feature input
+    let finalFeatures = [...formData.features];
+    if (newFeatureText.trim()) {
+      finalFeatures.push(newFeatureText.trim());
+    }
+
+    const payload = {
+      ...formData,
+      faqs: finalFaqs,
+      features: finalFeatures,
+    };
 
     setSaving(true);
     setNotification(null);
@@ -209,7 +262,7 @@ function EditSubServiceContent() {
       const res = await fetch(`/api/admin/manage-services/sub-service/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const resData = await res.json();
@@ -427,6 +480,104 @@ function EditSubServiceContent() {
               >
                 <FaPlus className="text-[10px]" />
                 <span>Add Item</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Card: Technical Clarifications & FAQs */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-md space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-400" />
+                <h3 className="text-sm font-bold text-white">
+                  Technical Clarifications & FAQs
+                </h3>
+              </div>
+              <span className="text-[11px] font-mono text-slate-400">
+                {formData.faqs.length} FAQs
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed">
+              These appear in the accordion section ("Technical Clarifications & Project Execution") on the Sub-Service page.
+            </p>
+
+            {/* List of FAQs */}
+            <div className="space-y-3">
+              {formData.faqs.map((faq, idx) => (
+                <div
+                  key={idx}
+                  className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-2 relative group"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[10px] font-mono font-bold">
+                      Q{idx + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFaq(idx)}
+                      className="w-7 h-7 rounded-lg bg-slate-800 hover:bg-rose-600/20 text-slate-400 hover:text-rose-400 flex items-center justify-center transition-colors shrink-0"
+                      title="Delete FAQ"
+                    >
+                      <FaTrash className="text-[9px]" />
+                    </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">
+                      Question
+                    </label>
+                    <input
+                      type="text"
+                      value={faq.question}
+                      onChange={(e) => handleFaqChange(idx, "question", e.target.value)}
+                      placeholder="e.g. How long does implementation take?"
+                      className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 mb-1">
+                      Answer
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={faq.answer}
+                      onChange={(e) => handleFaqChange(idx, "answer", e.target.value)}
+                      placeholder="e.g. 4 to 12 weeks."
+                      className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Add New FAQ Form */}
+            <div className="pt-2 border-t border-slate-800/80 space-y-2">
+              <label className="block text-xs font-bold text-slate-300">
+                + Add New Clarification / FAQ
+              </label>
+              <input
+                type="text"
+                value={newFaqQuestion}
+                onChange={(e) => setNewFaqQuestion(e.target.value)}
+                placeholder="Question (e.g. What warranty is provided?)..."
+                className="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
+              />
+              <textarea
+                rows={2}
+                value={newFaqAnswer}
+                onChange={(e) => setNewFaqAnswer(e.target.value)}
+                placeholder="Answer (e.g. 5-year comprehensive warranty with 24/7 technical support)..."
+                className="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
+              />
+              <button
+                type="button"
+                onClick={handleAddFaq}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white text-xs font-bold border border-blue-500/30 transition-all"
+              >
+                <FaPlus className="text-[10px]" />
+                <span>Add FAQ</span>
               </button>
             </div>
           </div>

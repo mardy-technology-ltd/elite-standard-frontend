@@ -94,6 +94,24 @@ async function getSubServiceData(parentSlug: string, subSlug: string, category?:
         (s) => s.slug === subSlug || s.id === subSlug
       );
       if (foundSub) {
+        // Also check if there is a standalone record for this subservice that holds specific faqs / sliderImages
+        const standaloneSub = await prisma.service.findFirst({
+          where: {
+            OR: [
+              { slug: subSlug },
+              { code: subSlug.toUpperCase() },
+              { code: `ESL-MEP-${subSlug.toUpperCase()}` },
+              { id: foundSub.id },
+            ],
+          },
+        });
+
+        const effectiveFaqs = (standaloneSub && Array.isArray(standaloneSub.faqs) && standaloneSub.faqs.length > 0)
+          ? standaloneSub.faqs
+          : (Array.isArray(foundSub.faqs) && foundSub.faqs.length > 0)
+          ? foundSub.faqs
+          : (Array.isArray(dbParent.faqs) ? dbParent.faqs : []);
+
         const parentItem: ServiceItem = {
           id: dbParent.id,
           slug: dbParent.slug,
@@ -110,11 +128,26 @@ async function getSubServiceData(parentSlug: string, subSlug: string, category?:
           solutions: dbParent.solutions,
           scopeOfWork: dbParent.scopeOfWork,
           subServices: dbParent.subServices as any,
-          faqs: (dbParent.faqs as any) || [],
+          faqs: (effectiveFaqs as any) || [],
           sectors: (dbParent.sectors as any) || undefined,
         };
 
-        return { service: parentItem, sub: foundSub };
+        const effectiveFeatures = (standaloneSub && Array.isArray(standaloneSub.scopeOfWork) && standaloneSub.scopeOfWork.length > 0)
+          ? standaloneSub.scopeOfWork
+          : (Array.isArray(foundSub.features) ? foundSub.features : []);
+
+        const effectiveSlider = (standaloneSub && Array.isArray(standaloneSub.subServices) && (standaloneSub.subServices as any[])[0]?.sliderImages)
+          ? (standaloneSub.subServices as any[])[0].sliderImages
+          : (Array.isArray(foundSub.sliderImages) ? foundSub.sliderImages : (foundSub.image ? [foundSub.image] : []));
+
+        const enhancedSub: SubServiceDetail = {
+          ...foundSub,
+          features: effectiveFeatures,
+          sliderImages: effectiveSlider,
+          image: standaloneSub?.bannerImage || foundSub.image,
+        };
+
+        return { service: parentItem, sub: enhancedSub };
       }
     }
 

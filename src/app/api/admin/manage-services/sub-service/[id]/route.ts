@@ -35,6 +35,7 @@ export async function GET(
         ...service,
         sliderImages,
         features: Array.isArray(service.scopeOfWork) ? service.scopeOfWork : [],
+        faqs: Array.isArray(service.faqs) ? service.faqs : [],
       };
 
       return NextResponse.json({ success: true, service: synthesized, isEmbedded: false });
@@ -73,6 +74,7 @@ export async function GET(
             sliderImages,
             features: Array.isArray(found.features) ? found.features : [],
             scopeOfWork: Array.isArray(found.features) ? found.features : [],
+            faqs: Array.isArray(found.faqs) ? found.faqs : (Array.isArray(flagship.faqs) ? flagship.faqs : []),
             compliance: flagship.compliance || [],
             parentFlagshipId: flagship.id,
             parentFlagshipSlug: flagship.slug,
@@ -156,6 +158,7 @@ export async function PUT(
           bannerImage,
           scopeOfWork: Array.isArray(body.features) ? body.features : existingDedicated.scopeOfWork,
           subServices: updatedSubServices,
+          faqs: Array.isArray(body.faqs) ? body.faqs : existingDedicated.faqs,
         },
       });
 
@@ -174,6 +177,7 @@ export async function PUT(
                 image: bannerImage,
                 sliderImages,
                 features: Array.isArray(body.features) ? body.features : sub.features,
+                faqs: Array.isArray(body.faqs) ? body.faqs : sub.faqs,
               };
             }
             return sub;
@@ -224,6 +228,7 @@ export async function PUT(
             image: bannerImage || sub.image,
             sliderImages: sliderImages.length > 0 ? sliderImages : (sub.image ? [sub.image] : []),
             features: Array.isArray(body.features) ? body.features : sub.features,
+            faqs: Array.isArray(body.faqs) ? body.faqs : sub.faqs,
           };
         }
         return sub;
