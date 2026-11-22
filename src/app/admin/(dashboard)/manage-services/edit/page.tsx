@@ -50,6 +50,12 @@ function EditSubServiceContent() {
       warranty: "OEM Verified Guarantee",
       support: "24/7 Rapid Response",
     },
+    keyFacts: {
+      category: "",
+      executionMode: "",
+      safetyStandard: "",
+      maintenanceSupport: "",
+    },
     parentFlagshipId: "",
     parentFlagshipSlug: "",
     parentFlagshipCode: "",
@@ -99,6 +105,12 @@ function EditSubServiceContent() {
               standards: "BNBC & NFPA Compliant",
               warranty: "OEM Verified Guarantee",
               support: "24/7 Rapid Response",
+            },
+            keyFacts: {
+              category: (s.sectors as any)?.keyFacts?.category || (s as any).keyFacts?.category || "",
+              executionMode: (s.sectors as any)?.keyFacts?.executionMode || (s as any).keyFacts?.executionMode || "",
+              safetyStandard: (s.sectors as any)?.keyFacts?.safetyStandard || (s as any).keyFacts?.safetyStandard || "",
+              maintenanceSupport: (s.sectors as any)?.keyFacts?.maintenanceSupport || (s as any).keyFacts?.maintenanceSupport || "",
             },
             parentFlagshipId: data.parentFlagshipId || s.parentFlagshipId || "",
             parentFlagshipSlug: s.parentFlagshipSlug || parentParam || "",
@@ -334,6 +346,7 @@ function EditSubServiceContent() {
       solutions: finalSolutions,
       sectors: {
         assurance: formData.assurance,
+        keyFacts: formData.keyFacts,
       },
     };
 
@@ -498,6 +511,103 @@ function EditSubServiceContent() {
                 placeholder="Summary description displayed under the title on the big card and page header..."
                 className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
               />
+            </div>
+          </div>
+
+          {/* Card: Key Facts Summary Strip (Hero Strip under title) */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-md space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-400" />
+                <h3 className="text-sm font-bold text-white">
+                  Hero Key Facts Strip (4 Highlights)
+                </h3>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                Customizable
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed">
+              These 4 items appear right below the short description in the top hero section of the sub-service page. Leave empty to use default flagship values.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Fact 1: Service Category */}
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5">
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
+                  1. Service Category
+                </span>
+                <input
+                  type="text"
+                  value={formData.keyFacts.category}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      keyFacts: { ...formData.keyFacts, category: e.target.value },
+                    })
+                  }
+                  placeholder={`Default: ${formData.parentFlagshipCode || "e.g. Power Distribution & Control Panel"}`}
+                  className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {/* Fact 2: Execution Mode */}
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5">
+                <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block">
+                  2. Execution Mode
+                </span>
+                <input
+                  type="text"
+                  value={formData.keyFacts.executionMode}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      keyFacts: { ...formData.keyFacts, executionMode: e.target.value },
+                    })
+                  }
+                  placeholder="e.g. Turnkey EPC / Supply & Install"
+                  className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-400"
+                />
+              </div>
+
+              {/* Fact 3: Safety Standard */}
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5">
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">
+                  3. Safety Standard
+                </span>
+                <input
+                  type="text"
+                  value={formData.keyFacts.safetyStandard}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      keyFacts: { ...formData.keyFacts, safetyStandard: e.target.value },
+                    })
+                  }
+                  placeholder="e.g. BNBC, IEC, NFPA"
+                  className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-400"
+                />
+              </div>
+
+              {/* Fact 4: Maintenance Support */}
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5">
+                <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider block">
+                  4. Maintenance Support
+                </span>
+                <input
+                  type="text"
+                  value={formData.keyFacts.maintenanceSupport}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      keyFacts: { ...formData.keyFacts, maintenanceSupport: e.target.value },
+                    })
+                  }
+                  placeholder="e.g. 24/7 Corporate SLA"
+                  className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-300"
+                />
+              </div>
             </div>
           </div>
 

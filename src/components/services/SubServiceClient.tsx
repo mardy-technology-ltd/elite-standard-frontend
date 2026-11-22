@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ServiceItem, SubServiceDetail } from "@/lib/mockData";
 import {
   FaArrowLeft,
+  FaCheck,
   FaCheckCircle,
   FaFilePdf,
   FaPhoneAlt,
@@ -138,6 +139,15 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
     solutionOptions[1] || solutionOptions[0] || "On-Grid Solar System"
   );
 
+  // User-selected key actions (checkbox / tick marks) - empty by default (unticked)
+  const [selectedActions, setSelectedActions] = useState<string[]>([]);
+
+  const toggleAction = (title: string) => {
+    setSelectedActions((prev) =>
+      prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]
+    );
+  };
+
   // 6 Key Actions (Framework actions)
   const sixKeyActions = [
     {
@@ -265,7 +275,11 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
           facility: data.company,
           productName: `Sub-Service: ${sub.title} (${data.projectScale || "Scale not specified"})`,
           type: "quotation",
-          message: data.message,
+          message: `${data.message}${
+            selectedActions.length > 0
+              ? `\n\nSelected Required Actions: ${selectedActions.join(", ")}`
+              : ""
+          }`,
         }),
       });
 
@@ -338,25 +352,7 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
             </nav>
           </div>
 
-          {/* Badges Row */}
-          <div className="flex flex-wrap items-center gap-2.5 mb-4">
-            <span className="px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-accent/20 border border-accent/40 text-accent backdrop-blur-md">
-              {service.code || "MEP"} DIVISION
-            </span>
-            <span className="px-3 py-1 rounded-lg text-xs font-extrabold uppercase tracking-wider bg-blue-600/90 text-white shadow-sm border border-blue-400/40">
-              Technical Specification
-            </span>
-            <span className="px-3 py-1 rounded-lg text-xs font-bold bg-white/10 text-slate-200 border border-white/20 flex items-center gap-1.5">
-              <FaAward className="text-accent text-[11px]" />
-              Industrial Grade Turnkey
-            </span>
-            {slides.length > 1 && (
-              <span className="px-3 py-1 rounded-lg text-xs font-bold bg-white/10 text-slate-200 border border-white/20 flex items-center gap-1.5">
-                <FaImages className="text-accent text-[11px]" />
-                {slides.length} Slider Slides
-              </span>
-            )}
-          </div>
+
 
           {/* Title & Short Description */}
           <div className="max-w-4xl">
@@ -388,67 +384,79 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
             </div>
           </div>
 
-          {/* Key Facts Summary Strip */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8 pt-6 border-t border-white/15 max-w-5xl">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center text-base shrink-0 border border-accent/30">
-                <FaCogs />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                  Service Category
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-white block truncate">
-                  {service.title}
-                </span>
-              </div>
-            </div>
+          {/* Key Facts Summary Strip (Configurable via Admin Panel) */}
+          {(() => {
+            const keyFacts = (sub as any)?.sectors?.keyFacts ?? (service as any)?.sectors?.keyFacts ?? {};
+            const serviceCat = keyFacts.category || service.title;
+            const execMode = keyFacts.executionMode || "Turnkey EPC / Supply & Install";
+            const safetyStd = keyFacts.safetyStandard || (
+              Array.isArray(service.compliance) && service.compliance.length > 0
+                ? service.compliance.slice(0, 2).join(", ")
+                : "BNBC, IEC"
+            );
+            const maintSupport = keyFacts.maintenanceSupport || "24/7 Corporate SLA";
 
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center text-base shrink-0 border border-blue-500/30">
-                <FaTools />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                  Execution Mode
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-white block truncate">
-                  Turnkey EPC / Supply & Install
-                </span>
-              </div>
-            </div>
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8 pt-6 border-t border-white/15 max-w-5xl">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center text-base shrink-0 border border-accent/30">
+                    <FaCogs />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                      Service Category
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-white block truncate" title={serviceCat}>
+                      {serviceCat}
+                    </span>
+                  </div>
+                </div>
 
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-base shrink-0 border border-emerald-500/30">
-                <FaShieldAlt />
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                  Safety Standard
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-white block truncate">
-                  {Array.isArray(service.compliance) && service.compliance.length > 0
-                    ? service.compliance.slice(0, 2).join(", ")
-                    : "BNBC, NFPA, ASHRAE"}
-                </span>
-              </div>
-            </div>
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center text-base shrink-0 border border-blue-500/30">
+                    <FaTools />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                      Execution Mode
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-white block truncate" title={execMode}>
+                      {execMode}
+                    </span>
+                  </div>
+                </div>
 
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-base shrink-0 border border-amber-500/30">
-                <FaRegClock />
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-base shrink-0 border border-emerald-500/30">
+                    <FaShieldAlt />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                      Safety Standard
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-white block truncate" title={safetyStd}>
+                      {safetyStd}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-base shrink-0 border border-amber-500/30">
+                    <FaRegClock />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                      Maintenance Support
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5" title={maintSupport}>
+                      <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                      {maintSupport}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                  Maintenance Support
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
-                  24/7 Corporate SLA
-                </span>
-              </div>
-            </div>
-          </div>
+            );
+          })()}
         </div>
       </section>
 
@@ -1098,6 +1106,47 @@ export default function SubServiceClient({ service, sub }: SubServiceClientProps
                     {errors.projectScale && (
                       <span className="text-red-500 text-[11px] font-semibold">{errors.projectScale.message}</span>
                     )}
+                  </div>
+
+                  {/* Required Engineering Actions (Tick Marks) */}
+                  <div className="flex flex-col gap-2 pt-1 pb-1">
+                    <div className="flex items-center justify-between">
+                      <label className="font-bold text-slate-700 text-xs">
+                        Required Key Actions (Select to customize scope):
+                      </label>
+                      <span className="text-[11px] font-semibold text-blue-600">
+                        {selectedActions.length} of {sixKeyActions.length} selected
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {sixKeyActions.map((action, idx) => {
+                        const isChecked = selectedActions.includes(action.title);
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => toggleAction(action.title)}
+                            className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all ${
+                              isChecked
+                                ? "bg-blue-50/80 border-blue-500/80 text-blue-950 font-bold shadow-xs"
+                                : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
+                            }`}
+                          >
+                            <div
+                              className={`w-4 h-4 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                                isChecked
+                                  ? "bg-blue-600 text-white"
+                                  : "border border-slate-300 bg-white"
+                              }`}
+                            >
+                              {isChecked && <FaCheck className="text-[9px]" />}
+                            </div>
+                            <span className="text-xs truncate">{action.title}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Message */}
